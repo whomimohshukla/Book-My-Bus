@@ -5,6 +5,7 @@ import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Nav";
 import Home from "./components/Home/Home";
+import Footer from "./components/Footer/Footer";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -29,6 +30,7 @@ function App() {
         <Route path="/my-wallet" element={<MyWallet />} />
         <Route */}
       </Routes>
+      <Footer></Footer>
     </div>
   );
 }

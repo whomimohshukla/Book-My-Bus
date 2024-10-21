@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import mylogo from "/home/whomimohshukla/Desktop/Book mY bus/Frontend/src/assets/Book My Ticket (1).png";
+import mylogo from "/home/whomimohshukla/Desktop/Book mY bus/Frontend/src/assets/Untitled design.png";
 import CTAButton from "../Utls/Home/Button";
 
 function Nav() {
@@ -20,11 +20,11 @@ function Nav() {
               className="flex items-center space-x-2  relative rounded-none"
             >
               {/* Logo */}
-              {/* <img
+              <img
                 src={mylogo}
                 alt="Logo"
                 style={{ width: "70px", height: "70px" }} // Adjust width and maintain aspect ratio
-              /> */}
+              />
             </Link>
 
             {/* Hamburger Menu for Mobile */}
@@ -94,14 +94,14 @@ function Nav() {
                 </li>
                 <li>
                   <NavLink
-                    to="/Blogs"
+                    to="/Help"
                     className={({ isActive }) =>
                       `block py-2 px-4 transition duration-200 rounded ${
                         isActive ? "text-Darkgreen" : "text-black"
                       } hover:text-customBlue`
                     }
                   >
-                    Blogs
+                    Help
                   </NavLink>
                 </li>
                 <li>

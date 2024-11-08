@@ -6,7 +6,7 @@ export default {
       poppins: ["Poppins", "sans-serif"],
     },
     colors: {
-      Darkgreen: "#349E4D",
+      Darkgreen: "#FB607F",
       LightGreen: "#88CCA6",
       grayWhite: "#FFFFFF",
       grayText: "#424248",

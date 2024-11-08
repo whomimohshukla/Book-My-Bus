@@ -11,7 +11,7 @@ function Nav() {
   };
 
   return (
-    <div>
+    
       <header className="shadow-lg sticky z-50 top-0">
         <nav className="border-gray-200 ml-14 px-4 lg:px-8 py-3 rounded-full">
           <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
@@ -131,7 +131,7 @@ function Nav() {
           </div>
         </nav>
       </header>
-    </div>
+    
   );
 }
 

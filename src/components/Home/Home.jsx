@@ -1,14 +1,58 @@
-import React from "react";
-import { FaBus, FaTicketAlt, FaLock } from "react-icons/fa";
+import React, { useState } from "react";
+import {
+  FaBus,
+  FaTicketAlt,
+  FaLock,
+  FaChevronDown,
+  FaChevronUp,
+} from "react-icons/fa";
 import Highlight from "../../Utls/Highlight";
 import CTAButton from "../../Utls/Home/Button";
 import BusSearch2 from "../../Utls/Home/BusSearch2";
 import Amenties from "./Amenties";
+import Testimonials from "./Testimonials";
+
+function FAQItem({ question, answer }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="border-b border-gray-200 py-4">
+      <button
+        className="text-left w-full flex justify-between items-center text-lg font-medium text-gray-800"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {question}
+        {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+      </button>
+      {isOpen && (
+        <p className="mt-2 text-gray-600 text-sm md:text-base">{answer}</p>
+      )}
+    </div>
+  );
+}
 
 function Home() {
+  const faqData = [
+    {
+      question: "How do I book a ticket?",
+      answer:
+        "You can book a ticket by using our bus search feature, selecting your preferred route, and completing the payment process.",
+    },
+    {
+      question: "Can I cancel my ticket?",
+      answer:
+        "Yes, you can cancel your ticket through the 'My Tickets' section. Cancellation policies may apply.",
+    },
+    {
+      question: "Is online payment secure?",
+      answer:
+        "Yes, we use secure payment gateways to ensure your information is protected.",
+    },
+  ];
+
   return (
     <div className="font-poppins text-grayText text-white mt-28">
-      {/* Code Section 1 */}
+      {/* Hero Section */}
       <div className="relative flex flex-col md:flex-row justify-center md:justify-around gap-8 p-4 md:p-8">
         <div className="flex flex-col gap-4 md:ml-6 text-center md:text-left">
           <Highlight
@@ -31,12 +75,8 @@ function Home() {
           <BusSearch2 />
         </div>
       </div>
-      {/* <div className="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8 mb-0">
-        <hr className="my-6 w-3/4 mx-auto border-t-2 border-gray-400 rounded-full shadow-lg sm:mx-auto lg:my-8" />
-      </div> */}
 
-      {/* Code Section 2 */}
-      <div className="text-center mt-20 mb-64 md:mt-40 font-poppins bg-simon p-40 text-black">
+      <div className="text-center mt-20 mb-64 md:mt-40 font-poppins bg-simon p-8 md:p-40 text-black">
         <h1 className="text-3xl md:text-5xl font-bold text-gray-800">
           Get Your Tickets in Just 3 Simple Steps!
         </h1>
@@ -46,8 +86,8 @@ function Home() {
           <br /> With just a few clicks, you can secure your journey with ease!
         </p>
 
-        <div className="mt-12 md:mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 px-4 md:px-0">
-          {/* Step 1: Search Buses */}
+        {/* Step Cards */}
+        <div className="mt-12 md:mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-4 md:px-0">
           <div className="flex flex-col items-center">
             <div className="bg-lightgreen p-6 shadow-lg rounded-md flex flex-col items-center">
               <FaBus className="text-3xl md:text-4xl text-gray-800 mb-4" />
@@ -57,8 +97,6 @@ function Home() {
               </p>
             </div>
           </div>
-
-          {/* Step 2: Choose Your Ticket */}
           <div className="flex flex-col items-center">
             <div className="bg-lightgreen p-6 shadow-lg rounded-md flex flex-col items-center">
               <FaTicketAlt className="text-3xl md:text-4xl text-gray-800 mb-4" />
@@ -70,8 +108,6 @@ function Home() {
               </p>
             </div>
           </div>
-
-          {/* Step 3: Secure Payment */}
           <div className="flex flex-col items-center">
             <div className="bg-lightgreen p-6 shadow-lg rounded-md flex flex-col items-center">
               <FaLock className="text-3xl md:text-4xl text-gray-800 mb-4" />
@@ -85,7 +121,28 @@ function Home() {
           </div>
         </div>
       </div>
-      <Amenties></Amenties>
+
+      {/* Amenities Section */}
+      <Amenties />
+
+      {/* Testimonial section  */}
+
+      <Testimonials></Testimonials>
+      {/* FAQ Section */}
+      <div className="text-center mt-20 font-poppins bg-white p-10 rounded-lg shadow-lg">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
+          Frequently Asked Questions
+        </h2>
+        <div className="mt-8 space-y-4 md:space-y-6 text-left">
+          {faqData.map((item, index) => (
+            <FAQItem
+              key={index}
+              question={item.question}
+              answer={item.answer}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

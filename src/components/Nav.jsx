@@ -91,18 +91,18 @@ function Nav() {
                   FAQs
                 </NavLink>
               </li>
-              <li>
+              {/* <li>
                 <NavLink
-                  to="/Help"
+                  to="/blog"
                   className={({ isActive }) =>
                     `block py-2 px-4 transition duration-200 rounded ${
                       isActive ? "text-Darkgreen" : "text-black"
                     } hover:text-customBlue`
                   }
                 >
-                  Help
+                  Blogs
                 </NavLink>
-              </li>
+              </li> */}
               <li>
                 <NavLink
                   to="/contact"

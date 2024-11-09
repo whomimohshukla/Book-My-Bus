@@ -6,7 +6,9 @@ import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/Nav";
 import Home from "./components/Home/Home";
 import Footer from "./components/Footer/Footer";
-
+import About from "./components/About/About";
+import FaqS from "./components/FAQs/FaqS";
+import Contact from "./components/Contact/Contact";
 function App() {
   const [count, setCount] = useState(0);
 
@@ -15,9 +17,14 @@ function App() {
       <Navbar></Navbar>
       <Routes>
         <Route path="/" element={<Home />} />
-        {/* <Route path="/about" element={<About />} />
-        <Route path="/FAQs" element={<FAQs />} />
-        <Route path="/Blogs" element={<Blogs />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/FAQs" element={<FaqS />} />
+        <Route path="/contact" element={<Contact />} />
+
+
+        {/* // i will do later  */}
+        {/* "backend part " */}
+        {/* <Route path="/Blogs" element={<Blogs />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} /> */}

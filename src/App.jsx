@@ -9,17 +9,20 @@ import FaqS from "./components/FAQs/FaqS";
 import Contact from "./components/Contact/Contact";
 import BookMyTicket from "./components/BookMyTicket/BookMyTicket";
 import Signup from "./components/Signup/Signup";
+import Login from "./components/Login /Login";
+import ScrollToTop from "./Utls/MOVETOP/ScrollToTop";
 
 function App() {
   const [count, setCount] = useState(0);
   const location = useLocation();
 
-  // Condition to hide Footer on the /signup page
-  const shouldHideFooter = location.pathname === "/signup";
+  // Condition to hide Footer on /signup or /login pages
+  const shouldHideFooter = location.pathname === "/signup" || location.pathname === "/login";
 
   return (
     <div>
       <Navbar />
+      <ScrollToTop/> {/* Add ScrollToTop component here */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -27,10 +30,12 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/getTicket" element={<BookMyTicket />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
 
       {/* Conditionally render Footer */}
       {!shouldHideFooter && <Footer />}
+      
     </div>
   );
 }

@@ -129,7 +129,7 @@ function Home() {
 
       <Testimonials></Testimonials>
       {/* FAQ Section */}
-      <div className="text-center mt-20 font-poppins bg-white p-10 rounded-lg shadow-lg">
+      <div className="text-center mt-20 mb-40 font-poppins bg-white p-10 rounded-lg shadow-lg">
         <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
           Frequently Asked Questions
         </h2>

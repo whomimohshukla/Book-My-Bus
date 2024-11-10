@@ -102,7 +102,7 @@ function Signup() {
   return (
     <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
       <div
-        className="flex justify-center items-center min-h-screen p-4 bg-cover bg-center bg-fixed"
+        className="flex justify-center items-center min-h-screen p-4 bg-cover bg-center "
         style={{
           backgroundImage: `url(${backgroundImage})`,
           backgroundColor: "rgba(0, 0, 0, 0.5)", // Fallback color
@@ -124,7 +124,7 @@ function Signup() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
                 placeholder="Enter your name"
               />
               {errors.name && (
@@ -140,7 +140,7 @@ function Signup() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
                 placeholder="Enter your email"
               />
               {errors.email && (
@@ -156,7 +156,7 @@ function Signup() {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
                 placeholder="Enter your password"
               />
               {errors.password && (
@@ -172,7 +172,7 @@ function Signup() {
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
                 placeholder="Confirm your password"
               />
               {errors.confirmPassword && (
@@ -187,7 +187,7 @@ function Signup() {
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
               >
                 {/* <option value="">Select Role</option> */}
                 <option value="admin">Admin</option>
@@ -205,7 +205,7 @@ function Signup() {
                 name="passengerType"
                 value={formData.passengerType}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
               >
                 {/* <option value="">Select Passenger Type</option> */}
                 <option value="adult">Adult</option>
@@ -227,7 +227,7 @@ function Signup() {
                   name="otp"
                   value={formData.otp}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
                   placeholder="Enter the OTP sent to your email"
                 />
                 {errors.otp && (
@@ -236,7 +236,7 @@ function Signup() {
                 <button
                   type="button"
                   onClick={handleResendOtp}
-                  className="mt-2 text-sm text-blue-600 hover:underline"
+                  className="mt-2 text-sm text-blue-600 hover:underline "
                 >
                   Resend OTP
                 </button>
@@ -247,7 +247,7 @@ function Signup() {
                 <button
                   type="button"
                   onClick={handleSendOtp}
-                  className="w-full py-2 bg-pink100 text-white font-semibold rounded-lg hover:bg-Darkgreen transition-colors shadow-md"
+                  className="w-full py-2 bg-Darkgreen hover:shadow-none hover:scale-95 transition-all duration-200  text-white font-semibold rounded-lg hover:bg-Darkgreen  shadow-md"
                 >
                   Send OTP
                 </button>
@@ -256,7 +256,7 @@ function Signup() {
             <div>
               <button
                 type="submit"
-                className="w-full py-2 bg-pink100 text-white font-semibold rounded-lg hover:bg-Darkgreen transition-colors shadow-md"
+               className="w-full py-2 bg-Darkgreen hover:shadow-none hover:scale-95 transition-all duration-200  text-white font-semibold rounded-lg hover:bg-Darkgreen  shadow-md"
               >
                 Sign Up
               </button>

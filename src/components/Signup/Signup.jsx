@@ -101,6 +101,7 @@ function Signup() {
 
   return (
     <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
+      
       <div
         className="flex justify-center items-center min-h-screen p-4 bg-cover bg-center "
         style={{
@@ -110,7 +111,7 @@ function Signup() {
         }}
       >
         <ToastContainer />
-        <div className="bg-white border p-6 md:p-10 mt-20 mb-48 rounded-lg shadow-3xl w-full max-w-lg space-y-4 backdrop-blur-lg bg-opacity-90">
+        <div className="bg-white border p-6 md:p-10 mt-20 mb-48 rounded-lg shadow-3xl w-full max-w-lg space-y-11 backdrop-blur-lg bg-opacity-90">
           <h2 className="text-2xl md:text-3xl font-semibold text-center text-Darkgreen">
             Sign Up
           </h2>
@@ -164,7 +165,7 @@ function Signup() {
               )}
             </div>
             <div>
-              <label className="block text-sm md:text-base font-semibold text-gray-600">
+              <label className="block text-sm md:text-base font-semibold ">
                 Confirm Password
               </label>
               <input
@@ -247,7 +248,7 @@ function Signup() {
                 <button
                   type="button"
                   onClick={handleSendOtp}
-                  className="w-full py-2 bg-Darkgreen hover:shadow-none hover:scale-95 transition-all duration-200  text-white font-semibold rounded-lg hover:bg-Darkgreen  shadow-md"
+                  className="w-full py-2 bg-Darkgreen hover:shadow-none hover:scale-95 transition-all duration-200  text-white2 font-semibold rounded-lg hover:bg-Darkgreen  shadow-md"
                 >
                   Send OTP
                 </button>
@@ -256,7 +257,7 @@ function Signup() {
             <div>
               <button
                 type="submit"
-               className="w-full py-2 bg-Darkgreen hover:shadow-none hover:scale-95 transition-all duration-200  text-white font-semibold rounded-lg hover:bg-Darkgreen  shadow-md"
+               className="w-full py-2 bg-Darkgreen hover:shadow-none hover:scale-95 transition-all duration-200  text-white2 font-semibold rounded-lg hover:bg-Darkgreen  shadow-md"
               >
                 Sign Up
               </button>

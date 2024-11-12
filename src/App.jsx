@@ -31,6 +31,8 @@ function App() {
         <Route path="/getTicket" element={<BookMyTicket />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+       
+
       </Routes>
 
       {/* Conditionally render Footer */}

@@ -47,6 +47,9 @@ function Login() {
       });
       toast.success("Logged in successfully!");
       localStorage.setItem("token", response.data.token);
+      // Clear form after successful login
+      setEmail("");
+      setPassword("");
     } catch (error) {
       console.error("Error during login:", error);
       if (error.response && error.response.data.message) {

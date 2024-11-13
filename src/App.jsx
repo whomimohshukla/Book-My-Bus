@@ -17,12 +17,15 @@ function App() {
   const location = useLocation();
 
   // Condition to hide Footer on /signup or /login pages
-  const shouldHideFooter = location.pathname === "/signup" || location.pathname === "/login";
+  const shouldHideFooter =
+    location.pathname === "/signup" || location.pathname === "/login";
 
   return (
     <div>
       <Navbar />
-      <ScrollToTop/> {/* Add ScrollToTop component here */}
+      <ScrollToTop /> {/* Add ScrollToTop component here */}
+      // routes react component
+      {/* Add your routes here */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -31,13 +34,9 @@ function App() {
         <Route path="/getTicket" element={<BookMyTicket />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
-       
-
       </Routes>
-
       {/* Conditionally render Footer */}
       {!shouldHideFooter && <Footer />}
-      
     </div>
   );
 }

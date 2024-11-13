@@ -30,6 +30,7 @@ function App() {
       // Example: <Route path="/about" element={<About count={count} />} />
       // Update the count state in the component using the setCount function
       // Example: setCount(prevCount => prevCount + 1); */}
+      // whomimohshukla
       {/* Add your routes here */}
       <Routes>
         <Route path="/" element={<Home />} />

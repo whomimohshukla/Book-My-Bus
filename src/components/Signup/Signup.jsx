@@ -14,7 +14,7 @@ function Signup() {
     password: "",
     confirmPassword: "",
     otp: "",
-    role: "passanger", // reset role
+    role: "passenger", // reset role
     passengerType: "adult", // reset passenger type
   });
   const [errors, setErrors] = useState({});
@@ -88,7 +88,7 @@ function Signup() {
             password: "",
             confirmPassword: "",
             otp: "",
-            role: "passanger", // reset role
+            role: "passenger", // reset role
             passengerType: "adult", // reset passenger type
           });
           navigate("/home");

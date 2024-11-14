@@ -25,12 +25,12 @@ function App() {
       <Navbar />
       <ScrollToTop /> {/* Add ScrollToTop component here */}
       {/* // routes react component
-      // Add "exact" prop to only render the route when the path matches exactly
-      // Add "count" prop to the routes to pass the count state to the respective components
-      // Example: <Route path="/about" element={<About count={count} />} />
-      // Update the count state in the component using the setCount function
-      // Example: setCount(prevCount => prevCount + 1); */}
-      // whomimohshukla
+      Add "exact" prop to only render the route when the path matches exactly
+      Add "count" prop to the routes to pass the count state to the respective components
+      Example: <Route path="/about" element={<About count={count} />} />
+      Update the count state in the component using the setCount function
+      Example: setCount(prevCount => prevCount + 1); */}
+     
       {/* Add your routes here */}
       <Routes>
         <Route path="/" element={<Home />} />

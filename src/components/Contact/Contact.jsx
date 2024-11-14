@@ -1,9 +1,47 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import { FiFacebook, FiTwitter, FiInstagram, FiLinkedin } from "react-icons/fi";
 import busImage from "/home/whomimohshukla/Desktop/Project Mine/BookMyBus/src/assets/maps.jpg"; // Ensure this path is correct
+import { toast, ToastContainer } from "react-toastify"; // Import toastify functions
+import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
 
 function Contact() {
+  const formRef = useRef(null); // Reference for the form
+  const [isSubmitting, setIsSubmitting] = useState(false); // State for loading
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);  // Set loading state to true
+    const formData = new FormData(event.target);
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      message: formData.get("message"),
+    };
+
+    try {
+      const response = await fetch("http://localhost:8000/api/v2/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        toast.success("Message sent successfully!"); // Show success toast
+        formRef.current.reset(); // Clear the form after submission
+      } else {
+        toast.error("Failed to send message."); // Show error toast
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An error occurred. Please try again."); // Show error toast
+    } finally {
+      setIsSubmitting(false);  // Set loading state to false
+    }
+  };
+
   return (
     <div className="font-poppins text-black bg-grayWhite mb-36 p-8 md:p-16">
       {/* Heading */}
@@ -39,13 +77,18 @@ function Contact() {
         </div>
 
         {/* Contact Form */}
-        <form className="w-full md:w-1/2 bg-white p-8 md:p-16 rounded-lg shadow-lg">
+        <form
+          ref={formRef} // Attach ref here
+          className="w-full md:w-1/2 bg-white p-8 md:p-16 rounded-lg shadow-lg"
+          onSubmit={handleSubmit}
+        >
           <div className="flex flex-col gap-6 mb-6">
             <label className="text-gray-700 text-lg font-semibold">
               Your Name
             </label>
             <input
               type="text"
+              name="name"
               className="border border-gray-300 p-3 rounded focus:outline-none focus:ring focus:ring-Darkgreen"
               placeholder="Enter your name"
             />
@@ -55,6 +98,7 @@ function Contact() {
             </label>
             <input
               type="email"
+              name="email"
               className="border border-gray-300 p-3 rounded focus:outline-none focus:ring focus:ring-Darkgreen"
               placeholder="Enter your email"
             />
@@ -64,15 +108,17 @@ function Contact() {
             </label>
             <textarea
               rows="4"
+              name="message"
               className="border border-gray-300 p-3 rounded focus:outline-none focus:ring focus:ring-Darkgreen"
               placeholder="Type your message here"
             ></textarea>
           </div>
           <button
             type="submit"
+            disabled={isSubmitting} // Disable the button when submitting
             className="w-full bg-Darkgreen text-white py-3 rounded font-semibold hover:bg-green-700 hover:shadow-md transition-all duration-200"
           >
-            SEND MESSAGE
+            {isSubmitting ? "Sending..." : "SEND MESSAGE"} {/* Show "Sending..." text when submitting */}
           </button>
         </form>
       </div>
@@ -104,6 +150,9 @@ function Contact() {
           <FiLinkedin className="text-3xl" />
         </a>
       </div>
+
+      {/* ToastContainer to display toasts */}
+      <ToastContainer />
     </div>
   );
 }

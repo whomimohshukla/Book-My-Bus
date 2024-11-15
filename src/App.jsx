@@ -29,8 +29,7 @@ function App() {
       Add "count" prop to the routes to pass the count state to the respective components
       Example: <Route path="/about" element={<About count={count} />} />
       Update the count state in the component using the setCount function
-      Example: setCount(prevCount => prevCount + 1); */}
-      ALL THE routes
+      Example: setCount(prevCount => prevCount + 1);
      
       {/* Add your routes here */}
       <Routes>

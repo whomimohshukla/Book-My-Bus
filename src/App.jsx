@@ -11,6 +11,8 @@ import BookMyTicket from "./components/BookMyTicket/BookMyTicket";
 import Signup from "./components/Signup/Signup";
 import Login from "./components/Login /Login";
 import ScrollToTop from "./Utls/MOVETOP/ScrollToTop";
+import Ticket from "./components/BookMyTicket/Ticket";
+import { AuthProvider } from "./contexts/AuthProvider";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -37,10 +39,15 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/FAQs" element={<FaqS />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/getTicket" element={<BookMyTicket />} />
+
         <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
       </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/getTicket" element={<Ticket />} />
+        </Routes>
+      </AuthProvider>
       {/* Conditionally render Footer */}
       {!shouldHideFooter && <Footer />}
     </div>

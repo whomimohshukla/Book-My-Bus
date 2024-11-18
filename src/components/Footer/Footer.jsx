@@ -90,22 +90,22 @@ function Footer() {
             <h2 className="mb-4 text-xl font-semibold text-Darkgreen">Policies</h2>
             <ul className="space-y-2">
               <li>
-                <Link to="/privacy-policy" className="hover:text-Darkgreen">
+                <Link to="/privacyPolicy" className="hover:text-Darkgreen">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/terms-of-service" className="hover:text-Darkgreen">
+                <Link to="/termsAndConditions" className="hover:text-Darkgreen">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link to="/ticket-policies" className="hover:text-Darkgreen">
+                <Link to="/TicketPolicies" className="hover:text-Darkgreen">
                   Ticket Policies
                 </Link>
               </li>
               <li>
-                <Link to="/refund-policy" className="hover:text-Darkgreen">
+                <Link to="/refunds" className="hover:text-Darkgreen">
                   Refund Policy
                 </Link>
               </li>

@@ -91,7 +91,7 @@ function Signup() {
             role: "passenger", // reset role
             passengerType: "adult", // reset passenger type
           });
-          navigate("/home");
+          navigate("/");
         }
       } catch (err) {
         toast.error(err.response?.data?.message || "Something went wrong");
@@ -101,7 +101,6 @@ function Signup() {
 
   return (
     <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
-      
       <div
         className="flex justify-center items-center min-h-screen p-4 bg-cover bg-center "
         style={{
@@ -192,7 +191,7 @@ function Signup() {
               >
                 {/* <option value="">Select Role</option> */}
                 <option value="admin">Admin</option>
-                <option value="User">User</option>
+                <option value="passenger">passenger</option>
               </select>
               {errors.role && (
                 <p className="text-red-600 text-xs">{errors.role}</p>
@@ -257,7 +256,7 @@ function Signup() {
             <div>
               <button
                 type="submit"
-               className="w-full py-2 bg-Darkgreen hover:shadow-none hover:scale-95 transition-all duration-200  text-white2 font-semibold rounded-lg hover:bg-Darkgreen  shadow-md"
+                className="w-full py-2 bg-Darkgreen hover:shadow-none hover:scale-95 transition-all duration-200  text-white2 font-semibold rounded-lg hover:bg-Darkgreen  shadow-md"
               >
                 Sign Up
               </button>
@@ -284,7 +283,7 @@ function Signup() {
             Sign in to avail exciting discounts and cashbacks! By signing up,
             you agree to our{" "}
             <Link
-              to="/terms"
+              to="/termsAndConditions"
               className="text-Darkgreen font-semibold hover:underline"
             >
               Terms & Conditions

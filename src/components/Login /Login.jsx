@@ -4,10 +4,10 @@ import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { toast, ToastContainer } from "react-toastify";
 import backgroundImage from "/home/whomimohshukla/Desktop/Project Mine/BookMyBus/src/assets/empty-red-seats-inside-public-bus-sunset-empty-red-bus-seats-warm-sunset-light-creating-cozy-urban-scene-commuting-336102958.webp";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthProvider";
+// import { useAuth } from "../../contexts/AuthProvider";z
 
 function Login() {
-  const { login } = useAuth();
+  // const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -73,7 +73,7 @@ function Login() {
         className="flex justify-center items-center min-h-screen p-4 bg-cover bg-center "
         style={{
           backgroundImage: `url(${backgroundImage})`,
-          backgroundColor: "rgba(0, 0, 0, 0.5)", 
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
           backgroundBlendMode: "overlay",
         }}
       >
@@ -147,22 +147,32 @@ function Login() {
             />
           </div>
 
-          <div className="text-center mt-4 text-sm text-gray-600">
+          <div className="text-center mt-4 text-sm text-white2">
             <p className="mb-2">
               Unlock special discounts and cashbacks by signing in! By
               continuing, you confirm that you agree with our{" "}
               <Link
-                to="/terms"
+                to="/termsAndConditions"
                 className="text-Darkgreen font-semibold hover:underline"
               >
                 Terms & Conditions
               </Link>{" "}
               and{" "}
               <Link
-                to="/privacy"
+                to="/privacyPolicy"
                 className="text-Darkgreen font-semibold hover:underline"
               >
                 Privacy Policy
+              </Link>
+              .
+            </p>
+            <p className="mt-2">
+              Don't have an account?{" "}
+              <Link
+                to="/signup"
+                className="text-Darkgreen font-semibold hover:underline"
+              >
+                Sign up
               </Link>
               .
             </p>

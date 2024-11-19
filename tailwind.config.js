@@ -11,7 +11,7 @@ export default {
       poppins: ["Poppins", "sans-serif"],
     },
     colors: {
-      Darkgreen: "#FB607F",
+      Darkgreen: "#349E4D",
       LightGreen: "#88CCA6",
       grayWhite: "#FFFFFF",
       white2:"#F7F7F7",
@@ -21,8 +21,8 @@ export default {
       black2: "#000000",
       blue: "#1D293F",
       busColor: "#71ACBC",
-      simon: "#FF91A4",
-      pink100: "#FFA6C9",
+      simon: "#88CCA6",
+      pink100: "#88CCA6",
       indigo600:"#3949AB"
     },
   },

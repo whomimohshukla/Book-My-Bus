@@ -24,7 +24,7 @@ function Login() {
           token: credentialResponse.credential,
         }
       );
-      login(response.data.token); // Save token to context
+      // login(response.data.token); // Save token to context
       navigate("/ticket"); // Redirect to ticket page after successful login
       toast.success("Logged in with Google successfully!");
       localStorage.setItem("token", response.data.token); // Store JWT token
@@ -51,7 +51,7 @@ function Login() {
       });
       toast.success("Logged in successfully!");
       localStorage.setItem("token", response.data.token);
-      login(response.data.token); // Save token to context
+      // ogin(response.data.token); // Save token to context
       navigate("/getTicket"); // Redirect to ticket page after successful login
       setEmail("");
       setPassword("");

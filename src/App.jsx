@@ -14,6 +14,8 @@ import TermsAndConditions from "./components/TermsAndConditions/TermsAndConditio
 import PrivacyPolicy from "./components/TermsAndConditions/PrivacyPolicy";
 import TicketPolicies from "./components/TermsAndConditions/TicketPolicies";
 import RefundPolicies from "./components/TermsAndConditions/RefundPolicies";
+import TicketSearch from "./components/Ticket/TicketSearch";
+import BusSeatSelection from "./components/Ticket/BusSeatSelection";
 // import Ticket from "./components/BookMyTicket/Ticket";
 // import { AuthProvider } from "./contexts/AuthProvider";
 
@@ -41,6 +43,8 @@ function App() {
         <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
         <Route path="/TicketPolicies" element={<TicketPolicies />} />
         <Route path="/refunds" element={<RefundPolicies />} />
+        <Route path="/ticket-Search" element={<TicketSearch />} />
+        <Route path="/seatSelection" element={<BusSeatSelection />} />
       </Routes>
       {/* Conditionally render Footer */}
       {!shouldHideFooter && <Footer />}

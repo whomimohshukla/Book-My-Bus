@@ -18,7 +18,7 @@ function TermsAndConditions() {
     toast.success("Terms and conditions accepted!");
   };
   return (
-    <div className="flex justify-center items-center min-h-screen p-6 bg-gray-100">
+    <div className="flex font-poppins justify-center items-center min-h-screen p-6 bg-gray-100">
       <div className="bg-white rounded-lg shadow-lg p-6 md:p-10 w-full max-w-4xl space-y-6">
         <ToastContainer />
         <h1 className="text-2xl md:text-3xl font-bold text-center text-gray-800">

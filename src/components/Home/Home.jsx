@@ -66,7 +66,7 @@ function Home() {
             Get started today and enjoy the ride!
           </p>
           <div className="mt-4 md:mt-6 mx-auto md:mx-0 w-36 md:w-44">
-            <CTAButton active="true" linkto="/getTicket">
+            <CTAButton active="true" linkto="/ticket-Search">
               GET TICKETS NOW
             </CTAButton>
           </div>

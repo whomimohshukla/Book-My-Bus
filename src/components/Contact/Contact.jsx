@@ -1,17 +1,17 @@
 import React, { useRef, useState } from "react";
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import { FiFacebook, FiTwitter, FiInstagram, FiLinkedin } from "react-icons/fi";
-import busImage from "/home/whomimohshukla/Desktop/Project Mine/BookMyBus/src/assets/maps.jpg"; // Ensure this path is correct
-import { toast, ToastContainer } from "react-toastify"; // Import toastify functions
-import "react-toastify/dist/ReactToastify.css"; // Import toastify CSS
+import busImage from "/home/whomimohshukla/Desktop/Project Mine/BookMyBus/src/assets/maps.jpg";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Contact() {
-  const formRef = useRef(null); // Reference for the form
-  const [isSubmitting, setIsSubmitting] = useState(false); // State for loading
+  const formRef = useRef(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    setIsSubmitting(true);  // Set loading state to true
+    setIsSubmitting(true);
     const formData = new FormData(event.target);
     const data = {
       name: formData.get("name"),
@@ -29,130 +29,135 @@ function Contact() {
       });
 
       if (response.ok) {
-        toast.success("Message sent successfully!"); // Show success toast
-        formRef.current.reset(); // Clear the form after submission
+        toast.success("Message sent successfully!");
+        formRef.current.reset();
       } else {
-        toast.error("Failed to send message."); // Show error toast
+        toast.error("Failed to send message.");
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("An error occurred. Please try again."); // Show error toast
+      toast.error("An error occurred. Please try again.");
     } finally {
-      setIsSubmitting(false);  // Set loading state to false
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="font-poppins text-black bg-grayWhite mb-36 p-8 md:p-16">
-      {/* Heading */}
-      <h1 className="text-center text-4xl md:text-5xl font-bold mb-16 mt-7 text-gray-800">
-        Get in <span className="text-Darkgreen">Touch</span>
-      </h1>
-
-      {/* Contact Info Section */}
-      <div className="flex flex-col md:flex-row justify-center gap-12 mb-16">
-        <div className="flex items-center gap-4 text-gray-600">
-          <FaPhoneAlt className="text-Darkgreen text-2xl" />
-          <span className="text-lg md:text-xl">+1 (800) 123-4567</span>
-        </div>
-        <div className="flex items-center gap-4 text-gray-600">
-          <FaEnvelope className="text-Darkgreen text-2xl" />
-          <span className="text-lg md:text-xl">info@bookmybus.com</span>
-        </div>
-        <div className="flex items-center gap-4 text-gray-600">
-          <FaMapMarkerAlt className="text-Darkgreen text-2xl" />
-          <span className="text-lg md:text-xl">123 Main St, City, Country</span>
+    <div className="min-h-screen bg-white2">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen py-20 px-8">
+        <div className="max-w-6xl mx-auto text-center">
+          <h1 className="text-4xl md:text-6xl font-bold text-white2 mb-6">
+            Get in Touch
+          </h1>
+          <p className="text-lg md:text-xl text-white2 opacity-90 max-w-2xl mx-auto">
+            Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+          </p>
         </div>
       </div>
 
-      {/* Image and Contact Form Section */}
-      <div className="flex flex-col md:flex-row items-center justify-center gap-12">
-        {/* Bus Image */}
-        <div className="w-full md:w-1/2 lg:w-1/3 mb-8 md:mb-0">
-          <img
-            src={busImage}
-            alt="Bus"
-            className="rounded-lg shadow-lg w-full h-80 object-cover md:h-96 lg:h-auto"
-          />
+      {/* Contact Info Cards */}
+      <div className="max-w-6xl mx-auto px-8 py-16 -mt-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {[
+            { icon: <FaPhoneAlt className="text-3xl" />, text: "+1 (800) 123-4567", title: "Call Us" },
+            { icon: <FaEnvelope className="text-3xl" />, text: "info@bookmybus.com", title: "Email Us" },
+            { icon: <FaMapMarkerAlt className="text-3xl" />, text: "123 Main St, City, Country", title: "Visit Us" }
+          ].map((item, index) => (
+            <div key={index} className="bg-white rounded-xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="w-16 h-16 bg-gradient-to-r from-Darkgreen to-LightGreen rounded-full flex items-center justify-center text-white2 mb-6">
+                {item.icon}
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">{item.title}</h3>
+              <p className="text-gray-600">{item.text}</p>
+            </div>
+          ))}
         </div>
 
-        {/* Contact Form */}
-        <form
-          ref={formRef} // Attach ref here
-          className="w-full md:w-1/2 bg-white p-8 md:p-16 rounded-lg shadow-lg"
-          onSubmit={handleSubmit}
-        >
-          <div className="flex flex-col gap-6 mb-6">
-            <label className="text-gray-700 text-lg font-semibold">
-              Your Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              className="border border-gray-300 p-3 rounded focus:outline-none focus:ring focus:ring-Darkgreen"
-              placeholder="Enter your name"
+        {/* Main Content */}
+        <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12">
+          {/* Map Image */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-Darkgreen to-LightGreen opacity-10 rounded-xl"></div>
+            <img
+              src={busImage}
+              alt="Location Map"
+              className="w-full h-full object-cover rounded-xl shadow-lg"
             />
-
-            <label className="text-gray-700 text-lg font-semibold">
-              Your Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              className="border border-gray-300 p-3 rounded focus:outline-none focus:ring focus:ring-Darkgreen"
-              placeholder="Enter your email"
-            />
-
-            <label className="text-gray-700 text-lg font-semibold">
-              Message
-            </label>
-            <textarea
-              rows="4"
-              name="message"
-              className="border border-gray-300 p-3 rounded focus:outline-none focus:ring focus:ring-Darkgreen"
-              placeholder="Type your message here"
-            ></textarea>
           </div>
-          <button
-            type="submit"
-            disabled={isSubmitting} // Disable the button when submitting
-            className="w-full bg-Darkgreen text-white py-3 rounded font-semibold hover:bg-green-700 hover:shadow-md transition-all duration-200"
-          >
-            {isSubmitting ? "Sending..." : "SEND MESSAGE"} {/* Show "Sending..." text when submitting */}
-          </button>
-        </form>
+
+          {/* Contact Form */}
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-8">Send us a Message</h2>
+            <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">Your Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-LightGreen focus:ring-2 focus:ring-LightGreen/20 transition-all duration-300"
+                  placeholder="John Doe"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">Your Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  required
+                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-LightGreen focus:ring-2 focus:ring-LightGreen/20 transition-all duration-300"
+                  placeholder="john@example.com"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-2">Message</label>
+                <textarea
+                  name="message"
+                  required
+                  rows="4"
+                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 focus:border-LightGreen focus:ring-2 focus:ring-LightGreen/20 transition-all duration-300"
+                  placeholder="Your message here..."
+                ></textarea>
+              </div>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-gradient-to-r from-Darkgreen to-LightGreen text-white2 py-4 rounded-lg font-semibold hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-70"
+              >
+                {isSubmitting ? "Sending..." : "Send Message"}
+              </button>
+            </form>
+          </div>
+        </div>
       </div>
 
-      {/* Social Media Links Section */}
-      <div className="flex justify-center gap-8 mt-40">
-        <a
-          href="https://facebook.com"
-          className="text-gray-600 hover:text-Darkgreen"
-        >
-          <FiFacebook className="text-3xl" />
-        </a>
-        <a
-          href="https://twitter.com"
-          className="text-gray-600 hover:text-Darkgreen"
-        >
-          <FiTwitter className="text-3xl" />
-        </a>
-        <a
-          href="https://instagram.com"
-          className="text-gray-600 hover:text-Darkgreen"
-        >
-          <FiInstagram className="text-3xl" />
-        </a>
-        <a
-          href="https://linkedin.com"
-          className="text-gray-600 hover:text-Darkgreen"
-        >
-          <FiLinkedin className="text-3xl" />
-        </a>
+      {/* Social Links */}
+      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen text-white2 py-16 px-8 mt-16">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-2xl md:text-3xl font-bold mb-8">Connect With Us</h2>
+          <div className="flex justify-center gap-8">
+            {[
+              { icon: <FiFacebook className="text-3xl" />, url: "https://facebook.com" },
+              { icon: <FiTwitter className="text-3xl" />, url: "https://twitter.com" },
+              { icon: <FiInstagram className="text-3xl" />, url: "https://instagram.com" },
+              { icon: <FiLinkedin className="text-3xl" />, url: "https://linkedin.com" }
+            ].map((social, index) => (
+              <a
+                key={index}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white2 p-4 rounded-full hover:scale-110 transition-transform duration-300"
+              >
+                <span className="text-Darkgreen">{social.icon}</span>
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* ToastContainer to display toasts */}
-      <ToastContainer />
+      <ToastContainer position="bottom-right" />
     </div>
   );
 }

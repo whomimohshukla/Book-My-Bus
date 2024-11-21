@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthProvider";
 import "./App.css";
 import Navbar from "./components/Nav";
 import Home from "./components/Home/Home";
@@ -16,11 +17,9 @@ import TicketPolicies from "./components/TermsAndConditions/TicketPolicies";
 import RefundPolicies from "./components/TermsAndConditions/RefundPolicies";
 import TicketSearch from "./components/Ticket/TicketSearch";
 import BusSeatSelection from "./components/Ticket/BusSeatSelection";
-// import Ticket from "./components/BookMyTicket/Ticket";
-// import { AuthProvider } from "./contexts/AuthProvider";
+import BusSearch2 from "./components/BusSearch2";
 
 function App() {
-  const [count, setCount] = useState(0);
   const location = useLocation();
 
   // Condition to hide Footer on /signup or /login pages
@@ -28,27 +27,29 @@ function App() {
     location.pathname === "/signup" || location.pathname === "/login";
 
   return (
-    <div>
-      <Navbar />
-      <ScrollToTop /> {/* Add ScrollToTop component here */}
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/FAQs" element={<FaqS />} />
-        <Route path="/contact" element={<Contact />} />
-
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/termsAndConditions" element={<TermsAndConditions />} />
-        <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
-        <Route path="/TicketPolicies" element={<TicketPolicies />} />
-        <Route path="/refunds" element={<RefundPolicies />} />
-        <Route path="/ticket-Search" element={<TicketSearch />} />
-        <Route path="/seatSelection" element={<BusSeatSelection />} />
-      </Routes>
-      {/* Conditionally render Footer */}
-      {!shouldHideFooter && <Footer />}
-    </div>
+    <AuthProvider>
+      <div>
+        <Navbar />
+        <ScrollToTop /> {/* Add ScrollToTop component here */}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/FAQs" element={<FaqS />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/search" element={<BusSearch2 />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/termsAndConditions" element={<TermsAndConditions />} />
+          <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
+          <Route path="/TicketPolicies" element={<TicketPolicies />} />
+          <Route path="/refunds" element={<RefundPolicies />} />
+          <Route path="/ticket-Search" element={<TicketSearch />} />
+          <Route path="/seatSelection" element={<BusSeatSelection />} />
+        </Routes>
+        {/* Conditionally render Footer */}
+        {!shouldHideFooter && <Footer />}
+      </div>
+    </AuthProvider>
   );
 }
 

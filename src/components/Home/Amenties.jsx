@@ -1,65 +1,132 @@
 import React from "react";
 import {
   FaWifi,
-  FaCoffee,
+  FaSnowflake,
   FaChargingStation,
-  FaTv,
-  FaMapMarkedAlt,
+  FaFilm,
+  FaFirstAid,
+  FaGlassWhiskey,
+  FaToilet,
+  FaUmbrella,
+  FaLightbulb,
+  FaHeadphones,
+  FaBed,
+  FaLeaf
 } from "react-icons/fa";
+
+const amenities = [
+  {
+    icon: <FaWifi />,
+    title: "Free Wi-Fi",
+    description: "Stay connected throughout your journey"
+  },
+  {
+    icon: <FaSnowflake />,
+    title: "Air Conditioning",
+    description: "Travel in comfort with climate control"
+  },
+  {
+    icon: <FaChargingStation />,
+    title: "Charging Points",
+    description: "Keep your devices powered up"
+  },
+  {
+    icon: <FaFilm />,
+    title: "Entertainment",
+    description: "Enjoy movies and music on-board"
+  },
+  {
+    icon: <FaFirstAid />,
+    title: "First Aid",
+    description: "Emergency medical kit available"
+  },
+  {
+    icon: <FaGlassWhiskey />,
+    title: "Refreshments",
+    description: "Complimentary snacks and drinks"
+  },
+  {
+    icon: <FaToilet />,
+    title: "Clean Restroom",
+    description: "Well-maintained facilities"
+  },
+  {
+    icon: <FaUmbrella />,
+    title: "Insurance",
+    description: "Travel protection included"
+  },
+  {
+    icon: <FaLightbulb />,
+    title: "Reading Lights",
+    description: "Individual adjustable lights"
+  },
+  {
+    icon: <FaHeadphones />,
+    title: "Noise Control",
+    description: "Peaceful journey experience"
+  },
+  {
+    icon: <FaBed />,
+    title: "Reclining Seats",
+    description: "Comfortable seating arrangement"
+  },
+  {
+    icon: <FaLeaf />,
+    title: "Air Purifier",
+    description: "Clean and fresh air circulation"
+  }
+];
+
+function AmenityCard({ icon, title, description }) {
+  return (
+    <div className="group bg-white p-6 rounded-xl shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+      <div className="flex flex-col items-center text-center space-y-4">
+        <div className="w-14 h-14 bg-gradient-to-r from-Darkgreen to-LightGreen rounded-full flex items-center justify-center text-white text-2xl transform group-hover:scale-110 transition-transform duration-300">
+          {icon}
+        </div>
+        <h3 className="text-lg font-semibold text-gray-800 group-hover:text-Darkgreen transition-colors duration-300">
+          {title}
+        </h3>
+        <p className="text-gray-600 text-sm">
+          {description}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 function Amenities() {
   return (
-    <div className="text-center -mt-52 mb-20 font-poppins bg-gray-100 p-6 md:p-12 text-gray-800">
-      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800">
-        Our Amenities
-      </h1>
-      <p className="mt-4 text-sm md:text-base lg:text-lg text-gray-600 px-4 md:px-0">
-        Enjoy a comfortable and convenient journey with our top amenities!
-      </p>
-
-      <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 px-4 md:px-0">
-        {/* WiFi */}
-        <div className="flex flex-col items-center">
-          <div className="bg-lightblue p-4 sm:p-6 shadow-lg rounded-md flex flex-col items-center transition transform hover:shadow-xl hover:-translate-y-2 duration-300">
-            <FaWifi className="text-2xl md:text-3xl lg:text-4xl text-gray-800 mb-2 md:mb-4 hover:text-simon" />
-            <h2 className="text-base md:text-lg font-bold">Free WiFi</h2>
-            <p className="text-gray-600 text-xs md:text-sm lg:text-base">
-              Stay connected throughout your journey.
-            </p>
-          </div>
+    <div className="bg-gray-50 py-20">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Premium
+            <span className="text-Darkgreen"> Amenities</span>
+          </h2>
+          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            Experience luxury and comfort with our top-class bus amenities designed for your convenience
+          </p>
         </div>
 
-        {/* GPS Tracking */}
-        <div className="flex flex-col items-center">
-          <div className="bg-lightblue p-4 sm:p-6 shadow-lg rounded-md flex flex-col items-center transition transform hover:shadow-xl hover:-translate-y-2 duration-300">
-            <FaMapMarkedAlt className="text-2xl md:text-3xl lg:text-4xl text-gray-800 mb-2 md:mb-4 hover:text-simon" />
-            <h2 className="text-base md:text-lg font-bold">GPS Tracking</h2>
-            <p className="text-gray-600 text-xs md:text-sm lg:text-base">
-              Track your route in real-time.
-            </p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          {amenities.map((amenity, index) => (
+            <AmenityCard
+              key={index}
+              icon={amenity.icon}
+              title={amenity.title}
+              description={amenity.description}
+            />
+          ))}
         </div>
 
-        {/* Charging Stations */}
-        <div className="flex flex-col items-center">
-          <div className="bg-lightblue p-4 sm:p-6 shadow-lg rounded-md flex flex-col items-center transition transform hover:shadow-xl hover:-translate-y-2 duration-300">
-            <FaChargingStation className="text-2xl md:text-3xl lg:text-4xl text-gray-800 mb-2 md:mb-4 hover:text-simon" />
-            <h2 className="text-base md:text-lg font-bold">Charging Stations</h2>
-            <p className="text-gray-600 text-xs md:text-sm lg:text-base">
-              Keep your devices fully charged on the go.
-            </p>
-          </div>
-        </div>
-
-        {/* TV */}
-        <div className="flex flex-col items-center">
-          <div className="bg-lightblue p-4 sm:p-6 shadow-lg rounded-md flex flex-col items-center transition transform hover:shadow-xl hover:-translate-y-2 duration-300">
-            <FaTv className="text-2xl md:text-3xl lg:text-4xl text-gray-800 mb-2 md:mb-4 hover:text-simon" />
-            <h2 className="text-base md:text-lg font-bold">Onboard TV</h2>
-            <p className="text-gray-600 text-xs md:text-sm lg:text-base">
-              Enjoy entertainment throughout your ride.
-            </p>
-          </div>
+        <div className="mt-16 text-center">
+          <p className="text-gray-600 text-lg mb-8">
+            All amenities are subject to availability and may vary by bus type
+          </p>
+          <button className="bg-gradient-to-r from-Darkgreen to-LightGreen text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transform hover:scale-[0.98] transition-all duration-300 shadow-lg">
+            View All Features
+          </button>
         </div>
       </div>
     </div>

@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthProvider';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 function Profile() {
   const { user, login } = useAuth();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    passengerType: user?.passengerType || 'adult',
+    name: '',
+    email: '',
+    passengerType: 'adult',
   });
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || '',
+        email: user.email || '',
+        passengerType: user.passengerType || 'adult',
+      });
+    } else {
+      navigate('/login');
+    }
+  }, [user, navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,26 +37,44 @@ function Profile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
+      const token = localStorage.getItem('token');
       const response = await axios.put(
         'http://localhost:8000/api/v1/update-profile',
-        formData,
+        {
+          name: formData.name,
+          passengerType: formData.passengerType,
+        },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
           }
         }
       );
 
       if (response.data.success) {
+        // Update local storage with new token
+        localStorage.setItem('token', response.data.token);
+        
+        // Update auth context
+        login(response.data.token);
+        
         toast.success('Profile updated successfully!');
-        login(response.data.token); // Update user context with new data
         setIsEditing(false);
       }
     } catch (error) {
+      console.error('Update error:', error);
       toast.error(error.response?.data?.message || 'Failed to update profile');
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  if (!user) {
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -51,6 +84,7 @@ function Profile() {
           <button
             onClick={() => setIsEditing(!isEditing)}
             className="px-4 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700 transition-colors"
+            disabled={isLoading}
           >
             {isEditing ? 'Cancel' : 'Edit Profile'}
           </button>
@@ -58,15 +92,15 @@ function Profile() {
 
         <div className="flex items-center space-x-6 mb-8">
           <img
-            src={user?.image}
-            alt={`${user?.name}'s avatar`}
+            src={user.image}
+            alt={`${user.name}'s avatar`}
             className="w-24 h-24 rounded-full border-4 border-Darkgreen"
           />
           <div>
-            <h2 className="text-2xl font-semibold text-gray-800">{user?.name}</h2>
-            <p className="text-gray-600">{user?.email}</p>
+            <h2 className="text-2xl font-semibold text-gray-800">{user.name}</h2>
+            <p className="text-gray-600">{user.email}</p>
             <span className="inline-block px-3 py-1 mt-2 bg-green-100 text-Darkgreen rounded-full text-sm">
-              {user?.role} - {user?.passengerType}
+              {user.role} - {user.passengerType}
             </span>
           </div>
         </div>
@@ -84,6 +118,8 @@ function Profile() {
                 value={formData.name}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-Darkgreen focus:border-Darkgreen"
+                disabled={isLoading}
+                required
               />
             </div>
 
@@ -96,10 +132,10 @@ function Profile() {
                 name="email"
                 id="email"
                 value={formData.email}
-                onChange={handleInputChange}
-                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-Darkgreen focus:border-Darkgreen"
+                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 bg-gray-50 cursor-not-allowed"
                 disabled
               />
+              <p className="mt-1 text-sm text-gray-500">Email cannot be changed</p>
             </div>
 
             <div>
@@ -112,6 +148,7 @@ function Profile() {
                 value={formData.passengerType}
                 onChange={handleInputChange}
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-Darkgreen focus:border-Darkgreen"
+                disabled={isLoading}
               >
                 <option value="adult">Adult</option>
                 <option value="senior">Senior</option>
@@ -124,14 +161,16 @@ function Profile() {
                 type="button"
                 onClick={() => setIsEditing(false)}
                 className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                disabled={isLoading}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700"
+                className="px-4 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                disabled={isLoading}
               >
-                Save Changes
+                {isLoading ? 'Saving...' : 'Save Changes'}
               </button>
             </div>
           </form>
@@ -141,26 +180,26 @@ function Profile() {
               <dl className="divide-y divide-gray-200">
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">Full name</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user?.name}</dd>
+                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.name}</dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">Email address</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user?.email}</dd>
+                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.email}</dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">Role</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user?.role}</dd>
+                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.role}</dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">Passenger Type</dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {user?.passengerType}
+                    {user.passengerType}
                   </dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">Member Since</dt>
                   <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-                    {new Date(user?.createdAt).toLocaleDateString()}
+                    {new Date(user.createdAt).toLocaleDateString()}
                   </dd>
                 </div>
               </dl>

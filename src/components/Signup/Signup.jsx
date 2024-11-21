@@ -4,7 +4,44 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { useNavigate, Link } from "react-router-dom";
-import backgroundImage from "/home/whomimohshukla/Desktop/Project Mine/BookMyBus/src/assets/busBg.jpg";
+import { FaGoogle, FaBus, FaUser, FaEnvelope, FaLock, FaIdCard, FaUserTag } from "react-icons/fa";
+
+function InputField({ label, type, name, value, onChange, placeholder, icon: Icon, error, as = "input", options = [] }) {
+  return (
+    <div className="mb-4">
+      <label className="block text-sm md:text-base font-semibold text-gray-700 mb-2 flex items-center">
+        <Icon className="w-5 h-5 mr-2 text-Darkgreen" />
+        {label}
+      </label>
+      {as === "select" ? (
+        <select
+          name={name}
+          value={value}
+          onChange={onChange}
+          className="w-full p-3 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-LightGreen focus:border-LightGreen transition-all duration-300 outline-none bg-white"
+        >
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <div className="relative">
+          <input
+            type={type}
+            name={name}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            className="w-full p-3 pl-4 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-LightGreen focus:border-LightGreen transition-all duration-300 outline-none"
+          />
+        </div>
+      )}
+      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+    </div>
+  );
+}
 
 function Signup() {
   const navigate = useNavigate();
@@ -14,8 +51,8 @@ function Signup() {
     password: "",
     confirmPassword: "",
     otp: "",
-    role: "passenger", // reset role
-    passengerType: "adult", // reset passenger type
+    role: "passenger",
+    passengerType: "adult",
   });
   const [errors, setErrors] = useState({});
   const [otpSent, setOtpSent] = useState(false);
@@ -56,6 +93,7 @@ function Signup() {
       toast.error("Please enter an email first");
     }
   };
+
   const handleResendOtp = async () => {
     try {
       const response = await axios.post(
@@ -88,8 +126,8 @@ function Signup() {
             password: "",
             confirmPassword: "",
             otp: "",
-            role: "passenger", // reset role
-            passengerType: "adult", // reset passenger type
+            role: "passenger",
+            passengerType: "adult",
           });
           navigate("/");
         }
@@ -100,211 +138,184 @@ function Signup() {
   };
 
   return (
-    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
-      <div
-        className="flex justify-center items-center min-h-screen p-4 bg-cover bg-center "
-        style={{
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundColor: "rgba(0, 0, 0, 0.5)", // Fallback color
-          backgroundBlendMode: "overlay", // Transparent overlay
-        }}
-      >
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white2 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <ToastContainer />
-        <div className="bg-white border p-6 md:p-10 mt-20 mb-48 rounded-lg shadow-3xl w-full max-w-lg space-y-11 backdrop-blur-lg bg-opacity-90">
-          <h2 className="text-2xl md:text-3xl font-semibold text-center text-Darkgreen">
-            Sign Up
-          </h2>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm md:text-base font-semibold text-gray-600">
-                Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
-                placeholder="Enter your name"
+        <div className="max-w-md w-full space-y-8 bg-white rounded-2xl shadow-lg p-8">
+          {/* Logo and Title */}
+          <div className="text-center">
+            <div className="w-16 h-16 bg-gradient-to-r from-Darkgreen to-LightGreen rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-105 transition-transform duration-300">
+              <FaBus className="text-white2 text-3xl" />
+            </div>
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">Create Account</h2>
+            <p className="text-gray-600">Join us for a better journey</p>
+          </div>
+
+          {/* Google Sign In Button */}
+          <div>
+            <button
+              onClick={() => {
+                const googleLoginBtn = document.querySelector('.google-login-button');
+                if (googleLoginBtn) googleLoginBtn.click();
+              }}
+              className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg border-2 border-gray-200 hover:border-LightGreen hover:bg-gray-50 transition-all duration-300 group"
+            >
+              <FaGoogle className="w-5 h-5 text-Darkgreen group-hover:scale-110 transition-transform duration-300" />
+              <span className="text-gray-700 font-medium">Continue with Google</span>
+            </button>
+            <div className="hidden">
+              <GoogleLogin
+                className="google-login-button"
+                onSuccess={(response) => console.log("Google login success:", response)}
+                onError={() => console.log("Google login error")}
+                useOneTap
+                theme="filled_blue"
+                shape="pill"
               />
-              {errors.name && (
-                <p className="text-red-600 text-xs">{errors.name}</p>
-              )}
             </div>
-            <div>
-              <label className="block text-sm md:text-base font-semibold text-gray-600">
-                Email
-              </label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
-                placeholder="Enter your email"
-              />
-              {errors.email && (
-                <p className="text-red-600 text-xs">{errors.email}</p>
-              )}
+          </div>
+
+          {/* Divider */}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200"></div>
             </div>
-            <div>
-              <label className="block text-sm md:text-base font-semibold text-gray-600">
-                Password
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
-                placeholder="Enter your password"
-              />
-              {errors.password && (
-                <p className="text-red-600 text-xs">{errors.password}</p>
-              )}
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white text-gray-500">or sign up with email</span>
             </div>
-            <div>
-              <label className="block text-sm md:text-base font-semibold ">
-                Confirm Password
-              </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
-                placeholder="Confirm your password"
-              />
-              {errors.confirmPassword && (
-                <p className="text-red-600 text-xs">{errors.confirmPassword}</p>
-              )}
-            </div>
-            <div>
-              <label className="block text-sm md:text-base font-semibold text-gray-600">
-                Role
-              </label>
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
-              >
-                {/* <option value="">Select Role</option> */}
-                <option value="admin">Admin</option>
-                <option value="passenger">passenger</option>
-              </select>
-              {errors.role && (
-                <p className="text-red-600 text-xs">{errors.role}</p>
-              )}
-            </div>
-            <div>
-              <label className="block text-sm md:text-base font-semibold text-gray-600">
-                Passenger Type
-              </label>
-              <select
-                name="passengerType"
-                value={formData.passengerType}
-                onChange={handleChange}
-                className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
-              >
-                {/* <option value="">Select Passenger Type</option> */}
-                <option value="adult">Adult</option>
-                <option value="child">Child</option>
-                <option value="Senior">Senior</option>
-                <option value="student">student</option>
-              </select>
-              {errors.passengerType && (
-                <p className="text-red-600 text-xs">{errors.passengerType}</p>
-              )}
-            </div>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <InputField
+              label="Full Name"
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="John Doe"
+              icon={FaUser}
+              error={errors.name}
+            />
+
+            <InputField
+              label="Email Address"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="john@example.com"
+              icon={FaEnvelope}
+              error={errors.email}
+            />
+
+            <InputField
+              label="Password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              icon={FaLock}
+              error={errors.password}
+            />
+
+            <InputField
+              label="Confirm Password"
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              placeholder="••••••••"
+              icon={FaLock}
+              error={errors.confirmPassword}
+            />
+
+            <InputField
+              label="Role"
+              name="role"
+              value={formData.role}
+              onChange={handleChange}
+              icon={FaIdCard}
+              error={errors.role}
+              as="select"
+              options={[
+                { value: "admin", label: "Admin" },
+                { value: "passenger", label: "Passenger" }
+              ]}
+            />
+
+            <InputField
+              label="Passenger Type"
+              name="passengerType"
+              value={formData.passengerType}
+              onChange={handleChange}
+              icon={FaUserTag}
+              error={errors.passengerType}
+              as="select"
+              options={[
+                { value: "adult", label: "Adult" },
+                { value: "child", label: "Child" },
+                { value: "Senior", label: "Senior" },
+                { value: "student", label: "Student" }
+              ]}
+            />
+
             {otpSent && (
-              <div>
-                <label className="block text-sm md:text-base font-semibold text-gray-600">
-                  OTP
-                </label>
-                <input
+              <div className="space-y-2">
+                <InputField
+                  label="OTP"
                   type="text"
                   name="otp"
                   value={formData.otp}
                   onChange={handleChange}
-                  className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
-                  placeholder="Enter the OTP sent to your email"
+                  placeholder="Enter OTP"
+                  icon={FaLock}
+                  error={errors.otp}
                 />
-                {errors.otp && (
-                  <p className="text-red-600 text-xs">{errors.otp}</p>
-                )}
                 <button
                   type="button"
                   onClick={handleResendOtp}
-                  className="mt-2 text-sm text-blue-600 hover:underline "
+                  className="text-sm text-Darkgreen hover:text-LightGreen transition-colors duration-300"
                 >
                   Resend OTP
                 </button>
               </div>
             )}
-            {!otpSent && (
-              <div>
-                <button
-                  type="button"
-                  onClick={handleSendOtp}
-                  className="w-full py-2 bg-Darkgreen hover:shadow-none hover:scale-95 transition-all duration-200  text-white2 font-semibold rounded-lg hover:bg-Darkgreen  shadow-md"
-                >
-                  Send OTP
-                </button>
-              </div>
-            )}
-            <div>
+
+            {!otpSent ? (
+              <button
+                type="button"
+                onClick={handleSendOtp}
+                className="w-full py-3 bg-gradient-to-r from-Darkgreen to-LightGreen text-white2 font-semibold rounded-lg hover:opacity-90 transform hover:scale-[0.99] transition-all duration-300"
+              >
+                Send OTP
+              </button>
+            ) : (
               <button
                 type="submit"
-                className="w-full py-2 bg-Darkgreen hover:shadow-none hover:scale-95 transition-all duration-200  text-white2 font-semibold rounded-lg hover:bg-Darkgreen  shadow-md"
+                className="w-full py-3 bg-gradient-to-r from-Darkgreen to-LightGreen text-white2 font-semibold rounded-lg hover:opacity-90 transform hover:scale-[0.99] transition-all duration-300"
               >
-                Sign Up
+                Create Account
               </button>
-            </div>
+            )}
           </form>
-          <div className="flex items-center justify-center my-4">
-            <hr className="flex-grow border-t border-gray-300" />
-            <span className="px-4 text-gray-600 font-medium">or</span>
-            <hr className="flex-grow border-t border-gray-300" />
-          </div>
-          <div className="text-center">
-            <GoogleLogin
-              onSuccess={(response) =>
-                console.log("Google login success:", response)
-              }
-              onError={() => console.log("Google login error")}
-              useOneTap
-              theme="filled_blue"
-              shape="pill"
-            />
-          </div>
-          {/* Discounts and Terms Message */}
-          <div className="text-center mt-4 text-sm text-gray-600">
-            Sign in to avail exciting discounts and cashbacks! By signing up,
-            you agree to our{" "}
-            <Link
-              to="/termsAndConditions"
-              className="text-Darkgreen font-semibold hover:underline"
-            >
-              Terms & Conditions
-            </Link>{" "}
-            and{" "}
-            <Link
-              to="/privacy"
-              className="text-Darkgreen font-semibold hover:underline"
-            >
-              Privacy Policy
-            </Link>
-            .
-          </div>
-          <div className="text-center mt-4">
+
+          {/* Footer */}
+          <div className="text-center space-y-4">
+            <p className="text-sm text-gray-600">
+              By signing up, you agree to our{" "}
+              <Link to="/termsAndConditions" className="text-Darkgreen hover:text-LightGreen transition-colors duration-300">
+                Terms & Conditions
+              </Link>{" "}
+              and{" "}
+              <Link to="/privacy" className="text-Darkgreen hover:text-LightGreen transition-colors duration-300">
+                Privacy Policy
+              </Link>
+            </p>
             <p className="text-sm text-gray-600">
               Already have an account?{" "}
-              <Link
-                to="/login"
-                className="text-Darkgreen font-semibold hover:underline"
-              >
-                Log in
+              <Link to="/login" className="text-Darkgreen font-semibold hover:text-LightGreen transition-colors duration-300">
+                Sign in
               </Link>
             </p>
           </div>

@@ -19,6 +19,7 @@ import TicketSearch from "./components/Ticket/TicketSearch";
 import BusSeatSelection from "./components/Ticket/BusSeatSelection";
 import BusSearch2 from "./components/BusSearch2";
 import Profile from "./components/Profile/Profile";
+import Bookings from "./components/Bookings/Bookings";
 
 function App() {
   const location = useLocation();
@@ -41,6 +42,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/bookings" element={<Bookings />} />
 
           <Route path="/termsAndConditions" element={<TermsAndConditions />} />
           <Route path="/privacyPolicy" element={<PrivacyPolicy />} />

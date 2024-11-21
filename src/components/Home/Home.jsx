@@ -5,6 +5,7 @@ import {
   FaLock,
   FaChevronDown,
   FaChevronUp,
+  FaMapMarkedAlt,
 } from "react-icons/fa";
 import Highlight from "../../Utls/Highlight";
 import CTAButton from "../../Utls/Home/Button";
@@ -18,14 +19,18 @@ function FAQItem({ question, answer }) {
   return (
     <div className="border-b border-gray-200 py-4">
       <button
-        className="text-left w-full flex justify-between items-center text-lg font-medium text-gray-800"
+        className="text-left w-full flex justify-between items-center text-lg font-medium text-gray-800 hover:text-Darkgreen transition-colors duration-300"
         onClick={() => setIsOpen(!isOpen)}
       >
         {question}
-        {isOpen ? <FaChevronUp /> : <FaChevronDown />}
+        {isOpen ? (
+          <FaChevronUp className="text-Darkgreen" />
+        ) : (
+          <FaChevronDown className="text-Darkgreen" />
+        )}
       </button>
       {isOpen && (
-        <p className="mt-2 text-gray-600 text-sm md:text-base">{answer}</p>
+        <p className="mt-2 text-gray-600 text-sm md:text-base leading-relaxed">{answer}</p>
       )}
     </div>
   );
@@ -36,88 +41,109 @@ function Home() {
     {
       question: "How do I book a ticket?",
       answer:
-        "You can book a ticket by using our bus search feature, selecting your preferred route, and completing the payment process.",
+        "Booking a ticket is simple! Just use our intuitive bus search feature at the top of the page, select your preferred route and timing, choose your seat, and complete the secure payment process. You'll receive instant confirmation of your booking.",
+    },
+    {
+      question: "What are the payment options available?",
+      answer:
+        "We offer multiple secure payment options including credit/debit cards, UPI, net banking, and popular digital wallets. All transactions are protected with industry-standard encryption.",
     },
     {
       question: "Can I cancel my ticket?",
       answer:
-        "Yes, you can cancel your ticket through the 'My Tickets' section. Cancellation policies may apply.",
+        "Yes, you can cancel your ticket through the 'My Bookings' section. Our cancellation policy allows for full refunds if cancelled 24 hours before departure, and partial refunds up to 6 hours before departure. Terms and conditions apply.",
     },
     {
       question: "Is online payment secure?",
       answer:
-        "Yes, we use secure payment gateways to ensure your information is protected.",
+        "Absolutely! We use industry-leading security measures and encrypted payment gateways to ensure your payment information is always protected. Our platform is regularly audited for security compliance.",
     },
+    {
+      question: "How can I contact customer support?",
+      answer:
+        "Our customer support team is available 24/7. You can reach us through live chat, email at support@bookmybus.com, or call our toll-free number 1800-XXX-XXXX. We typically respond within minutes!",
+    }
   ];
 
   return (
-    <div className="font-poppins text-grayText text-white mt-28">
+    <div className="font-poppins text-gray-800">
       {/* Hero Section */}
-      <div className="relative flex flex-col md:flex-row justify-center md:justify-around gap-8 p-4 md:p-8">
-        <div className="flex flex-col gap-4 md:ml-6 text-center md:text-left">
-          <Highlight
-            text={"Welcome to Book My Bus!"}
-            className="ml-auto md:ml-0"
-          />
-          <p className="text-2xl md:text-3xl font-semibold">
-            Explore. Book. Travel.
-          </p>
-          <p className="text-lg md:text-2xl font-medium">
-            Get started today and enjoy the ride!
-          </p>
-          <div className="mt-4 md:mt-6 mx-auto md:mx-0 w-36 md:w-44">
-            <CTAButton active="true" linkto="/ticket-Search">
-              GET TICKETS NOW
-            </CTAButton>
+      <div className="relative min-h-screen bg-gradient-to-br from-gray-50 to-white2 flex flex-col justify-center">
+        <div className="container mx-auto px-4 py-12 md:py-20">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-12">
+            <div className="flex flex-col gap-6 text-center md:text-left max-w-xl">
+              <Highlight text="Welcome to Book My Bus!" className="text-Darkgreen" />
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900">
+                Your Journey, <br />
+                <span className="text-Darkgreen">Our Priority</span>
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-600">
+                Experience comfortable and reliable bus travel across the country
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mt-8">
+                <CTAButton active={true} linkto="/ticket-search" className="px-8 py-4">
+                  Book Now
+                </CTAButton>
+                <CTAButton active={false} linkto="/about" className="px-8 py-4">
+                  Learn More
+                </CTAButton>
+              </div>
+            </div>
+            <div className="w-full md:w-1/2 mt-8 md:mt-0">
+              <BusSearch2 />
+            </div>
           </div>
-        </div>
-        <div className="flex justify-center md:justify-end mt-8 md:mt-0">
-          <BusSearch2 />
         </div>
       </div>
 
-      <div className="text-center mt-20 mb-64 md:mt-40 font-poppins bg-simon p-8 md:p-40 text-black">
-        <h1 className="text-3xl md:text-5xl font-bold text-gray-800">
-          Get Your Tickets in Just 3 Simple Steps!
-        </h1>
-        <p className="mt-4 text-base md:text-lg text-gray-600 px-4 md:px-0">
-          Discover why choosing our bus service is the best decision for your
-          travel needs.
-          <br /> With just a few clicks, you can secure your journey with ease!
-        </p>
+      {/* Booking Steps Section */}
+      <div className="bg-white py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Book Your Journey in
+              <span className="text-Darkgreen"> 3 Simple Steps</span>
+            </h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Experience hassle-free booking with our streamlined process
+            </p>
+          </div>
 
-        {/* Step Cards */}
-        <div className="mt-12 md:mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-4 md:px-0">
-          <div className="flex flex-col items-center">
-            <div className="bg-lightgreen p-6 shadow-lg rounded-md flex flex-col items-center">
-              <FaBus className="text-3xl md:text-4xl text-gray-800 mb-4" />
-              <h2 className="text-xl md:text-2xl font-bold">1. Search Buses</h2>
-              <p className="text-gray-600 text-sm md:text-base">
-                Find the best routes and timings for your journey.
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="bg-lightgreen p-6 shadow-lg rounded-md flex flex-col items-center">
-              <FaTicketAlt className="text-3xl md:text-4xl text-gray-800 mb-4" />
-              <h2 className="text-xl md:text-2xl font-bold">
-                2. Choose Your Ticket
-              </h2>
-              <p className="text-gray-600 text-sm md:text-base">
-                Select your preferred bus and seat.
-              </p>
-            </div>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="bg-lightgreen p-6 shadow-lg rounded-md flex flex-col items-center">
-              <FaLock className="text-3xl md:text-4xl text-gray-800 mb-4" />
-              <h2 className="text-xl md:text-2xl font-bold">
-                3. Secure Payment
-              </h2>
-              <p className="text-gray-600 text-sm md:text-base">
-                Make your payment securely and confirm your booking.
-              </p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {[
+              {
+                icon: <FaMapMarkedAlt />,
+                title: "Search Route",
+                description: "Enter your source and destination to find available buses"
+              },
+              {
+                icon: <FaTicketAlt />,
+                title: "Select Seat",
+                description: "Choose your preferred seat and view amenities"
+              },
+              {
+                icon: <FaLock />,
+                title: "Secure Payment",
+                description: "Pay securely and receive instant confirmation"
+              }
+            ].map((step, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-xl shadow-lg p-8 transform hover:-translate-y-2 transition-all duration-300"
+              >
+                <div className="w-16 h-16 bg-gradient-to-r from-Darkgreen to-LightGreen rounded-full flex items-center justify-center mb-6 mx-auto">
+                  <div className="text-2xl text-white">
+                    {step.icon}
+                  </div>
+                </div>
+                <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">
+                  {step.title}
+                </h3>
+                <p className="text-gray-600 text-center">
+                  {step.description}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -125,22 +151,48 @@ function Home() {
       {/* Amenities Section */}
       <Amenties />
 
-      {/* Testimonial section  */}
+      {/* Testimonials Section */}
+      <Testimonials />
 
-      <Testimonials></Testimonials>
       {/* FAQ Section */}
-      <div className="text-center mt-20 mb-40 font-poppins bg-white p-10 rounded-lg shadow-lg">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-800">
-          Frequently Asked Questions
-        </h2>
-        <div className="mt-8 space-y-4 md:space-y-6 text-left">
-          {faqData.map((item, index) => (
-            <FAQItem
-              key={index}
-              question={item.question}
-              answer={item.answer}
-            />
-          ))}
+      <div className="bg-gray-50 py-20">
+        <div className="container mx-auto px-4 max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Frequently Asked
+              <span className="text-Darkgreen"> Questions</span>
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Find quick answers to common questions about our services
+            </p>
+          </div>
+          <div className="bg-white rounded-xl shadow-lg p-8">
+            <div className="space-y-6">
+              {faqData.map((item, index) => (
+                <FAQItem
+                  key={index}
+                  question={item.question}
+                  answer={item.answer}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA Section */}
+      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen py-20">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
+            Ready to Start Your Journey?
+          </h2>
+          <CTAButton
+            active={true}
+            linkto="/ticket-search"
+            className="bg-white text-Darkgreen hover:bg-gray-100 px-8 py-4"
+          >
+            Book Your Ticket Now
+          </CTAButton>
         </div>
       </div>
     </div>

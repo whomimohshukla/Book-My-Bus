@@ -9,24 +9,53 @@ function Nav() {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const avatarRef = useRef(null);
+  const mobileMenuRef = useRef(null);
+  const hamburgerRef = useRef(null);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  // Close dropdown when clicking outside
+  // Close dropdown and mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
         dropdownRef.current && 
         !dropdownRef.current.contains(event.target) &&
-        !avatarRef.current.contains(event.target)
+        !avatarRef.current?.contains(event.target)
       ) {
         setDropdownOpen(false);
+      }
+
+      if (
+        mobileMenuRef.current && 
+        !mobileMenuRef.current.contains(event.target) &&
+        !hamburgerRef.current?.contains(event.target)
+      ) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    // Close mobile menu on scroll
+    const handleScroll = () => {
+      if (isMobileMenuOpen) {
+        setMobileMenuOpen(false);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    window.addEventListener("scroll", handleScroll);
+    
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [isMobileMenuOpen]);
+
+  // Close mobile menu on navigation
+  useEffect(() => {
+    return () => {
+      setMobileMenuOpen(false);
+    };
+  }, [navigate]);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
@@ -58,6 +87,7 @@ function Nav() {
 
           {/* Hamburger Menu for Mobile */}
           <button
+            ref={hamburgerRef}
             className="lg:hidden text-gray-500 hover:text-gray-700 focus:outline-none"
             onClick={toggleMobileMenu}
             aria-label="Toggle menu"
@@ -80,6 +110,7 @@ function Nav() {
 
           {/* Navigation Links */}
           <div
+            ref={mobileMenuRef}
             className={`${
               isMobileMenuOpen ? "block" : "hidden"
             } lg:flex lg:w-auto lg:order-1 w-full lg:items-center`}
@@ -93,6 +124,7 @@ function Nav() {
                       isActive ? "text-Darkgreen" : "text-black"
                     } hover:text-customBlue`
                   }
+                  onClick={() => setMobileMenuOpen(false)}
                 >
                   Home
                 </NavLink>
@@ -105,6 +137,7 @@ function Nav() {
                       isActive ? "text-Darkgreen" : "text-black"
                     } hover:text-customBlue`
                   }
+                  onClick={() => setMobileMenuOpen(false)}
                 >
                   About
                 </NavLink>
@@ -117,6 +150,7 @@ function Nav() {
                       isActive ? "text-Darkgreen" : "text-black"
                     } hover:text-customBlue`
                   }
+                  onClick={() => setMobileMenuOpen(false)}
                 >
                   FAQs
                 </NavLink>
@@ -129,6 +163,7 @@ function Nav() {
                       isActive ? "text-Darkgreen" : "text-black"
                     } hover:text-customBlue`
                   }
+                  onClick={() => setMobileMenuOpen(false)}
                 >
                   Contact
                 </NavLink>
@@ -191,7 +226,10 @@ function Nav() {
                       <Link
                         to="/profile"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-Darkgreen transition-colors duration-150"
-                        onClick={() => setDropdownOpen(false)}
+                        onClick={() => {
+                          setDropdownOpen(false);
+                          setMobileMenuOpen(false);
+                        }}
                       >
                         <div className="flex items-center space-x-2">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -203,7 +241,10 @@ function Nav() {
                       <Link
                         to="/bookings"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-Darkgreen transition-colors duration-150"
-                        onClick={() => setDropdownOpen(false)}
+                        onClick={() => {
+                          setDropdownOpen(false);
+                          setMobileMenuOpen(false);
+                        }}
                       >
                         <div className="flex items-center space-x-2">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

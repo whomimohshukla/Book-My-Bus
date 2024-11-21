@@ -9,7 +9,7 @@ import { FaGoogle, FaBus, FaUser, FaEnvelope, FaLock, FaIdCard, FaUserTag } from
 function InputField({ label, type, name, value, onChange, placeholder, icon: Icon, error, as = "input", options = [] }) {
   return (
     <div className="mb-4">
-      <label className="block text-sm md:text-base font-semibold text-gray-700 mb-2 flex items-center">
+      <label className=" text-sm md:text-base font-semibold text-gray-700 mb-2 flex items-center">
         <Icon className="w-5 h-5 mr-2 text-Darkgreen" />
         {label}
       </label>

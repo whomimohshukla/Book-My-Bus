@@ -2,25 +2,27 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { toast, ToastContainer } from "react-toastify";
-import backgroundImage from "/home/whomimohshukla/Desktop/Project Mine/BookMyBus/src/assets/empty-red-seats-inside-public-bus-sunset-empty-red-bus-seats-warm-sunset-light-creating-cozy-urban-scene-commuting-336102958.webp";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthProvider"; // Importing useAuth for login handling
+import { useAuth } from "../../contexts/AuthProvider";
+import { FaEnvelope, FaLock, FaBus, FaGoogle } from "react-icons/fa";
 
-function InputField({ label, type, value, onChange, placeholder }) {
+function InputField({ label, type, value, onChange, placeholder, icon: Icon }) {
   return (
-    <div className="mb-4">
-      <label htmlFor={label} className="block text-gray-600 font-medium mb-2">
-        {label}:
-      </label>
-      <input
-        type={type}
-        id={label}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required
-        className="w-full p-3 border border-Darkgreen rounded-md focus:ring-2 focus:ring-Darkgreen focus:outline-none"
-      />
+    <div className="mb-6">
+      <label className="block text-gray-700 font-medium mb-2">{label}</label>
+      <div className="relative">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Icon className="h-5 w-5 text-gray-400" />
+        </div>
+        <input
+          type={type}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          required
+          className="w-full pl-10 pr-4 py-3 rounded-lg border-2 border-gray-200 focus:border-LightGreen focus:ring-2 focus:ring-LightGreen/20 transition-all duration-300 text-gray-700"
+        />
+      </div>
     </div>
   );
 }
@@ -29,45 +31,50 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+  const [isLoading, setIsLoading] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const navigate = useNavigate();
-  const { login } = useAuth(); // Using AuthContext for managing login
+  const { login } = useAuth();
 
-  // Disable login button if email or password is empty
   useEffect(() => {
     setIsButtonDisabled(!(email.length > 0 && password.length > 0));
-  }, [email, password]); // Dependencies are email and password
+  }, [email, password]);
 
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
-      setIsLoading(true); // Start loading
+      setIsLoading(true);
+      console.log("Google Login Success:", credentialResponse);
       const response = await axios.post(
         "http://localhost:8000/api/v1/google-login",
         {
           token: credentialResponse.credential,
         }
       );
-      login(response.data.token); // Using context to handle token
+      login(response.data.token);
       toast.success("Logged in with Google successfully!");
-      navigate("/"); // Redirect after successful login
+      navigate("/");
     } catch (error) {
       console.error("Google login error:", error);
       toast.error("Google login failed. Please try again.");
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsLoading(false);
     }
+  };
+
+  const handleGoogleLoginError = () => {
+    console.error("Google Sign-In was unsuccessful.");
+    toast.error("Google login failed. Please try again.");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
 
     if (!email || !password) {
       setErrorMessage("Please enter both email and password.");
       toast.error("Please enter both email and password.");
-      setIsLoading(false); // Stop loading
+      setIsLoading(false);
       return;
     }
 
@@ -76,7 +83,7 @@ function Login() {
         email,
         password,
       });
-      login(response.data.token); // Using context for login
+      login(response.data.token);
       toast.success("Logged in successfully!");
       navigate("/getTicket");
       setEmail("");
@@ -89,106 +96,149 @@ function Login() {
       setErrorMessage(message);
       toast.error(message);
     } finally {
-      setIsLoading(false); // Stop loading
+      setIsLoading(false);
     }
   };
 
   return (
-    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
-      <div
-        className="flex justify-center items-center min-h-screen p-4 bg-cover bg-center"
-        style={{
-          backgroundImage: `url(${backgroundImage})`,
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          backgroundBlendMode: "overlay",
-        }}
-      >
-        <div className="bg-white border p-6 md:p-10 mt-20 mb-48 rounded-lg shadow-3xl w-full max-w-lg space-y-4 backdrop-blur-lg bg-opacity-90">
-          <h2 className="text-2xl font-bold text-center text-Darkgreen mb-6">
-            Login
-          </h2>
-          <form onSubmit={handleSubmit}>
-            <InputField
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-            />
-            <InputField
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-            />
-            {errorMessage && (
-              <p className="text-Darkgreen text-sm mb-4">{errorMessage}</p>
-            )}
-            <button
-              type="submit"
-              className="w-full py-2 bg-Darkgreen hover:shadow-none hover:scale-95 transition-all duration-200 text-white font-semibold rounded-lg hover:bg-Darkgreen shadow-md"
-              disabled={isButtonDisabled || isLoading} // Disable button based on state
-            >
-              {isLoading ? (
-                <span>Loading...</span> // Loading text
-              ) : (
-                "Login"
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <div className="min-h-screen bg-gradient-to-br from-Darkgreen/5 to-LightGreen/5">
+        <div className="flex flex-col items-center justify-center min-h-screen px-4">
+          {/* Logo Section */}
+          <div className="mb-8 text-center">
+            <div className="w-16 h-16 bg-gradient-to-r from-Darkgreen to-LightGreen rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaBus className="text-white2 text-3xl" />
+            </div>
+            <h1 className="text-3xl font-bold text-gray-800">Welcome Back!</h1>
+            <p className="text-gray-600 mt-2">Sign in to continue your journey</p>
+          </div>
+
+          {/* Login Card */}
+          <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+            {/* Google Sign In Button */}
+            <div className="mb-8">
+              <button
+                onClick={() => {
+                  const googleLoginBtn = document.querySelector('.google-login-button');
+                  if (googleLoginBtn) {
+                    googleLoginBtn.click();
+                  }
+                }}
+                className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-lg border-2 border-gray-200 hover:border-LightGreen hover:bg-gray-50 hover:shadow-md transition-all duration-300 group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 w-3 bg-gradient-to-r from-Darkgreen to-LightGreen transform -skew-x-12 -translate-x-full transition-transform duration-500 ease-out group-hover:translate-x-full"></div>
+                <img 
+                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
+                  alt="Google" 
+                  className="w-6 h-6 transform group-hover:scale-110 transition-transform duration-300"
+                />
+                <span className="text-gray-700 font-medium text-base transform group-hover:scale-105 transition-transform duration-300">
+                  Continue with Google
+                </span>
+              </button>
+              
+              {/* Hidden Google Login Component */}
+              <div className="hidden">
+                <GoogleLogin
+                  className="google-login-button"
+                  onSuccess={handleGoogleLoginSuccess}
+                  onError={handleGoogleLoginError}
+                  useOneTap
+                  theme="filled_blue"
+                  size="large"
+                  text="signin_with"
+                  shape="rectangular"
+                  width="400"
+                  locale="en"
+                />
+              </div>
+            </div>
+
+            {/* Improved Divider */}
+            <div className="relative mb-8">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-6 py-2 bg-white text-gray-500 text-sm font-medium rounded-full border border-gray-200">
+                  or continue with email
+                </span>
+              </div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <InputField
+                label="Email Address"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="john@example.com"
+                icon={FaEnvelope}
+              />
+
+              <InputField
+                label="Password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                icon={FaLock}
+              />
+
+              {errorMessage && (
+                <div className="text-red-500 text-sm mt-2">{errorMessage}</div>
               )}
-            </button>
-          </form>
 
-          <div className="flex items-center justify-center my-4">
-            <hr className="flex-grow border-t border-gray-300" />
-            <span className="px-4 text-gray-600 font-medium">or</span>
-            <hr className="flex-grow border-t border-gray-300" />
-          </div>
-
-          <div className="text-center">
-            <GoogleLogin
-              onSuccess={handleGoogleLoginSuccess}
-              onError={() =>
-                toast.error("Google login failed. Please try again.")
-              }
-              useOneTap
-              theme="filled_blue"
-              shape="pill"
-            />
-          </div>
-
-          <div className="text-center mt-4 text-sm text-white2">
-            <p className="mb-2">
-              Unlock special discounts and cashbacks by signing in! By
-              continuing, you confirm that you agree with our{" "}
-              <Link
-                to="/termsAndConditions"
-                className="text-Darkgreen font-semibold hover:underline"
+              <button
+                type="submit"
+                disabled={isButtonDisabled || isLoading}
+                className="w-full bg-gradient-to-r from-Darkgreen to-LightGreen text-white2 py-3 rounded-lg font-semibold hover:opacity-90 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
               >
-                Terms & Conditions
-              </Link>{" "}
-              and{" "}
-              <Link
-                to="/privacyPolicy"
-                className="text-Darkgreen font-semibold hover:underline"
-              >
-                Privacy Policy
-              </Link>
-              .
-            </p>
-            <p className="mt-2">
-              Don't have an account?{" "}
-              <Link
-                to="/signup"
-                className="text-Darkgreen font-semibold hover:underline"
-              >
-                Sign up
-              </Link>
-              .
-            </p>
-          </div>
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white2 border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Signing in...
+                  </div>
+                ) : (
+                  "Sign In with Email"
+                )}
+              </button>
+            </form>
 
-          <ToastContainer />
+            {/* Footer Links */}
+            <div className="mt-8 text-center text-sm text-gray-600">
+              <p className="mb-4">
+                By continuing, you agree to our{" "}
+                <Link to="/termsAndConditions" className="text-Darkgreen hover:underline">
+                  Terms & Conditions
+                </Link>{" "}
+                and{" "}
+                <Link to="/privacyPolicy" className="text-Darkgreen hover:underline">
+                  Privacy Policy
+                </Link>
+              </p>
+              <p>
+                Don't have an account?{" "}
+                <Link to="/signup" className="text-Darkgreen font-semibold hover:underline">
+                  Create Account
+                </Link>
+              </p>
+            </div>
+          </div>
         </div>
+
+        <ToastContainer 
+          position="bottom-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
       </div>
     </GoogleOAuthProvider>
   );

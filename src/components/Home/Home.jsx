@@ -6,6 +6,7 @@ import {
   FaChevronDown,
   FaChevronUp,
   FaMapMarkedAlt,
+  FaArrowRight,
 } from "react-icons/fa";
 import Highlight from "../../Utls/Highlight";
 import CTAButton from "../../Utls/Home/Button";
@@ -36,6 +37,30 @@ function FAQItem({ question, answer }) {
   );
 }
 
+function PopularRouteCard({ from, to, price, duration, frequency }) {
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800">{from}</h3>
+          <div className="flex items-center text-gray-500 mt-1">
+            <FaArrowRight className="mx-2" />
+            <span>{to}</span>
+          </div>
+        </div>
+        <div className="text-right">
+          <p className="text-2xl font-bold text-Darkgreen">₹{price}</p>
+          <p className="text-sm text-gray-500">starting from</p>
+        </div>
+      </div>
+      <div className="flex justify-between text-sm text-gray-600 mt-4">
+        <span>{duration}</span>
+        <span>{frequency} daily buses</span>
+      </div>
+    </div>
+  );
+}
+
 function Home() {
   const faqData = [
     {
@@ -62,6 +87,37 @@ function Home() {
       question: "How can I contact customer support?",
       answer:
         "Our customer support team is available 24/7. You can reach us through live chat, email at support@bookmybus.com, or call our toll-free number 1800-XXX-XXXX. We typically respond within minutes!",
+    }
+  ];
+
+  const popularRoutes = [
+    {
+      from: "Mumbai",
+      to: "Pune",
+      price: "500",
+      duration: "3 hrs",
+      frequency: 50
+    },
+    {
+      from: "Delhi",
+      to: "Agra",
+      price: "800",
+      duration: "4 hrs",
+      frequency: 35
+    },
+    {
+      from: "Bangalore",
+      to: "Chennai",
+      price: "1200",
+      duration: "6 hrs",
+      frequency: 45
+    },
+    {
+      from: "Hyderabad",
+      to: "Bangalore",
+      price: "1500",
+      duration: "8 hrs",
+      frequency: 30
     }
   ];
 
@@ -144,6 +200,33 @@ function Home() {
                 </p>
               </div>
             ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Popular Routes Section */}
+      <div className="bg-gray-50 py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Popular
+              <span className="text-Darkgreen"> Routes</span>
+            </h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Discover our most frequently traveled routes with the best deals
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {popularRoutes.map((route, index) => (
+              <PopularRouteCard key={index} {...route} />
+            ))}
+          </div>
+
+          <div className="text-center mt-12">
+            <CTAButton active={true} linkto="/routes" className="px-8 py-4">
+              View All Routes
+            </CTAButton>
           </div>
         </div>
       </div>

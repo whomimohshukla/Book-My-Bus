@@ -157,8 +157,8 @@ function Nav() {
                   >
                     <div className="relative w-10 h-10 rounded-full border-2 border-Darkgreen overflow-hidden transition-transform duration-200 hover:scale-105">
                       <img
-                        src="https://via.placeholder.com/40"
-                        alt="User Avatar"
+                        src={user?.image}
+                        alt={`${user?.name}'s Avatar`}
                         className="w-full h-full object-cover"
                       />
                     </div>

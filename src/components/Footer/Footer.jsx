@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaGithub, FaDiscord, FaTwitter, FaFacebookF, FaMapMarkerAlt, FaPhone, FaEnvelope, FaBus, FaClock, FaHeadset } from "react-icons/fa";
+import { FaGithub, FaDiscord, FaTwitter, FaFacebookF, FaMapMarkerAlt, FaPhone, FaEnvelope, FaBus, FaClock, FaHeadset, FaBlog } from "react-icons/fa";
 import mylogo from "/home/whomimohshukla/Desktop/Project Mine/BookMyBus/src/assets/bookMyBusLogo.jpg";
 
 function Footer() {
@@ -62,22 +62,22 @@ function Footer() {
             <h3 className="text-xl font-semibold text-white mb-6">Quick Links</h3>
             <ul className="space-y-4">
               <li>
-                <Link to="/about" className="text-gray-400 hover:text-LightGreen transition duration-300 flex items-center">
-                  <FaBus className="mr-2" /> About Us
+                <Link to="/support" className="text-gray-400 hover:text-LightGreen transition duration-300 flex items-center">
+                  <FaHeadset className="mr-2" /> Support
                 </Link>
               </li>
               <li>
-                <Link to="/faqs" className="text-gray-400 hover:text-LightGreen transition duration-300 flex items-center">
-                  <FaHeadset className="mr-2" /> FAQs
+                <Link to="/blogs" className="text-gray-400 hover:text-LightGreen transition duration-300 flex items-center">
+                  <FaBlog className="mr-2" /> Blog
                 </Link>
               </li>
               <li>
-                <Link to="/blog" className="text-gray-400 hover:text-LightGreen transition duration-300 flex items-center">
-                  <FaClock className="mr-2" /> Latest News
+                <Link to="/" className="text-gray-400 hover:text-LightGreen transition duration-300 flex items-center">
+                  <FaBus className="mr-2" /> Book Now
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="text-gray-400 hover:text-LightGreen transition duration-300 flex items-center">
+                <Link to="/support" className="text-gray-400 hover:text-LightGreen transition duration-300 flex items-center">
                   <FaEnvelope className="mr-2" /> Contact Us
                 </Link>
               </li>
@@ -140,19 +140,19 @@ function Footer() {
             <div className="mt-4 md:mt-0">
               <ul className="flex space-x-6">
                 <li>
-                  <a href="#" className="text-gray-400 hover:text-LightGreen text-sm">
+                  <Link to="/support" className="text-gray-400 hover:text-LightGreen text-sm">
                     Support
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-400 hover:text-LightGreen text-sm">
+                  <Link to="/termsAndConditions" className="text-gray-400 hover:text-LightGreen text-sm">
                     License
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-400 hover:text-LightGreen text-sm">
-                    API
-                  </a>
+                  <Link to="/blogs" className="text-gray-400 hover:text-LightGreen text-sm">
+                    Blog
+                  </Link>
                 </li>
               </ul>
             </div>

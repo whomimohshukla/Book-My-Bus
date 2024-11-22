@@ -20,6 +20,9 @@ import BusSeatSelection from "./components/Ticket/BusSeatSelection";
 import BusSearch2 from "./components/BusSearch2";
 import Profile from "./components/Profile/Profile";
 import Bookings from "./components/Bookings/Bookings";
+import Blogs from "./components/Blogs/Blogs";
+import BlogPost from "./components/Blogs/BlogPost";
+import Support from "./components/Support/Support";
 
 function App() {
   const location = useLocation();
@@ -50,6 +53,9 @@ function App() {
           <Route path="/refunds" element={<RefundPolicies />} />
           <Route path="/ticket-Search" element={<TicketSearch />} />
           <Route path="/seatSelection" element={<BusSeatSelection />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/blogs/:id" element={<BlogPost />} />
+          <Route path="/support" element={<Support />} />
         </Routes>
         {/* Conditionally render Footer */}
         {!shouldHideFooter && <Footer />}

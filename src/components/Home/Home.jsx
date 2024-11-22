@@ -7,6 +7,10 @@ import {
   FaChevronUp,
   FaMapMarkedAlt,
   FaArrowRight,
+  FaShieldAlt,
+  FaClock,
+  FaHeadset,
+  FaPercent,
 } from "react-icons/fa";
 import Highlight from "../../Utls/Highlight";
 import CTAButton from "../../Utls/Home/Button";
@@ -31,7 +35,9 @@ function FAQItem({ question, answer }) {
         )}
       </button>
       {isOpen && (
-        <p className="mt-2 text-gray-600 text-sm md:text-base leading-relaxed">{answer}</p>
+        <p className="mt-2 text-gray-600 text-sm md:text-base leading-relaxed">
+          {answer}
+        </p>
       )}
     </div>
   );
@@ -57,6 +63,27 @@ function PopularRouteCard({ from, to, price, duration, frequency }) {
         <span>{duration}</span>
         <span>{frequency} daily buses</span>
       </div>
+    </div>
+  );
+}
+
+function FeatureCard({ icon, title, description }) {
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+      <div className="w-12 h-12 bg-gradient-to-r from-Darkgreen to-LightGreen rounded-full flex items-center justify-center mb-4">
+        <div className="text-xl text-white">{icon}</div>
+      </div>
+      <h3 className="text-xl font-semibold text-gray-800 mb-2">{title}</h3>
+      <p className="text-gray-600">{description}</p>
+    </div>
+  );
+}
+
+function StatCard({ number, label }) {
+  return (
+    <div className="text-center p-6 bg-white rounded-xl shadow-lg">
+      <div className="text-4xl font-bold text-Darkgreen mb-2">{number}</div>
+      <div className="text-gray-600">{label}</div>
     </div>
   );
 }
@@ -87,7 +114,7 @@ function Home() {
       question: "How can I contact customer support?",
       answer:
         "Our customer support team is available 24/7. You can reach us through live chat, email at support@bookmybus.com, or call our toll-free number 1800-XXX-XXXX. We typically respond within minutes!",
-    }
+    },
   ];
 
   const popularRoutes = [
@@ -96,29 +123,29 @@ function Home() {
       to: "Pune",
       price: "500",
       duration: "3 hrs",
-      frequency: 50
+      frequency: 50,
     },
     {
       from: "Delhi",
       to: "Agra",
       price: "800",
       duration: "4 hrs",
-      frequency: 35
+      frequency: 35,
     },
     {
       from: "Bangalore",
       to: "Chennai",
       price: "1200",
       duration: "6 hrs",
-      frequency: 45
+      frequency: 45,
     },
     {
       from: "Hyderabad",
       to: "Bangalore",
       price: "1500",
       duration: "8 hrs",
-      frequency: 30
-    }
+      frequency: 30,
+    },
   ];
 
   return (
@@ -128,16 +155,24 @@ function Home() {
         <div className="container mx-auto px-4 py-12 md:py-20">
           <div className="flex flex-col md:flex-row items-center justify-between gap-12">
             <div className="flex flex-col gap-6 text-center md:text-left max-w-xl">
-              <Highlight text="Welcome to Book My Bus!" className="text-Darkgreen" />
+              <Highlight
+                text="Welcome to Book My Bus!"
+                className="text-Darkgreen"
+              />
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900">
                 Your Journey, <br />
                 <span className="text-Darkgreen">Our Priority</span>
               </h1>
               <p className="text-xl md:text-2xl text-gray-600">
-                Experience comfortable and reliable bus travel across the country
+                Experience comfortable and reliable bus travel across the
+                country
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mt-8">
-                <CTAButton active={true} linkto="/ticket-search" className="px-8 py-4">
+                <CTAButton
+                  active={true}
+                  linkto="/ticket-search"
+                  className="px-8 py-4"
+                >
                   Book Now
                 </CTAButton>
                 <CTAButton active={false} linkto="/about" className="px-8 py-4">
@@ -170,34 +205,31 @@ function Home() {
               {
                 icon: <FaMapMarkedAlt />,
                 title: "Search Route",
-                description: "Enter your source and destination to find available buses"
+                description:
+                  "Enter your source and destination to find available buses",
               },
               {
                 icon: <FaTicketAlt />,
                 title: "Select Seat",
-                description: "Choose your preferred seat and view amenities"
+                description: "Choose your preferred seat and view amenities",
               },
               {
                 icon: <FaLock />,
                 title: "Secure Payment",
-                description: "Pay securely and receive instant confirmation"
-              }
+                description: "Pay securely and receive instant confirmation",
+              },
             ].map((step, index) => (
               <div
                 key={index}
                 className="bg-white rounded-xl shadow-lg p-8 transform hover:-translate-y-2 transition-all duration-300"
               >
                 <div className="w-16 h-16 bg-gradient-to-r from-Darkgreen to-LightGreen rounded-full flex items-center justify-center mb-6 mx-auto">
-                  <div className="text-2xl text-white">
-                    {step.icon}
-                  </div>
+                  <div className="text-2xl text-white">{step.icon}</div>
                 </div>
                 <h3 className="text-xl font-bold text-gray-800 mb-4 text-center">
                   {step.title}
                 </h3>
-                <p className="text-gray-600 text-center">
-                  {step.description}
-                </p>
+                <p className="text-gray-600 text-center">{step.description}</p>
               </div>
             ))}
           </div>
@@ -227,6 +259,56 @@ function Home() {
             <CTAButton active={true} linkto="/routes" className="px-8 py-4">
               View All Routes
             </CTAButton>
+          </div>
+        </div>
+      </div>
+
+      {/* Why Choose Us Section */}
+      <div className="bg-white py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Why Choose
+              <span className="text-Darkgreen"> BookMyBus</span>
+            </h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Experience the best in bus travel with our premium services
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+            <FeatureCard
+              icon={<FaShieldAlt />}
+              title="Secure Booking"
+              description="End-to-end encrypted transactions and secure payment gateway"
+            />
+            <FeatureCard
+              icon={<FaClock />}
+              title="24/7 Service"
+              description="Round-the-clock support for all your travel needs"
+            />
+            <FeatureCard
+              icon={<FaHeadset />}
+              title="Expert Support"
+              description="Dedicated customer service team to assist you"
+            />
+            <FeatureCard
+              icon={<FaPercent />}
+              title="Best Deals"
+              description="Regular offers and discounts on popular routes"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Statistics Section */}
+      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen py-20">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+            <StatCard number="10M+" label="Happy Customers" />
+            <StatCard number="1000+" label="Bus Partners" />
+            <StatCard number="2000+" label="Routes" />
+            <StatCard number="24/7" label="Customer Support" />
           </div>
         </div>
       </div>

@@ -18,7 +18,7 @@ function Nav() {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
-        dropdownRef.current && 
+        dropdownRef.current &&
         !dropdownRef.current.contains(event.target) &&
         !avatarRef.current?.contains(event.target)
       ) {
@@ -26,7 +26,7 @@ function Nav() {
       }
 
       if (
-        mobileMenuRef.current && 
+        mobileMenuRef.current &&
         !mobileMenuRef.current.contains(event.target) &&
         !hamburgerRef.current?.contains(event.target)
       ) {
@@ -43,7 +43,7 @@ function Nav() {
 
     document.addEventListener("mousedown", handleClickOutside);
     window.addEventListener("scroll", handleScroll);
-    
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       window.removeEventListener("scroll", handleScroll);
@@ -77,7 +77,10 @@ function Nav() {
     <header className="shadow-lg sticky z-50 top-0 bg-grayWhite">
       <nav className="border-gray-200 ml-14 px-4 lg:px-8 py-3 rounded-full">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
-          <Link to="/" className="flex items-center space-x-2 relative rounded-none">
+          <Link
+            to="/"
+            className="flex items-center space-x-2 relative rounded-none"
+          >
             <img
               src={mylogo}
               alt="Logo"
@@ -168,6 +171,32 @@ function Nav() {
                   Contact
                 </NavLink>
               </li>
+              <li>
+                <NavLink
+                  to="/blogs"
+                  className={({ isActive }) =>
+                    `block py-2 px-4 transition duration-200 rounded ${
+                      isActive ? "text-Darkgreen" : "text-black"
+                    } hover:text-customBlue`
+                  }
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Blogs
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/support"
+                  className={({ isActive }) =>
+                    `block py-2 px-4 transition duration-200 rounded ${
+                      isActive ? "text-Darkgreen" : "text-black"
+                    } hover:text-customBlue`
+                  }
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Support
+                </NavLink>
+              </li>
             </ul>
 
             {/* Profile Section */}
@@ -232,8 +261,18 @@ function Nav() {
                         }}
                       >
                         <div className="flex items-center space-x-2">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
                           </svg>
                           <span>Profile</span>
                         </div>
@@ -247,8 +286,18 @@ function Nav() {
                         }}
                       >
                         <div className="flex items-center space-x-2">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                            />
                           </svg>
                           <span>My Bookings</span>
                         </div>
@@ -259,8 +308,18 @@ function Nav() {
                         className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-150"
                       >
                         <div className="flex items-center space-x-2">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                            />
                           </svg>
                           <span>Logout</span>
                         </div>

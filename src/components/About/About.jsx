@@ -4,6 +4,8 @@ import ourMission from "/home/whomimohshukla/Desktop/Project Mine/BookMyBus/src/
 import busTicketGif from "/home/whomimohshukla/Desktop/Project Mine/BookMyBus/src/assets/busTicket.jpg";
 import vision from "/home/whomimohshukla/Desktop/Project Mine/BookMyBus/src/assets/vision.jpg";
 
+
+// all about about
 function About() {
   return (
     <div className="font-poppins bg-white2 min-h-screen">

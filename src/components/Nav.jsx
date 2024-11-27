@@ -34,7 +34,7 @@ function Nav() {
       }
     };
 
-    // Close mobile menu on scroll
+    // Close mobile menu on scroll   
     const handleScroll = () => {
       if (isMobileMenuOpen) {
         setMobileMenuOpen(false);

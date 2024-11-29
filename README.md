@@ -5,7 +5,8 @@
 2. [Data Models](#data-models)
 3. [API Documentation](#api-documentation)
 4. [Admin Dashboard](#admin-dashboard)
-5. [Implementation Guidelines](#implementation-guidelines)
+5. [Passenger Features](#passenger-features)
+6. [Implementation Guidelines](#implementation-guidelines)
 
 ## 1. System Overview
 
@@ -13,12 +14,13 @@ BookMyBus is a comprehensive bus ticket booking platform that enables users to s
 
 ### Key Features
 - User registration and authentication
-- Bus search and booking
+- Advanced bus search and booking
 - Seat selection and layout visualization
 - Payment processing
-- Booking management
-- Admin dashboard
-- Reports and analytics
+- Real-time tracking
+- Loyalty program
+- Travel insurance
+- Emergency assistance
 
 ## 2. Data Models
 
@@ -173,6 +175,94 @@ BookMyBus is a comprehensive bus ticket booking platform that enables users to s
 }
 ```
 
+### Enhanced Passenger Profile Model
+```javascript
+{
+  passengerId: ObjectId,
+  userId: ObjectId,
+  preferences: {
+    seatPreference: String,
+    mealPreference: String,
+    specialAssistance: Boolean,
+    notificationPreferences: {
+      sms: Boolean,
+      email: Boolean,
+      push: Boolean
+    },
+    frequentRoutes: [{
+      source: String,
+      destination: String,
+      frequency: Number
+    }]
+  },
+  savedTravelers: [{
+    name: String,
+    age: Number,
+    gender: String,
+    idType: String,
+    idNumber: String,
+    relationship: String
+  }],
+  loyaltyProgram: {
+    points: Number,
+    tier: String,
+    joinDate: Date,
+    history: [{
+      action: String,
+      points: Number,
+      date: Date
+    }]
+  }
+}
+```
+
+### Journey Tracking Model
+```javascript
+{
+  journeyId: ObjectId,
+  bookingId: ObjectId,
+  status: String,
+  currentLocation: {
+    coordinates: [Number],
+    lastUpdated: DateTime
+  },
+  estimatedArrival: DateTime,
+  delays: [{
+    reason: String,
+    duration: Number,
+    updatedETA: DateTime
+  }],
+  stops: [{
+    location: String,
+    arrivalTime: DateTime,
+    departureTime: DateTime,
+    status: String
+  }]
+}
+```
+
+### Travel Insurance Model
+```javascript
+{
+  policyId: ObjectId,
+  bookingId: ObjectId,
+  passengerId: ObjectId,
+  coverage: {
+    type: String,
+    amount: Number,
+    startDate: Date,
+    endDate: Date
+  },
+  claims: [{
+    claimId: ObjectId,
+    reason: String,
+    amount: Number,
+    status: String,
+    documents: [String]
+  }]
+}
+```
+
 ## 3. API Documentation
 
 ### Authentication APIs
@@ -293,6 +383,111 @@ GET /api/admin/bookings/reports
 POST /api/payments/initiate
 POST /api/payments/verify
 POST /api/payments/refund
+```
+
+### Enhanced Passenger APIs
+
+#### Profile Management
+```javascript
+GET    /api/passengers/profile
+PUT    /api/passengers/profile
+GET    /api/passengers/saved-travelers
+POST   /api/passengers/saved-travelers
+DELETE /api/passengers/saved-travelers/:id
+
+// Travel Preferences
+POST   /api/passengers/preferences
+GET    /api/passengers/preferences
+PUT    /api/passengers/preferences/:id
+```
+
+#### Smart Booking
+```javascript
+// Seat Recommendations
+GET    /api/bookings/recommendations
+Query params: {
+  travelHistory: Boolean,
+  preferences: Boolean,
+  groupSize: Number
+}
+
+// Group Booking
+POST   /api/bookings/group
+Request: {
+  scheduleId: ObjectId,
+  groupSize: Number,
+  seatingPreference: String,
+  passengers: Array
+}
+
+// Flexible Date Booking
+GET    /api/bookings/flexible-dates
+Query params: {
+  source: String,
+  destination: String,
+  dateRange: {
+    start: Date,
+    end: Date
+  }
+}
+```
+
+#### Travel Companion Features
+```javascript
+// Journey Tracking
+GET    /api/journeys/active
+GET    /api/journeys/:id/track
+GET    /api/journeys/:id/eta
+
+// Live Updates
+GET    /api/journeys/:id/updates
+GET    /api/journeys/:id/alerts
+
+// Co-passenger Chat
+POST   /api/journeys/:id/chat
+GET    /api/journeys/:id/chat/messages
+```
+
+#### Loyalty Program
+```javascript
+// Points Management
+GET    /api/loyalty/points
+GET    /api/loyalty/history
+POST   /api/loyalty/redeem
+
+// Rewards
+GET    /api/loyalty/rewards
+POST   /api/loyalty/rewards/claim/:id
+GET    /api/loyalty/tier-status
+```
+
+#### Enhanced Services
+```javascript
+// Meal Preferences
+GET    /api/bookings/:id/meals
+POST   /api/bookings/:id/meals
+PUT    /api/bookings/:id/meals/:mealId
+
+// Extra Services
+GET    /api/services/available
+POST   /api/bookings/:id/services
+```
+
+#### Travel Insurance
+```javascript
+GET    /api/insurance/plans
+POST   /api/insurance/purchase
+GET    /api/insurance/policy/:id
+POST   /api/insurance/claims
+GET    /api/insurance/claims/:id
+```
+
+#### Emergency Services
+```javascript
+POST   /api/emergency/sos
+GET    /api/emergency/contacts
+PUT    /api/emergency/contacts
+GET    /api/emergency/nearby-hospitals
 ```
 
 ## 4. Admin Dashboard

@@ -24,6 +24,8 @@ import Blogs from "./components/Blogs/Blogs";
 import BlogPost from "./components/Blogs/BlogPost";
 import Support from "./components/Support/Support";
 
+
+// this is the main App component
 function App() {
   const location = useLocation();
 

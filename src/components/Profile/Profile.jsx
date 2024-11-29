@@ -13,6 +13,9 @@ function Profile() {
     name: '',
     email: '',
     passengerType: 'adult',
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   });
 
   useEffect(() => {
@@ -40,12 +43,38 @@ function Profile() {
     setIsLoading(true);
     try {
       const token = localStorage.getItem('token');
+      
+      // Check if password update is requested
+      const hasPasswordUpdate = formData.oldPassword && formData.newPassword && formData.confirmPassword;
+      
+      // Validate passwords if updating
+      if (hasPasswordUpdate) {
+        if (formData.newPassword !== formData.confirmPassword) {
+          toast.error('New passwords do not match!');
+          setIsLoading(false);
+          return;
+        }
+        if (formData.newPassword.length < 6) {
+          toast.error('New password must be at least 6 characters long!');
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      const requestData = {
+        name: formData.name,
+        passengerType: formData.passengerType,
+      };
+
+      // Add password fields if updating password
+      if (hasPasswordUpdate) {
+        requestData.oldPassword = formData.oldPassword;
+        requestData.newPassword = formData.newPassword;
+      }
+
       const response = await axios.put(
         'http://localhost:8000/api/v1/update-profile',
-        {
-          name: formData.name,
-          passengerType: formData.passengerType,
-        },
+        requestData,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -55,14 +84,17 @@ function Profile() {
       );
 
       if (response.data.success) {
-        // Update local storage with new token
         localStorage.setItem('token', response.data.token);
-        
-        // Update auth context
         login(response.data.token);
-        
         toast.success('Profile updated successfully!');
         setIsEditing(false);
+        // Clear password fields
+        setFormData(prev => ({
+          ...prev,
+          oldPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        }));
       }
     } catch (error) {
       console.error('Update error:', error);
@@ -156,7 +188,60 @@ function Profile() {
               </select>
             </div>
 
-            <div className="flex justify-end space-x-4">
+            <div className="border-t border-gray-200 mt-8 pt-8">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Update Password</h3>
+              <div className="space-y-6">
+                <div>
+                  <label htmlFor="oldPassword" className="block text-sm font-medium text-gray-700">
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    name="oldPassword"
+                    id="oldPassword"
+                    value={formData.oldPassword}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-Darkgreen focus:border-Darkgreen"
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    name="newPassword"
+                    id="newPassword"
+                    value={formData.newPassword}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-Darkgreen focus:border-Darkgreen"
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    id="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-Darkgreen focus:border-Darkgreen"
+                    disabled={isLoading}
+                  />
+                </div>
+                <p className="text-sm text-gray-500">
+                  Leave password fields empty if you don't want to update your password.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-4 mt-8">
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}

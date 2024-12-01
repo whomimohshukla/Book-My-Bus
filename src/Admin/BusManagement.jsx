@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus, FaBus, FaUsers, FaRoute, FaSearch, FaCheck, FaWifi, FaChargingStation, FaTint, FaBed, FaTv } from 'react-icons/fa';
 import api from '../utils/api';
 
 const BusManagement = () => {
@@ -17,6 +17,7 @@ const BusManagement = () => {
   });
   const [selectedBus, setSelectedBus] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Define bus types as a constant
   const BUS_TYPES = [
@@ -33,11 +34,11 @@ const BusManagement = () => {
   };
 
   const availableAmenities = [
-    { name: 'WiFi', icon: 'wifi-icon.png', description: 'Free WiFi available' },
-    { name: 'Charging Point', icon: 'charging-icon.png', description: 'USB charging points available' },
-    { name: 'Water Bottle', icon: 'water-icon.png', description: 'Complimentary water bottle' },
-    { name: 'Blanket', icon: 'blanket-icon.png', description: 'Blanket available on request' },
-    { name: 'Entertainment System', icon: 'entertainment-icon.png', description: 'Personal entertainment system' }
+    { name: 'WiFi', icon: <FaWifi />, description: 'Free WiFi available' },
+    { name: 'Charging Point', icon: <FaChargingStation />, description: 'USB charging points available' },
+    { name: 'Water Bottle', icon: <FaTint />, description: 'Complimentary water bottle' },
+    { name: 'Blanket', icon: <FaBed />, description: 'Blanket available on request' },
+    { name: 'Entertainment System', icon: <FaTv />, description: 'Personal entertainment system' }
   ];
 
   const handleAmenityChange = (amenity) => {
@@ -281,205 +282,366 @@ const BusManagement = () => {
     setShowForm(true);
   };
 
-  if (loading) {
-    return <div className="text-center py-4">Loading...</div>;
-  }
-
   return (
-    <div className="container mx-auto p-4">
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-        <span className="block sm:inline">{error}</span>
-      </div>
-      )}
+    <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section with Stats */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800 font-poppins">Bus Management</h1>
+              <p className="mt-2 text-sm text-gray-600 font-roboto">Manage your bus fleet and services</p>
+            </div>
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm 
+              font-medium text-white bg-blue-600 hover:bg-blue-700 hover:shadow-md
+              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+              transition-all duration-300 ease-in-out transform hover:scale-105 font-roboto"
+            >
+              <FaPlus className="mr-2 -ml-1 h-5 w-5" />
+              Add New Bus
+            </button>
+          </div>
 
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Bus Management</h1>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="bg-DarkGreen text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-LightGreen transition-colors"
-        >
-          <FaPlus /> {showForm ? 'Cancel' : 'Add Bus'}
-        </button>
-      </div>
-
-      {showForm && (
-        <form onSubmit={handleSubmit} className="mb-8 bg-white p-6 rounded-lg shadow-md">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Bus Number</label>
-              <input
-                type="text"
-                name="busNumber"
-                value={formData.busNumber}
-                onChange={handleInputChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-DarkGreen focus:ring-DarkGreen"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Bus Name</label>
-              <input
-                type="text"
-                name="busName"
-                value={formData.busName}
-                onChange={handleInputChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-DarkGreen focus:ring-DarkGreen"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Operator</label>
-              <select
-                name="operatorId"
-                value={formData.operatorId}
-                onChange={handleInputChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-DarkGreen focus:ring-DarkGreen"
-                required
-              >
-                <option value="">Select Operator</option>
-                {Array.isArray(operators) && operators.map((operator) => (
-                  <option key={operator._id} value={operator._id}>
-                    {operator.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Bus Type</label>
-              <select
-                name="busType"
-                value={formData.busType}
-                onChange={(e) => setFormData({ ...formData, busType: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-DarkGreen focus:ring-DarkGreen"
-                required
-              >
-                <option value="">Select Bus Type</option>
-                {BUS_TYPES.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Total Seats</label>
-              <input
-                type="number"
-                name="totalSeats"
-                value={formData.totalSeats}
-                onChange={handleInputChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-DarkGreen focus:ring-DarkGreen"
-                required
-                min="1"
-              />
-            </div>
-            <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">Amenities</label>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {availableAmenities.map((amenity) => (
-                  <div key={amenity.name} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={`amenity-${amenity.name}`}
-                      checked={formData.amenities?.some(a => a.name === amenity.name)}
-                      onChange={() => handleAmenityChange(amenity)}
-                      className="rounded border-gray-300 text-DarkGreen focus:ring-DarkGreen"
-                    />
-                    <label htmlFor={`amenity-${amenity.name}`} className="text-sm text-gray-700">
-                      {amenity.name}
-                    </label>
+          {/* Stats Grid */}
+          <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <FaBus className="h-6 w-6 text-blue-600" />
                   </div>
-                ))}
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-600 truncate font-roboto">Total Buses</dt>
+                      <dd className="text-2xl font-semibold text-gray-900 font-poppins">
+                        {buses.length}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <FaUsers className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-600 truncate font-roboto">Total Operators</dt>
+                      <dd className="text-2xl font-semibold text-gray-900 font-poppins">
+                        {operators.length}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <FaRoute className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-600 truncate font-roboto">Bus Types</dt>
+                      <dd className="text-2xl font-semibold text-gray-900 font-poppins">
+                        {BUS_TYPES.length}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <FaWifi className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-600 truncate font-roboto">Available Amenities</dt>
+                      <dd className="text-2xl font-semibold text-gray-900 font-poppins">
+                        {availableAmenities.length}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-          <div className="mt-4">
-            <button
-              type="submit"
-              className="bg-DarkGreen text-white px-4 py-2 rounded-lg hover:bg-LightGreen transition-colors"
-              disabled={loading}
-            >
-              {loading ? 'Saving...' : selectedBus ? 'Update Bus' : 'Add Bus'}
-            </button>
+
+          {/* Search Bar */}
+          <div className="mt-6">
+            <div className="relative rounded-md shadow-sm">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <FaSearch className="h-5 w-5 text-blue-600" />
+              </div>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="h-12 focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-12 
+                sm:text-sm border-gray-300 rounded-md bg-white shadow-sm 
+                transition-all duration-300 ease-in-out
+                hover:shadow-md hover:bg-gray-50 hover:border-blue-600
+                font-roboto"
+                placeholder="Search buses by number, name, or type..."
+              />
+            </div>
           </div>
-        </form>
-      )}
+        </div>
 
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus Number</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Bus Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Operator</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Seats</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amenities</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {Array.isArray(buses) && buses.length > 0 ? (
-              buses.map((bus) => (
-                <tr key={bus._id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{bus.busNumber}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{bus.busName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {(() => {
-                      let operatorId = null;
-                      if (bus.operatorId) {
-                        if (typeof bus.operatorId === 'object' && bus.operatorId._id) {
-                          operatorId = bus.operatorId._id;
-                        } else if (typeof bus.operatorId === 'string') {
-                          operatorId = bus.operatorId;
-                        }
-                      }
+        {/* Form Section */}
+        {showForm && (
+          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4 font-poppins">
+              {selectedBus ? 'Edit Bus' : 'Add New Bus'}
+            </h2>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div className="relative">
+                  <label className="block text-sm font-medium text-gray-800 mb-1 font-roboto">Bus Number</label>
+                  <input
+                    type="text"
+                    name="busNumber"
+                    value={formData.busNumber}
+                    onChange={handleInputChange}
+                    className="h-12 mt-1 block w-full rounded-md border-gray-300 bg-white 
+                    shadow-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 
+                    hover:border-blue-800 hover:shadow-md hover:bg-gray-50
+                    transition-all duration-300 ease-in-out text-base font-roboto"
+                    required
+                    placeholder="Enter bus number"
+                  />
+                </div>
+                
+                <div className="relative">
+                  <label className="block text-sm font-medium text-gray-800 mb-1 font-roboto">Bus Name</label>
+                  <input
+                    type="text"
+                    name="busName"
+                    value={formData.busName}
+                    onChange={handleInputChange}
+                    className="h-12 mt-1 block w-full rounded-md border-gray-300 bg-white 
+                    shadow-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 
+                    hover:border-blue-800 hover:shadow-md hover:bg-gray-50
+                    transition-all duration-300 ease-in-out text-base font-roboto"
+                    required
+                    placeholder="Enter bus name"
+                  />
+                </div>
+                
+                <div className="relative">
+                  <label className="block text-sm font-medium text-gray-800 mb-1 font-roboto">Operator</label>
+                  <select
+                    name="operatorId"
+                    value={formData.operatorId}
+                    onChange={handleInputChange}
+                    className="h-12 mt-1 block w-full rounded-md border-gray-300 bg-white 
+                    shadow-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 
+                    hover:border-blue-800 hover:shadow-md hover:bg-gray-50
+                    transition-all duration-300 ease-in-out text-base font-roboto"
+                    required
+                  >
+                    <option value="">Select Operator</option>
+                    {Array.isArray(operators) && operators.map((operator) => (
+                      <option key={operator._id} value={operator._id}>
+                        {operator.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="relative">
+                  <label className="block text-sm font-medium text-gray-800 mb-1 font-roboto">Bus Type</label>
+                  <select
+                    name="busType"
+                    value={formData.busType}
+                    onChange={(e) => setFormData({ ...formData, busType: e.target.value })}
+                    className="h-12 mt-1 block w-full rounded-md border-gray-300 bg-white 
+                    shadow-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 
+                    hover:border-blue-800 hover:shadow-md hover:bg-gray-50
+                    transition-all duration-300 ease-in-out text-base font-roboto"
+                    required
+                  >
+                    <option value="">Select Bus Type</option>
+                    {BUS_TYPES.map((type) => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="relative">
+                  <label className="block text-sm font-medium text-gray-800 mb-1 font-roboto">Total Seats</label>
+                  <input
+                    type="number"
+                    name="totalSeats"
+                    value={formData.totalSeats}
+                    onChange={handleInputChange}
+                    className="h-12 mt-1 block w-full rounded-md border-gray-300 bg-white 
+                    shadow-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 
+                    hover:border-blue-800 hover:shadow-md hover:bg-gray-50
+                    transition-all duration-300 ease-in-out text-base font-roboto"
+                    required
+                    min="1"
+                    placeholder="Enter total seats"
+                  />
+                </div>
+              </div>
 
-                      const operator = operators.find(op => op._id === operatorId);
-                      return operator ? operator.name : 'Unknown Operator';
-                    })()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{getBusTypeLabel(bus.type)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{bus.totalSeats}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-wrap gap-1">
-                      {Array.isArray(bus.amenities) && bus.amenities.map((amenity) => (
-                        <span
-                          key={amenity._id}
-                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
-                          title={amenity.description}
-                        >
-                          {amenity.name}
-                        </span>
-                      ))}
+              {/* Amenities Section */}
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                <label className="block text-sm font-medium text-gray-800 mb-2 font-roboto">Bus Amenities</label>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  {availableAmenities.map((amenity) => (
+                    <div key={amenity.name} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id={`amenity-${amenity.name}`}
+                        checked={formData.amenities?.some(a => a.name === amenity.name)}
+                        onChange={() => handleAmenityChange(amenity)}
+                        className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 
+                        rounded transition-all duration-300 ease-in-out cursor-pointer
+                        hover:border-blue-800 hover:shadow-sm"
+                      />
+                      <label htmlFor={`amenity-${amenity.name}`} className="text-sm font-medium text-gray-800 flex items-center font-roboto">
+                        {amenity.icon}
+                        <span className="ml-2">{amenity.name}</span>
+                      </label>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <button
-                      onClick={() => handleEdit(bus)}
-                      className="text-blue-600 hover:text-blue-900 mr-4"
-                    >
-                      <FaEdit className="inline" /> Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(bus._id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      <FaTrash className="inline" /> Delete
-                    </button>
-                  </td>
+                  ))}
+                </div>
+              </div>
+
+              {/* Form Buttons */}
+              <div className="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowForm(false);
+                    setSelectedBus(null);
+                    setFormData({
+                      busNumber: '',
+                      busName: '',
+                      operatorId: '',
+                      busType: '',
+                      totalSeats: '',
+                      amenities: []
+                    });
+                  }}
+                  className="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm 
+                  text-base font-medium rounded-md text-gray-800 bg-white 
+                  hover:bg-gray-50 hover:shadow-md hover:border-blue-400
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+                  transition-all duration-300 ease-in-out font-roboto"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="inline-flex items-center px-6 py-3 border border-transparent rounded-md 
+                  shadow-sm text-base font-medium text-white bg-blue-600 
+                  hover:bg-blue-700 hover:shadow-md
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 
+                  transition-all duration-300 ease-in-out transform hover:scale-105 font-roboto"
+                  disabled={loading}
+                >
+                  {loading ? 'Saving...' : selectedBus ? 'Update Bus' : 'Add Bus'}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* Table Section */}
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-800 font-roboto">Bus Number</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-800 font-roboto">Bus Name</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-800 font-roboto">Operator</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-800 font-roboto">Type</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-800 font-roboto">Total Seats</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-800 font-roboto">Amenities</th>
+                  <th className="px-6 py-3 text-left text-sm font-medium text-gray-800 font-roboto">Actions</th>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" className="px-6 py-4 text-center text-gray-500">
-                  {loading ? 'Loading buses...' : 'No buses found'}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {Array.isArray(buses) && buses.length > 0 ? (
+                  buses.map((bus) => (
+                    <tr key={bus._id}>
+                      <td className="px-6 py-4 whitespace-nowrap">{bus.busNumber}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{bus.busName}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {(() => {
+                          let operatorId = null;
+                          if (bus.operatorId) {
+                            if (typeof bus.operatorId === 'object' && bus.operatorId._id) {
+                              operatorId = bus.operatorId._id;
+                            } else if (typeof bus.operatorId === 'string') {
+                              operatorId = bus.operatorId;
+                            }
+                          }
+
+                          const operator = operators.find(op => op._id === operatorId);
+                          return operator ? operator.name : 'Unknown Operator';
+                        })()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">{getBusTypeLabel(bus.type)}</td>
+                      <td className="px-6 py-4 whitespace-nowrap">{bus.totalSeats}</td>
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap gap-1">
+                          {Array.isArray(bus.amenities) && bus.amenities.map((amenity) => (
+                            <span
+                              key={amenity._id}
+                              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+                              title={amenity.description}
+                            >
+                              {amenity.name}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <button
+                          onClick={() => handleEdit(bus)}
+                          className="text-blue-600 hover:text-blue-900 mr-4"
+                        >
+                          <FaEdit className="inline" /> Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(bus._id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          <FaTrash className="inline" /> Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="7" className="px-6 py-4 text-center text-gray-500">
+                      {loading ? 'Loading buses...' : 'No buses found'}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );

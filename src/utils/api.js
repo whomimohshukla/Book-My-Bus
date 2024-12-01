@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an axios instance with default config
 const api = axios.create({
-    baseURL: 'http://localhost:8000/api', // Update this with your actual server URL
+    baseURL: 'http://localhost:8000/api',
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
@@ -23,22 +23,46 @@ api.interceptors.request.use(
     }
 );
 
-// Response interceptor for handling errors
+// Response interceptor for handling errors and logging
 api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+        // Log successful responses for debugging
+        console.log('API Response:', {
+            url: response.config.url,
+            method: response.config.method,
+            status: response.status,
+            data: response.data
+        });
+        
+        // If the response has a data property that contains the actual data, extract it
+        if (response.data && typeof response.data === 'object' && 'data' in response.data) {
+            return { ...response, data: response.data.data };
+        }
+        return response;
+    },
     (error) => {
+        // Log error responses for debugging
+        console.error('API Error:', {
+            url: error.config?.url,
+            method: error.config?.method,
+            status: error.response?.status,
+            data: error.response?.data
+        });
+
         if (error.response) {
-            // Handle specific error cases
             switch (error.response.status) {
+                case 400:
+                    console.error('Bad Request:', error.response.data);
+                    break;
                 case 401:
-                    // Handle unauthorized
                     localStorage.removeItem('token');
                     window.location.href = '/login';
                     break;
                 case 403:
-                    // Handle forbidden
+                    console.error('Forbidden:', error.response.data);
                     break;
                 default:
+                    console.error('API Error:', error.response.data);
                     break;
             }
         }

@@ -3,7 +3,7 @@ import axios from 'axios';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 
 const RouteManagement = () => {
-  const [routes, setRoutes] = useState([]);
+  const [routes, setRoutes] = useState([]);  // Initialize as empty array
   const [cities, setCities] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -14,6 +14,8 @@ const RouteManagement = () => {
     viaStops: []
   });
   const [editingId, setEditingId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchRoutes();
@@ -22,19 +24,42 @@ const RouteManagement = () => {
 
   const fetchRoutes = async () => {
     try {
+      setLoading(true);
+      setError(null);
       const response = await axios.get('/busTravelRoute/Travelroutes');
-      setRoutes(response.data.routes);
+      
+      // Handle different response formats
+      if (response.data && Array.isArray(response.data)) {
+        setRoutes(response.data);
+      } else if (response.data && response.data.routes && Array.isArray(response.data.routes)) {
+        setRoutes(response.data.routes);
+      } else {
+        setRoutes([]);
+        console.warn('Unexpected API response format:', response.data);
+      }
     } catch (error) {
       console.error('Error fetching routes:', error);
+      setError('Failed to fetch routes');
+      setRoutes([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchCities = async () => {
     try {
-      const response = await axios.get('/api/cities');
-      setCities(response.data);
+      const response = await axios.get('/cityRoute/cities');  
+      if (response.data && Array.isArray(response.data)) {
+        setCities(response.data);
+      } else if (response.data && response.data.cities && Array.isArray(response.data.cities)) {
+        setCities(response.data.cities);
+      } else {
+        console.warn('Unexpected cities API response format:', response.data);
+        setCities([]);
+      }
     } catch (error) {
       console.error('Error fetching cities:', error);
+      setCities([]);
     }
   };
 
@@ -110,20 +135,26 @@ const RouteManagement = () => {
                   value={formData.source.name}
                   onChange={(e) => {
                     const city = cities.find(c => c.name === e.target.value);
-                    setFormData({
-                      ...formData,
-                      source: { name: city.name, state: city.state }
-                    });
+                    if (city) {
+                      setFormData({
+                        ...formData,
+                        source: { name: city.name, state: city.state }
+                      });
+                    }
                   }}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   required
                 >
                   <option value="">Select Source City</option>
-                  {cities.map((city) => (
-                    <option key={city._id} value={city.name}>
-                      {city.name}, {city.state}
-                    </option>
-                  ))}
+                  {cities && cities.length > 0 ? (
+                    cities.map((city) => (
+                      <option key={city._id} value={city.name}>
+                        {city.name}, {city.state}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="" disabled>Loading cities...</option>
+                  )}
                 </select>
               </div>
               <div>
@@ -132,20 +163,26 @@ const RouteManagement = () => {
                   value={formData.destination.name}
                   onChange={(e) => {
                     const city = cities.find(c => c.name === e.target.value);
-                    setFormData({
-                      ...formData,
-                      destination: { name: city.name, state: city.state }
-                    });
+                    if (city) {
+                      setFormData({
+                        ...formData,
+                        destination: { name: city.name, state: city.state }
+                      });
+                    }
                   }}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   required
                 >
                   <option value="">Select Destination City</option>
-                  {cities.map((city) => (
-                    <option key={city._id} value={city.name}>
-                      {city.name}, {city.state}
-                    </option>
-                  ))}
+                  {cities && cities.length > 0 ? (
+                    cities.map((city) => (
+                      <option key={city._id} value={city.name}>
+                        {city.name}, {city.state}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="" disabled>Loading cities...</option>
+                  )}
                 </select>
               </div>
               <div>
@@ -222,34 +259,54 @@ const RouteManagement = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {routes.map((route) => (
-                <tr key={route._id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {route.source.name}, {route.source.state}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {route.destination.name}, {route.destination.state}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{route.distance}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">₹{route.pricePerKm}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex space-x-3">
-                      <button
-                        onClick={() => handleEdit(route)}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(route._id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
+              {loading ? (
+                <tr>
+                  <td colSpan="5" className="px-6 py-4 text-center">
+                    Loading routes...
                   </td>
                 </tr>
-              ))}
+              ) : error ? (
+                <tr>
+                  <td colSpan="5" className="px-6 py-4 text-center text-red-500">
+                    {error}
+                  </td>
+                </tr>
+              ) : routes.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="px-6 py-4 text-center">
+                    No routes found
+                  </td>
+                </tr>
+              ) : (
+                routes.map((route) => (
+                  <tr key={route._id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {route.source?.name}, {route.source?.state}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {route.destination?.name}, {route.destination?.state}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">{route.distance}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">₹{route.pricePerKm}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex space-x-3">
+                        <button
+                          onClick={() => handleEdit(route)}
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          <FaEdit />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(route._id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

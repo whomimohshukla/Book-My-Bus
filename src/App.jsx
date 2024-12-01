@@ -30,6 +30,7 @@ import OperatorManagement from './Admin/OperatorManagement';
 import RouteManagement from './Admin/RouteManagement';
 import ScheduleManagement from './Admin/ScheduleManagement';
 import CityManagement from './Admin/CityManagement';
+import AdminDashboard from './Admin/AdminDashboard';
 
 // this is the main App component
 function App() {
@@ -67,6 +68,7 @@ function App() {
           <Route path="/blogs/:id" element={<BlogPost />} />
           <Route path="/support" element={<Support />} />
           <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
             <Route path="buses" element={<BusManagement />} />
             <Route path="operators" element={<OperatorManagement />} />
             <Route path="routes" element={<RouteManagement />} />

@@ -90,21 +90,21 @@ const CityManagement = () => {
   );
 
   return (
-    <div className="min-h-screen bg-emerald-100 py-6 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Section with Stats */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
             <div>
-              <h1 className="text-3xl font-bold text-emerald-900">City Management</h1>
-              <p className="mt-2 text-sm text-emerald-600">Manage your bus service cities and popular routes</p>
+              <h1 className="text-3xl font-bold text-gray-800 font-poppins">City Management</h1>
+              <p className="mt-2 text-sm text-gray-600 font-roboto">Manage your bus service cities and popular routes</p>
             </div>
             <button
               onClick={() => setShowForm(!showForm)}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm 
-              font-medium text-white bg-emerald-700 hover:bg-emerald-800 hover:shadow-md
-              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-600 
-              transition-all duration-300 ease-in-out transform hover:scale-105"
+              font-medium text-white bg-blue-600 hover:bg-blue-700 hover:shadow-md
+              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+              transition-all duration-300 ease-in-out transform hover:scale-105 font-roboto"
             >
               <FaPlus className="mr-2 -ml-1 h-5 w-5" />
               Add New City
@@ -113,18 +113,18 @@ const CityManagement = () => {
 
           {/* Stats Grid */}
           <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="bg-emerald-50 overflow-hidden shadow rounded-lg">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <FaCity className="h-6 w-6 text-emerald-600" />
+                    <FaCity className="h-6 w-6 text-blue-600" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-emerald-600 truncate">Total Cities</dt>
+                      <dt className="text-sm font-medium text-gray-600 truncate font-roboto">Total Cities</dt>
                       <dd className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-emerald-900">
-                          {filteredCities.length}
+                        <div className="text-2xl font-semibold text-gray-900 font-poppins">
+                          {cities.length}
                         </div>
                       </dd>
                     </dl>
@@ -133,18 +133,18 @@ const CityManagement = () => {
               </div>
             </div>
 
-            <div className="bg-emerald-50 overflow-hidden shadow rounded-lg">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <FaStar className="h-6 w-6 text-emerald-600" />
+                    <FaStar className="h-6 w-6 text-blue-600" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-emerald-600 truncate">Popular Cities</dt>
+                      <dt className="text-sm font-medium text-gray-600 truncate font-roboto">Popular Cities</dt>
                       <dd className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-emerald-900">
-                          {filteredCities.filter(city => city.isPopular).length}
+                        <div className="text-2xl font-semibold text-gray-900 font-poppins">
+                          {cities.filter(city => city.isPopular).length}
                         </div>
                       </dd>
                     </dl>
@@ -153,19 +153,18 @@ const CityManagement = () => {
               </div>
             </div>
 
-            <div className="bg-emerald-50 overflow-hidden shadow rounded-lg">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <FaBus className="h-6 w-6 text-emerald-600" />
+                    <FaBus className="h-6 w-6 text-blue-600" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-emerald-600 truncate">Active Routes</dt>
+                      <dt className="text-sm font-medium text-gray-600 truncate font-roboto">Active Routes</dt>
                       <dd className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-emerald-900">
-                          {/* Placeholder - connect to actual routes data */}
-                          {filteredCities.length * 2}
+                        <div className="text-2xl font-semibold text-gray-900 font-poppins">
+                          {cities.length * 2}
                         </div>
                       </dd>
                     </dl>
@@ -174,18 +173,18 @@ const CityManagement = () => {
               </div>
             </div>
 
-            <div className="bg-emerald-50 overflow-hidden shadow rounded-lg">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <FaMapMarkedAlt className="h-6 w-6 text-emerald-600" />
+                    <FaMapMarkedAlt className="h-6 w-6 text-blue-600" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
-                      <dt className="text-sm font-medium text-emerald-600 truncate">States Covered</dt>
+                      <dt className="text-sm font-medium text-gray-600 truncate font-roboto">States Covered</dt>
                       <dd className="flex items-baseline">
-                        <div className="text-2xl font-semibold text-emerald-900">
-                          {new Set(filteredCities.map(city => city.state)).size}
+                        <div className="text-2xl font-semibold text-gray-900 font-poppins">
+                          {new Set(cities.map(city => city.state)).size}
                         </div>
                       </dd>
                     </dl>
@@ -198,23 +197,24 @@ const CityManagement = () => {
           {/* Search Bar with Info */}
           <div className="mt-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
-              <h2 className="text-lg font-medium text-emerald-900 mb-2 sm:mb-0">Search Cities</h2>
-              <p className="text-sm text-emerald-600">
-                {filteredCities.length} cities available across {new Set(filteredCities.map(city => city.state)).size} states
+              <h2 className="text-lg font-medium text-gray-800 mb-2 sm:mb-0 font-poppins">Search Cities</h2>
+              <p className="text-sm text-gray-600 font-roboto">
+                Showing {filteredCities.length} of {cities.length} cities
               </p>
             </div>
             <div className="relative rounded-md shadow-sm">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FaSearch className="h-5 w-5 text-emerald-600" />
+                <FaSearch className="h-5 w-5 text-blue-600" />
               </div>
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="h-12 focus:ring-emerald-500 focus:border-emerald-500 block w-full pl-10 pr-12 
-                sm:text-sm border-emerald-300 rounded-md bg-emerald-50 shadow-sm 
+                className="h-12 focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-12 
+                sm:text-sm border-gray-300 rounded-md bg-white shadow-sm 
                 transition-all duration-300 ease-in-out
-                hover:shadow-md hover:bg-white hover:border-emerald-800"
+                hover:shadow-md hover:bg-gray-50 hover:border-blue-600
+                font-roboto"
                 placeholder="Search cities..."
               />
             </div>
@@ -224,58 +224,58 @@ const CityManagement = () => {
         {/* Form */}
         {showForm && (
           <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <h2 className="text-xl font-semibold text-emerald-900 mb-4">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4 font-poppins">
               {editingId ? 'Edit City' : 'Add New City'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div className="relative">
-                  <label className="block text-sm font-medium text-emerald-800 mb-1">City Name</label>
+                  <label className="block text-sm font-medium text-gray-800 mb-1 font-roboto">City Name</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="h-12 mt-1 block w-full rounded-md border-emerald-300 bg-emerald-50 
-                    shadow-sm focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 
-                    hover:border-emerald-800 hover:shadow-md hover:bg-white
-                    transition-all duration-300 ease-in-out text-base"
+                    className="h-12 mt-1 block w-full rounded-md border-gray-300 bg-white 
+                    shadow-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 
+                    hover:border-blue-800 hover:shadow-md hover:bg-gray-50
+                    transition-all duration-300 ease-in-out text-base font-roboto"
                     required
                     placeholder="Enter city name"
                   />
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-emerald-600 mt-6">
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-blue-600 mt-6">
                     {formData.name && <FaCheck className="h-5 w-5" />}
                   </div>
                 </div>
                 <div className="relative">
-                  <label className="block text-sm font-medium text-emerald-800 mb-1">State</label>
+                  <label className="block text-sm font-medium text-gray-800 mb-1 font-roboto">State</label>
                   <input
                     type="text"
                     value={formData.state}
                     onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                    className="h-12 mt-1 block w-full rounded-md border-emerald-300 bg-emerald-50 
-                    shadow-sm focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 
-                    hover:border-emerald-800 hover:shadow-md hover:bg-white
-                    transition-all duration-300 ease-in-out text-base"
+                    className="h-12 mt-1 block w-full rounded-md border-gray-300 bg-white 
+                    shadow-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 
+                    hover:border-blue-800 hover:shadow-md hover:bg-gray-50
+                    transition-all duration-300 ease-in-out text-base font-roboto"
                     required
                     placeholder="Enter state name"
                   />
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-emerald-600 mt-6">
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-blue-600 mt-6">
                     {formData.state && <FaCheck className="h-5 w-5" />}
                   </div>
                 </div>
               </div>
-              <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200">
+              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                 <label className="flex items-center space-x-3 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={formData.isPopular}
                     onChange={(e) => setFormData({ ...formData, isPopular: e.target.checked })}
-                    className="h-5 w-5 text-emerald-600 focus:ring-emerald-500 border-emerald-300 
+                    className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 
                     rounded transition-all duration-300 ease-in-out cursor-pointer
-                    hover:border-emerald-800 hover:shadow-sm"
+                    hover:border-blue-800 hover:shadow-sm"
                   />
-                  <span className="text-sm font-medium text-emerald-800 flex items-center">
-                    <FaStar className="h-4 w-4 text-emerald-600 mr-2" />
+                  <span className="text-sm font-medium text-gray-800 flex items-center font-roboto">
+                    <FaStar className="h-4 w-4 text-blue-600 mr-2" />
                     Mark as Popular City
                   </span>
                 </label>
@@ -288,21 +288,21 @@ const CityManagement = () => {
                     setEditingId(null);
                     setFormData({ name: '', state: '', isPopular: false });
                   }}
-                  className="inline-flex items-center px-6 py-3 border border-emerald-300 shadow-sm 
-                  text-base font-medium rounded-md text-emerald-700 bg-white 
-                  hover:bg-emerald-50 hover:shadow-md hover:border-emerald-400
-                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 
-                  transition-all duration-300 ease-in-out"
+                  className="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm 
+                  text-base font-medium rounded-md text-gray-800 bg-white 
+                  hover:bg-gray-50 hover:shadow-md hover:border-blue-400
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+                  transition-all duration-300 ease-in-out font-roboto"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   className="inline-flex items-center px-6 py-3 border border-transparent rounded-md 
-                  shadow-sm text-base font-medium text-white bg-emerald-700 
-                  hover:bg-emerald-800 hover:shadow-md
-                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-600 
-                  transition-all duration-300 ease-in-out transform hover:scale-105"
+                  shadow-sm text-base font-medium text-white bg-blue-600 
+                  hover:bg-blue-700 hover:shadow-md
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 
+                  transition-all duration-300 ease-in-out transform hover:scale-105 font-roboto"
                 >
                   {editingId ? 'Update City' : 'Add City'}
                 </button>
@@ -314,29 +314,29 @@ const CityManagement = () => {
         {/* Table */}
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-emerald-200">
-              <thead className="bg-emerald-50">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-emerald-800 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider font-roboto">
                     City Name
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-emerald-800 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider font-roboto">
                     State
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-emerald-800 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider font-roboto">
                     Popular
                   </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-emerald-800 uppercase tracking-wider">
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-800 uppercase tracking-wider font-roboto">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-emerald-200">
+              <tbody className="bg-white divide-y divide-gray-200">
                 {loading ? (
                   <tr>
-                    <td colSpan="4" className="px-6 py-4 text-center text-sm text-emerald-500">
+                    <td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-600">
                       <div className="flex justify-center items-center space-x-2">
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-emerald-600"></div>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
                         <span>Loading cities...</span>
                       </div>
                     </td>
@@ -347,21 +347,21 @@ const CityManagement = () => {
                   </tr>
                 ) : filteredCities.length === 0 ? (
                   <tr>
-                    <td colSpan="4" className="px-6 py-4 text-center text-sm text-emerald-500">
+                    <td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-600">
                       {searchTerm ? 'No cities found matching your search' : 'No cities available'}
                     </td>
                   </tr>
                 ) : (
                   filteredCities.map((city) => (
-                    <tr key={city._id} className="hover:bg-emerald-50 transition-colors duration-150">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-emerald-900">{city.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-emerald-500">{city.state}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-emerald-500">
+                    <tr key={city._id} className="hover:bg-gray-50 transition-colors duration-150">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-poppins">{city.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-roboto">{city.state}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-roboto">
                         {city.isPopular && (
-                          <FaStar className="h-5 w-5 text-emerald-600" />
+                          <FaStar className="h-5 w-5 text-blue-600" />
                         )}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-emerald-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-roboto">
                         <div className="flex items-center space-x-4">
                           <button
                             onClick={() => {
@@ -373,7 +373,7 @@ const CityManagement = () => {
                               setEditingId(city._id);
                               setShowForm(true);
                             }}
-                            className="text-emerald-600 hover:text-emerald-900 transition-colors duration-200"
+                            className="text-blue-600 hover:text-blue-900 transition-colors duration-200"
                           >
                             <FaEdit className="h-5 w-5" />
                           </button>

@@ -24,7 +24,12 @@ import Blogs from "./components/Blogs/Blogs";
 import BlogPost from "./components/Blogs/BlogPost";
 import Support from "./components/Support/Support";
 import SearchPage from "./SearchPage/SearchPage";
-
+import AdminLayout from './Admin/AdminLayout';
+import BusManagement from './Admin/BusManagement';
+import OperatorManagement from './Admin/OperatorManagement';
+import RouteManagement from './Admin/RouteManagement';
+import ScheduleManagement from './Admin/ScheduleManagement';
+import CityManagement from './Admin/CityManagement';
 
 // this is the main App component
 function App() {
@@ -61,6 +66,13 @@ function App() {
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blogs/:id" element={<BlogPost />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="buses" element={<BusManagement />} />
+            <Route path="operators" element={<OperatorManagement />} />
+            <Route path="routes" element={<RouteManagement />} />
+            <Route path="schedules" element={<ScheduleManagement />} />
+            <Route path="cities" element={<CityManagement />} />
+          </Route>
         </Routes>
         {/* Conditionally render Footer */}
         {!shouldHideFooter && <Footer />}

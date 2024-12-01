@@ -51,8 +51,8 @@ function Signup() {
     password: "",
     confirmPassword: "",
     otp: "",
-    role: "passenger",
-    passengerType: "adult",
+    role: "Passenger",
+    passengerType: "Adult",
   });
   const [errors, setErrors] = useState({});
   const [otpSent, setOtpSent] = useState(false);
@@ -79,7 +79,7 @@ function Signup() {
     if (formData.email) {
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/v1/send-otp",
+          "http://localhost:8000/api/user/otp-Verify",
           { email: formData.email }
         );
         if (response.status === 200) {
@@ -113,7 +113,7 @@ function Signup() {
     if (validate()) {
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/v1/signup",
+          "http://localhost:8000/api/user/signup",
           formData,
           { headers: { "Content-Type": "application/json" } }
         );
@@ -126,8 +126,8 @@ function Signup() {
             password: "",
             confirmPassword: "",
             otp: "",
-            role: "passenger",
-            passengerType: "adult",
+            role: "Passenger",
+            passengerType: "Adult",
           });
           navigate("/");
         }
@@ -239,8 +239,8 @@ function Signup() {
               error={errors.role}
               as="select"
               options={[
-                { value: "admin", label: "Admin" },
-                { value: "passenger", label: "Passenger" }
+                { value: "Admin", label: "Admin" },
+                { value: "Passenger", label: "Passenger" }
               ]}
             />
 
@@ -253,10 +253,10 @@ function Signup() {
               error={errors.passengerType}
               as="select"
               options={[
-                { value: "adult", label: "Adult" },
-                { value: "child", label: "Child" },
+                { value: "Adult", label: "Adult" },
+                { value: "Child", label: "Child" },
                 { value: "Senior", label: "Senior" },
-                { value: "student", label: "Student" }
+                { value: "Student", label: "Student" }
               ]}
             />
 

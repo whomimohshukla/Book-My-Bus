@@ -170,7 +170,7 @@ function Home() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start mt-8">
                 <CTAButton
                   active={true}
-                  linkto="/ticket-search"
+                  linkto="/searchBuses"
                   className="px-8 py-4"
                 >
                   Book Now

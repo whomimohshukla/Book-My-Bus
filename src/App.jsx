@@ -23,6 +23,7 @@ import Bookings from "./components/Bookings/Bookings";
 import Blogs from "./components/Blogs/Blogs";
 import BlogPost from "./components/Blogs/BlogPost";
 import Support from "./components/Support/Support";
+import SearchPage from "./SearchPage/SearchPage";
 
 
 // this is the main App component
@@ -48,6 +49,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/bookings" element={<Bookings />} />
+          
+          <Route path="/searchBuses" element={<SearchPage />} />
 
           <Route path="/termsAndConditions" element={<TermsAndConditions />} />
           <Route path="/privacyPolicy" element={<PrivacyPolicy />} />

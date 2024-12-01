@@ -15,9 +15,10 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  useTheme,
-  Paper,
-  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
 } from '@mui/material';
 import {
   DirectionsBus,
@@ -29,17 +30,12 @@ import {
   Sort,
   FilterList,
   LocationOn,
-  AcUnit,
-  LocalCafe,
-  PowerSettingsNew,
-  Wifi,
-  ChargingStation,
-  LiveTv,
-  Restaurant,
+  Person,
+  Phone,
+  DriveEta,
 } from '@mui/icons-material';
 
 const SearchResults = ({ results }) => {
-  const theme = useTheme();
   const [expandedId, setExpandedId] = useState(null);
   const [sortBy, setSortBy] = useState('price');
   const [filterBy, setFilterBy] = useState('all');
@@ -71,13 +67,13 @@ const SearchResults = ({ results }) => {
     return items.filter(bus => {
       switch (filterBy) {
         case 'ac':
-          return bus.busType?.toLowerCase().includes('ac');
+          return bus.busId?.type === 'AC';
         case 'nonAc':
-          return !bus.busType?.toLowerCase().includes('ac');
+          return bus.busId?.type !== 'AC';
         case 'sleeper':
-          return bus.busType?.toLowerCase().includes('sleeper');
+          return bus.busId?.type?.toLowerCase().includes('sleeper');
         case 'seater':
-          return bus.busType?.toLowerCase().includes('seater');
+          return bus.busId?.type?.toLowerCase().includes('seater');
         default:
           return true;
       }
@@ -88,6 +84,8 @@ const SearchResults = ({ results }) => {
     try {
       const date = new Date(timeString);
       return date.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
         hour12: true
@@ -108,258 +106,246 @@ const SearchResults = ({ results }) => {
       return `${hours}h ${minutes}m`;
     } catch (error) {
       console.error('Error calculating duration:', error);
-      return 'N/A';
+      return 'Duration N/A';
     }
   };
 
-  const sortedAndFilteredResults = filterResults(sortResults(results || []));
+  const calculateTotalFare = (fareDetails) => {
+    if (!fareDetails) return 'N/A';
+    const { baseFare = 0, tax = 0, serviceFee = 0 } = fareDetails;
+    return baseFare + tax + serviceFee;
+  };
+
+  const processedResults = sortResults(filterResults(results));
+
+  if (!results || results.length === 0) {
+    return (
+      <Box sx={{ textAlign: 'center', py: 4 }}>
+        <DirectionsBus sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
+        <Typography variant="h6" color="text.secondary">
+          No buses found for this route
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Try different dates or destinations
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
-    <Box sx={{ mt: 4 }}>
-      <Paper 
-        elevation={2}
-        sx={{ 
-          p: 2, 
-          mb: 3, 
-          borderRadius: '12px',
-          background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'
-        }}
-      >
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Sort By</InputLabel>
-              <Select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                startAdornment={<Sort sx={{ mr: 1, color: theme.palette.primary.main }} />}
-              >
-                <MenuItem value="price">Price: Low to High</MenuItem>
-                <MenuItem value="duration">Duration: Shortest First</MenuItem>
-                <MenuItem value="departure">Departure: Earliest First</MenuItem>
-                <MenuItem value="seats">Available Seats</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Filter By</InputLabel>
-              <Select
-                value={filterBy}
-                onChange={(e) => setFilterBy(e.target.value)}
-                startAdornment={<FilterList sx={{ mr: 1, color: theme.palette.primary.main }} />}
-              >
-                <MenuItem value="all">All Buses</MenuItem>
-                <MenuItem value="ac">AC Buses</MenuItem>
-                <MenuItem value="nonAc">Non-AC Buses</MenuItem>
-                <MenuItem value="sleeper">Sleeper</MenuItem>
-                <MenuItem value="seater">Seater</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-        </Grid>
-      </Paper>
+    <Box sx={{ py: 2 }}>
+      <Box sx={{ mb: 3, display: 'flex', gap: 2, alignItems: 'center' }}>
+        <FormControl size="small" sx={{ minWidth: 120 }}>
+          <InputLabel>Sort By</InputLabel>
+          <Select
+            value={sortBy}
+            label="Sort By"
+            onChange={(e) => setSortBy(e.target.value)}
+            startAdornment={<Sort sx={{ mr: 1 }} />}
+          >
+            <MenuItem value="price">Price</MenuItem>
+            <MenuItem value="duration">Duration</MenuItem>
+            <MenuItem value="departure">Departure</MenuItem>
+            <MenuItem value="seats">Available Seats</MenuItem>
+          </Select>
+        </FormControl>
 
-      {sortedAndFilteredResults.length === 0 ? (
-        <Paper
-          elevation={3}
-          sx={{
-            p: 4,
-            textAlign: 'center',
-            borderRadius: '12px',
-            background: 'linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)'
-          }}
-        >
-          <DirectionsBus sx={{ fontSize: 60, color: theme.palette.grey[400], mb: 2 }} />
-          <Typography variant="h6" color="textSecondary">
-            No buses found matching your criteria
-          </Typography>
-        </Paper>
-      ) : (
-        <Grid container spacing={3}>
-          {sortedAndFilteredResults.map((bus) => (
-            <Grid item xs={12} key={bus.id}>
-              <Card 
-                elevation={2}
-                sx={{ 
-                  borderRadius: '12px',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
-                  },
-                }}
-              >
-                <CardContent>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={3}>
-                      <Stack spacing={1}>
-                        <Typography variant="h6" color="primary" fontWeight={600}>
-                          {bus.busName}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                          {bus.busType}
-                        </Typography>
-                        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                          {bus.amenities?.map((amenity, index) => {
-                            const getAmenityIcon = (name) => {
-                              switch (name.toLowerCase()) {
-                                case 'ac': return <AcUnit fontSize="small" />;
-                                case 'wifi': return <Wifi fontSize="small" />;
-                                case 'charging': return <ChargingStation fontSize="small" />;
-                                case 'entertainment': return <LiveTv fontSize="small" />;
-                                case 'refreshments': return <Restaurant fontSize="small" />;
-                                default: return <LocalCafe fontSize="small" />;
-                              }
-                            };
-                            return (
-                              <Chip
-                                key={index}
-                                icon={getAmenityIcon(amenity)}
-                                label={amenity}
-                                size="small"
-                                variant="outlined"
-                                sx={{ borderRadius: '8px' }}
-                              />
-                            );
-                          })}
-                        </Box>
-                      </Stack>
-                    </Grid>
+        <FormControl size="small" sx={{ minWidth: 120 }}>
+          <InputLabel>Filter</InputLabel>
+          <Select
+            value={filterBy}
+            label="Filter"
+            onChange={(e) => setFilterBy(e.target.value)}
+            startAdornment={<FilterList sx={{ mr: 1 }} />}
+          >
+            <MenuItem value="all">All Buses</MenuItem>
+            <MenuItem value="ac">AC</MenuItem>
+            <MenuItem value="nonAc">Non-AC</MenuItem>
+            <MenuItem value="sleeper">Sleeper</MenuItem>
+            <MenuItem value="seater">Seater</MenuItem>
+          </Select>
+        </FormControl>
 
-                    <Grid item xs={12} md={3}>
-                      <Stack spacing={2} alignItems="center">
-                        <Box textAlign="center">
-                          <Typography variant="h6" color="primary">
-                            {formatTime(bus.departureTime)}
-                          </Typography>
-                          <Typography variant="body2" color="textSecondary">
-                            {bus.source}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <AccessTime color="action" sx={{ fontSize: 16, mr: 1 }} />
-                          <Typography variant="body2" color="textSecondary">
-                            {calculateDuration(bus.departureTime, bus.arrivalTime)}
-                          </Typography>
-                        </Box>
-                        <Box textAlign="center">
-                          <Typography variant="h6" color="primary">
-                            {formatTime(bus.arrivalTime)}
-                          </Typography>
-                          <Typography variant="body2" color="textSecondary">
-                            {bus.destination}
-                          </Typography>
-                        </Box>
-                      </Stack>
-                    </Grid>
+        <Typography variant="body2" color="text.secondary">
+          {processedResults.length} buses found
+        </Typography>
+      </Box>
 
-                    <Grid item xs={12} md={3}>
-                      <Stack spacing={1} alignItems="center" justifyContent="center" height="100%">
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <EventSeat color="primary" />
-                          <Typography variant="body1">
-                            {bus.availableSeats} Seats Available
-                          </Typography>
-                        </Box>
-                        <Rating 
-                          value={bus.rating || 4.5} 
-                          precision={0.5} 
-                          readOnly 
-                          size="small"
-                        />
-                      </Stack>
-                    </Grid>
-
-                    <Grid item xs={12} md={3}>
-                      <Stack spacing={2} alignItems="center" justifyContent="center" height="100%">
-                        <Typography variant="h5" color="primary" fontWeight={600}>
-                          ₹{bus.fareDetails?.baseFare}
-                        </Typography>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => handleExpandClick(bus.id)}
-                          endIcon={expandedId === bus.id ? <ExpandLess /> : <ExpandMore />}
-                          sx={{
-                            borderRadius: '8px',
-                            textTransform: 'none',
-                            fontWeight: 600,
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                            '&:hover': {
-                              boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
-                            },
-                          }}
-                        >
-                          View Details
-                        </Button>
-                      </Stack>
-                    </Grid>
+      <Grid container spacing={2}>
+        {processedResults.map((bus, index) => (
+          <Grid item xs={12} key={bus._id || index}>
+            <Card 
+              sx={{ 
+                '&:hover': { 
+                  boxShadow: 6,
+                  transform: 'translateY(-2px)',
+                  transition: 'all 0.2s ease-in-out'
+                }
+              }}
+            >
+              <CardContent>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid item xs={12} sm={3}>
+                    <Typography variant="h6" component="div">
+                      {bus.busId?.busName || 'Bus Name N/A'}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {bus.busId?.type || 'Type N/A'} • {bus.busId?.busNumber || 'Number N/A'}
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                      <LocationOn sx={{ fontSize: 16, mr: 0.5 }} />
+                      <Typography variant="body2" color="text.secondary">
+                        {bus.routeId?.source?.name} → {bus.routeId?.destination?.name}
+                      </Typography>
+                    </Box>
                   </Grid>
 
-                  <Collapse in={expandedId === bus.id}>
-                    <Divider sx={{ my: 2 }} />
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
-                        <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                          Boarding Points
-                        </Typography>
-                        {bus.boardingPoints?.map((point, index) => (
-                          <Box key={index} sx={{ display: 'flex', alignItems: 'start', mb: 1 }}>
-                            <LocationOn color="primary" sx={{ mr: 1, mt: 0.5 }} />
-                            <Box>
-                              <Typography variant="body1">{point.location}</Typography>
-                              <Typography variant="body2" color="textSecondary">
-                                {point.time}
-                              </Typography>
-                            </Box>
-                          </Box>
-                        ))}
-                      </Grid>
-                      <Grid item xs={12} md={6}>
-                        <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-                          Dropping Points
-                        </Typography>
-                        {bus.droppingPoints?.map((point, index) => (
-                          <Box key={index} sx={{ display: 'flex', alignItems: 'start', mb: 1 }}>
-                            <LocationOn color="primary" sx={{ mr: 1, mt: 0.5 }} />
-                            <Box>
-                              <Typography variant="body1">{point.location}</Typography>
-                              <Typography variant="body2" color="textSecondary">
-                                {point.time}
-                              </Typography>
-                            </Box>
-                          </Box>
-                        ))}
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          fullWidth
-                          sx={{
-                            mt: 2,
-                            borderRadius: '8px',
-                            textTransform: 'none',
-                            fontWeight: 600,
-                            py: 1.5,
-                            boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-                            '&:hover': {
-                              boxShadow: '0 6px 8px rgba(0,0,0,0.2)',
-                            },
-                          }}
-                        >
-                          Book Now
-                        </Button>
-                      </Grid>
+                  <Grid item xs={12} sm={3}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <AccessTime sx={{ mr: 1, fontSize: 20 }} />
+                      <Typography variant="body2">
+                        {formatTime(bus.departureTime)} - {formatTime(bus.arrivalTime)}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" color="text.secondary">
+                      Duration: {calculateDuration(bus.departureTime, bus.arrivalTime)}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Distance: {bus.routeId?.distance || 'N/A'} km
+                    </Typography>
+                  </Grid>
+
+                  <Grid item xs={12} sm={2}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <EventSeat sx={{ mr: 1, fontSize: 20 }} />
+                      <Typography variant="body2">
+                        {bus.availableSeats}/{bus.busId?.totalSeats} seats
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                      {bus.busId?.amenities?.map((amenity, i) => (
+                        <Chip 
+                          key={i} 
+                          label={amenity.name} 
+                          size="small" 
+                          variant="outlined"
+                          title={amenity.description}
+                        />
+                      ))}
+                    </Box>
+                  </Grid>
+
+                  <Grid item xs={12} sm={2}>
+                    <Typography variant="h6" color="primary">
+                      ₹{calculateTotalFare(bus.fareDetails)}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" display="block">
+                      Base Fare: ₹{bus.fareDetails?.baseFare}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" display="block">
+                      +Tax: ₹{bus.fareDetails?.tax}
+                    </Typography>
+                  </Grid>
+
+                  <Grid item xs={12} sm={2}>
+                    <Button 
+                      variant="contained" 
+                      fullWidth
+                      color="primary"
+                      onClick={() => {/* Handle booking */}}
+                    >
+                      Book Now
+                    </Button>
+                    <IconButton
+                      onClick={() => handleExpandClick(index)}
+                      sx={{ mt: 1, width: '100%' }}
+                    >
+                      {expandedId === index ? <ExpandLess /> : <ExpandMore />}
+                    </IconButton>
+                  </Grid>
+                </Grid>
+
+                <Collapse in={expandedId === index}>
+                  <Divider sx={{ my: 2 }} />
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <Typography variant="subtitle2" gutterBottom>
+                        Route Details
+                      </Typography>
+                      <Table size="small">
+                        <TableBody>
+                          <TableRow>
+                            <TableCell component="th" scope="row">Source</TableCell>
+                            <TableCell>
+                              {bus.routeId?.source?.name}, {bus.routeId?.source?.state}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell component="th" scope="row">Destination</TableCell>
+                            <TableCell>
+                              {bus.routeId?.destination?.name}, {bus.routeId?.destination?.state}
+                            </TableCell>
+                          </TableRow>
+                          {bus.routeId?.viaStops?.map((stop, i) => (
+                            <TableRow key={i}>
+                              <TableCell component="th" scope="row">Via Stop {i + 1}</TableCell>
+                              <TableCell>
+                                {stop.name} ({stop.arrivalTime} - {stop.departureTime})
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
                     </Grid>
-                  </Collapse>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
+
+                    <Grid item xs={12} md={6}>
+                      <Typography variant="subtitle2" gutterBottom>
+                        Driver Details
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <Person sx={{ mr: 1, fontSize: 20 }} />
+                        <Typography variant="body2">
+                          {bus.driverDetails?.name}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                        <Phone sx={{ mr: 1, fontSize: 20 }} />
+                        <Typography variant="body2">
+                          {bus.driverDetails?.phone}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <DriveEta sx={{ mr: 1, fontSize: 20 }} />
+                        <Typography variant="body2">
+                          License: {bus.driverDetails?.license}
+                        </Typography>
+                      </Box>
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <Typography variant="subtitle2" gutterBottom>
+                        Seat Layout
+                      </Typography>
+                      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                        {bus.busId?.seatLayout?.seats?.map((seat, i) => (
+                          <Chip 
+                            key={i}
+                            label={`${seat.seatNumber} - ${seat.type}`}
+                            size="small"
+                            color={seat.isAvailable ? "primary" : "default"}
+                            variant={seat.isAvailable ? "outlined" : "filled"}
+                            sx={{ mb: 1 }}
+                          />
+                        ))}
+                      </Box>
+                    </Grid>
+                  </Grid>
+                </Collapse>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
     </Box>
   );
 };

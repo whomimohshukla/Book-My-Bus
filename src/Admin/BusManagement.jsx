@@ -166,31 +166,33 @@ const BusManagement = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
+
     try {
-      setLoading(true);
-      setError(null);
+      // Validate required fields
+      const requiredFields = ['busNumber', 'busName', 'operatorId', 'busType', 'totalSeats'];
+      const missingFields = requiredFields.filter(field => !formData[field]);
       
-      // Validate form data
-      if (!formData.busNumber || !formData.busName || !formData.operatorId || !formData.busType || !formData.totalSeats) {
-        throw new Error('Please fill in all required fields');
+      if (missingFields.length > 0) {
+        throw new Error(`Please fill in all required fields: ${missingFields.join(', ')}`);
       }
 
-      // Convert totalSeats to number and ensure it's positive
-      const totalSeats = parseInt(formData.totalSeats, 10);
+      // Validate total seats
+      const totalSeats = parseInt(formData.totalSeats);
       if (isNaN(totalSeats) || totalSeats <= 0) {
         throw new Error('Total seats must be a positive number');
       }
 
       // Prepare the request data
       const requestData = {
-        busNumber: formData.busNumber,
-        busName: formData.busName,
+        busNumber: formData.busNumber.trim(),
+        busName: formData.busName.trim(),
         operatorId: formData.operatorId,
         type: formData.busType,
         totalSeats: totalSeats,
         amenities: formData.amenities.map(amenity => ({
           name: amenity.name,
-          icon: amenity.icon,
           description: amenity.description
         })),
         seatLayout: {
@@ -206,8 +208,7 @@ const BusManagement = () => {
         }
       };
 
-      // Log the request data for debugging
-      console.log('Sending request with data:', JSON.stringify(requestData, null, 2));
+      console.log('Sending request with data:', requestData);
 
       try {
         if (selectedBus) {
@@ -231,16 +232,15 @@ const BusManagement = () => {
         setSelectedBus(null);
       } catch (err) {
         console.error('API Error:', err.response || err);
-        setError(
-          err.response?.data?.error || 
-          err.response?.data?.message || 
-          err.message || 
-          'Failed to save bus'
-        );
+        const errorMessage = err.response?.data?.error || 
+                           err.response?.data?.message || 
+                           err.message || 
+                           'Failed to save bus';
+        throw new Error(errorMessage);
       }
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Failed to create bus');
-      console.error('Error details:', err.response?.data || err);
+      setError(err.message || 'Failed to create bus');
+      console.error('Error details:', err);
     } finally {
       setLoading(false);
     }
@@ -392,7 +392,7 @@ const BusManagement = () => {
                 className="h-12 focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-12 
                 sm:text-sm border-gray-300 rounded-md bg-white shadow-sm 
                 transition-all duration-300 ease-in-out
-                hover:shadow-md hover:bg-gray-50 hover:border-blue-600
+                hover:shadow-md hover:bg-gray-50 hover:border-blue-400
                 font-roboto"
                 placeholder="Search buses by number, name, or type..."
               />

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus, FaMapMarkerAlt, FaClock, FaRoute } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 const api = axios.create({
   baseURL: 'http://localhost:8000/api',
@@ -164,174 +165,351 @@ const RouteManagement = () => {
     setShowForm(true);
   };
 
+  // Add a new via stop
+  const addViaStop = () => {
+    setFormData(prev => ({
+      ...prev,
+      viaStops: [
+        ...prev.viaStops,
+        {
+          cityId: '',
+          name: '',
+          arrivalTime: '',
+          departureTime: '',
+          stopDuration: 0
+        }
+      ]
+    }));
+  };
+
+  // Remove a via stop
+  const removeViaStop = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      viaStops: prev.viaStops.filter((_, i) => i !== index)
+    }));
+  };
+
+  // Update via stop details
+  const updateViaStop = (index, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      viaStops: prev.viaStops.map((stop, i) => {
+        if (i === index) {
+          if (field === 'cityId') {
+            const selectedCity = cities.find(city => city._id === value);
+            return {
+              ...stop,
+              cityId: value,
+              name: selectedCity ? selectedCity.name : ''
+            };
+          }
+          return { ...stop, [field]: value };
+        }
+        return stop;
+      })
+    }));
+  };
+
+  // Calculate stop duration
+  const calculateStopDuration = (arrivalTime, departureTime) => {
+    if (!arrivalTime || !departureTime) return 0;
+    const arrival = new Date(`2000-01-01T${arrivalTime}`);
+    const departure = new Date(`2000-01-01T${departureTime}`);
+    return Math.round((departure - arrival) / (1000 * 60)); // Duration in minutes
+  };
+
   if (loading) {
     return <div className="text-center py-4">Loading...</div>;
   }
 
   return (
-    <div className="container mx-auto p-4">
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-          <span className="block sm:inline">{error}</span>
-        </div>
-      )}
-
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Route Management</h1>
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="container mx-auto p-4 space-y-6"
+    >
+      <div className="flex justify-between items-center bg-gradient-to-r from-DarkGreen to-LightGreen p-6 rounded-lg shadow-md">
+        <h1 className="text-3xl font-bold text-white flex items-center gap-2">
+          <FaRoute className="text-white" />
+          Route Management
+        </h1>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 transition-colors"
+          className="bg-white text-DarkGreen px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-md"
         >
-          <FaPlus /> {showForm ? 'Cancel' : 'Add Route'}
+          <FaPlus /> {showForm ? "Cancel" : "Add New Route"}
         </button>
       </div>
 
+      {error && (
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded shadow-md" role="alert">
+          <p className="font-bold">Error</p>
+          <p>{error}</p>
+        </div>
+      )}
+
       {showForm && (
-        <form onSubmit={handleSubmit} className="mb-8 bg-white p-6 rounded-lg shadow-md">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Source City</label>
-              <select
-                value={formData.source.name}
-                onChange={(e) => {
-                  const city = cities.find(c => c.name === e.target.value);
-                  setFormData({
-                    ...formData,
-                    source: {
-                      name: city?.name || '',
-                      state: city?.state || '',
-                      cityId: city?._id || ''
-                    }
-                  });
-                }}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                required
-              >
-                <option value="">Select Source City</option>
-                {cities.map((city) => (
-                  <option key={city._id} value={city.name}>
-                    {city.name}, {city.state}
-                  </option>
-                ))}
-              </select>
+        <motion.form
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          onSubmit={handleSubmit}
+          className="bg-white p-8 rounded-lg shadow-lg space-y-6 border border-gray-200"
+        >
+          <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+            {editingId ? "Edit Route" : "Add New Route"}
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Source and Destination Fields */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-700">Source Details</h3>
+              <div className="form-group">
+                <label className="block text-sm font-medium text-gray-700">City</label>
+                <select
+                  value={formData.source.cityId}
+                  onChange={(e) => {
+                    const city = cities.find(c => c._id === e.target.value);
+                    setFormData({
+                      ...formData,
+                      source: {
+                        name: city?.name || '',
+                        state: city?.state || '',
+                        cityId: city?._id || ''
+                      }
+                    });
+                  }}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-DarkGreen focus:ring-DarkGreen"
+                >
+                  <option value="">Select City</option>
+                  {cities.map((city) => (
+                    <option key={city._id} value={city._id}>
+                      {city.name}, {city.state}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Destination City</label>
-              <select
-                value={formData.destination.name}
-                onChange={(e) => {
-                  const city = cities.find(c => c.name === e.target.value);
-                  setFormData({
-                    ...formData,
-                    destination: {
-                      name: city?.name || '',
-                      state: city?.state || '',
-                      cityId: city?._id || ''
-                    }
-                  });
-                }}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                required
-              >
-                <option value="">Select Destination City</option>
-                {cities.map((city) => (
-                  <option key={city._id} value={city.name}>
-                    {city.name}, {city.state}
-                  </option>
-                ))}
-              </select>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium text-gray-700">Destination Details</h3>
+              <div className="form-group">
+                <label className="block text-sm font-medium text-gray-700">City</label>
+                <select
+                  value={formData.destination.cityId}
+                  onChange={(e) => {
+                    const city = cities.find(c => c._id === e.target.value);
+                    setFormData({
+                      ...formData,
+                      destination: {
+                        name: city?.name || '',
+                        state: city?.state || '',
+                        cityId: city?._id || ''
+                      }
+                    });
+                  }}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-DarkGreen focus:ring-DarkGreen"
+                >
+                  <option value="">Select City</option>
+                  {cities.map((city) => (
+                    <option key={city._id} value={city._id}>
+                      {city.name}, {city.state}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
-            <div>
+
+            {/* Route Details */}
+            <div className="form-group">
               <label className="block text-sm font-medium text-gray-700">Distance (km)</label>
               <input
                 type="number"
                 value={formData.distance}
                 onChange={(e) => setFormData({ ...formData, distance: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-DarkGreen focus:ring-DarkGreen"
                 required
-                min="0"
-                step="0.01"
               />
             </div>
-            <div>
+
+            <div className="form-group">
               <label className="block text-sm font-medium text-gray-700">Price per km (₹)</label>
               <input
                 type="number"
                 value={formData.pricePerKm}
                 onChange={(e) => setFormData({ ...formData, pricePerKm: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-DarkGreen focus:ring-DarkGreen"
                 required
-                min="0"
-                step="0.01"
               />
             </div>
           </div>
-          <div className="mt-4">
+
+          {/* Via Stops Section */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-medium text-gray-700">Via Stops</h3>
+              <button
+                type="button"
+                onClick={addViaStop}
+                className="bg-DarkGreen text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-LightGreen transition-all duration-300"
+              >
+                <FaPlus /> Add Stop
+              </button>
+            </div>
+
+            {formData.viaStops.map((stop, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="p-4 border border-gray-200 rounded-lg space-y-4"
+              >
+                <div className="flex justify-between items-center">
+                  <h4 className="font-medium text-gray-700">Stop {index + 1}</h4>
+                  <button
+                    type="button"
+                    onClick={() => removeViaStop(index)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="form-group">
+                    <label className="block text-sm font-medium text-gray-700">City</label>
+                    <select
+                      value={stop.cityId}
+                      onChange={(e) => updateViaStop(index, 'cityId', e.target.value)}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-DarkGreen focus:ring-DarkGreen"
+                    >
+                      <option value="">Select City</option>
+                      {cities.map((city) => (
+                        <option key={city._id} value={city._id}>
+                          {city.name}, {city.state}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label className="block text-sm font-medium text-gray-700">Arrival Time</label>
+                    <input
+                      type="time"
+                      value={stop.arrivalTime}
+                      onChange={(e) => {
+                        updateViaStop(index, 'arrivalTime', e.target.value);
+                        const duration = calculateStopDuration(e.target.value, stop.departureTime);
+                        updateViaStop(index, 'stopDuration', duration);
+                      }}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-DarkGreen focus:ring-DarkGreen"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label className="block text-sm font-medium text-gray-700">Departure Time</label>
+                    <input
+                      type="time"
+                      value={stop.departureTime}
+                      onChange={(e) => {
+                        updateViaStop(index, 'departureTime', e.target.value);
+                        const duration = calculateStopDuration(stop.arrivalTime, e.target.value);
+                        updateViaStop(index, 'stopDuration', duration);
+                      }}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-DarkGreen focus:ring-DarkGreen"
+                    />
+                  </div>
+                </div>
+
+                <div className="text-sm text-gray-600">
+                  Stop Duration: {stop.stopDuration} minutes
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="flex justify-end pt-4">
             <button
               type="submit"
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-DarkGreen text-white px-8 py-3 rounded-lg hover:bg-LightGreen transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-md"
               disabled={loading}
             >
-              {loading ? 'Saving...' : editingId ? 'Update Route' : 'Add Route'}
+              {loading ? (
+                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-white"></div>
+              ) : (
+                <>
+                  <FaPlus /> {editingId ? "Update Route" : "Add Route"}
+                </>
+              )}
             </button>
           </div>
-        </form>
+        </motion.form>
       )}
 
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Destination</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Distance</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price/km</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {routes.length > 0 ? (
-              routes.map((route) => (
-                <tr key={route._id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {route.source.name}, {route.source.state}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {route.destination.name}, {route.destination.state}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {route.distance} km
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    ₹{route.pricePerKm}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <button
-                      onClick={() => handleEdit(route)}
-                      className="text-blue-600 hover:text-blue-900 mr-4"
-                    >
-                      <FaEdit className="inline" /> Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(route._id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      <FaTrash className="inline" /> Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
-                  {loading ? 'Loading routes...' : 'No routes found'}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {routes.map((route) => (
+          <motion.div
+            key={route._id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200"
+          >
+            <div className="bg-gradient-to-r from-DarkGreen to-LightGreen p-4">
+              <h3 className="text-lg font-semibold text-white">
+                {route.source?.name} to {route.destination?.name}
+              </h3>
+            </div>
+
+            <div className="p-4 space-y-4">
+              <div className="flex items-center gap-2 text-gray-600">
+                <FaMapMarkerAlt className="text-DarkGreen" />
+                <span>Distance: {route.distance} km</span>
+              </div>
+
+              <div className="flex items-center gap-2 text-gray-600">
+                <FaRoute className="text-DarkGreen" />
+                <span>Price/km: ₹{route.pricePerKm}</span>
+              </div>
+
+              {route.viaStops && route.viaStops.length > 0 && (
+                <div className="space-y-2">
+                  <h4 className="font-medium text-gray-700">Via Stops:</h4>
+                  {route.viaStops.map((stop, index) => (
+                    <div key={index} className="ml-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <FaMapMarkerAlt className="text-DarkGreen" />
+                        <span>{stop.name}</span>
+                      </div>
+                      <div className="ml-6 text-xs">
+                        <FaClock className="inline mr-1 text-DarkGreen" />
+                        {stop.arrivalTime} - {stop.departureTime}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="border-t border-gray-200 p-4 flex justify-end gap-2">
+              <button
+                onClick={() => handleEdit(route)}
+                className="text-blue-600 hover:text-blue-800 px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-1"
+              >
+                <FaEdit /> Edit
+              </button>
+              <button
+                onClick={() => handleDelete(route._id)}
+                className="text-red-600 hover:text-red-800 px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-1"
+              >
+                <FaTrash /> Delete
+              </button>
+            </div>
+          </motion.div>
+        ))}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

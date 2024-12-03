@@ -40,14 +40,14 @@ export const AuthProvider = ({ children }) => {
     };
   });
 
-  useEffect(() => {
-    console.log('Auth state changed:', {
-      isAuthenticated: auth.isAuthenticated,
-      userRole: auth.user?.role,
-      hasToken: !!auth.token,
-      hasUser: !!auth.user
-    });
-  }, [auth]);
+  // useEffect(() => {
+  // //   console.log('Auth state changed:', {
+  // //     isAuthenticated: auth.isAuthenticated,
+  // //     userRole: auth.user?.role,
+  // //     hasToken: !!auth.token,
+  // //     hasUser: !!auth.user
+  // //   });
+  // // }, [auth]);
 
   const login = (token, user) => {
     if (!token || !user) {

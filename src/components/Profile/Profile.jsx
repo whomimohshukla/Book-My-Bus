@@ -73,7 +73,7 @@ function Profile() {
       }
 
       const response = await axios.put(
-        'http://localhost:8000/api/v1/update-profile',
+        'http://localhost:8000/api/user/profile',
         requestData,
         {
           headers: {

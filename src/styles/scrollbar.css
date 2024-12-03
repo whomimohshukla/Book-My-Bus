@@ -1,0 +1,46 @@
+/* Custom Scrollbar Styles */
+/* For Webkit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9; /* neutral-100 */
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #349E4D; /* primary-600 */
+  border: 3px solid #f1f5f9; /* neutral-100 */
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2c8440; /* primary-700 */
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #349E4D #f1f5f9; /* primary-600 neutral-100 */
+}
+
+/* Custom class for elements that need custom scrollbar */
+.custom-scrollbar {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+/* Hide scrollbar for small touch devices */
+@media (max-width: 640px) {
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

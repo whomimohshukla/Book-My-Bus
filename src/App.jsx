@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthProvider";
 import "./App.css";
+import './styles/scrollbar.css';
 import Navbar from "./components/Nav";
 import Home from "./components/Home/Home";
 import Footer from "./components/Footer/Footer";
@@ -44,7 +45,7 @@ function App() {
 
   return (
     <AuthProvider>
-      <div>
+      <div className="min-h-screen bg-neutral-50 custom-scrollbar">
         <Navbar />
         <ScrollToTop /> {/* Add ScrollToTop component here */}
         <Routes>

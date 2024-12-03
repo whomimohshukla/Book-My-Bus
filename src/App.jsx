@@ -24,13 +24,15 @@ import Blogs from "./components/Blogs/Blogs";
 import BlogPost from "./components/Blogs/BlogPost";
 import Support from "./components/Support/Support";
 import SearchPage from "./SearchPage/SearchPage";
-import AdminLayout from './Admin/AdminLayout';
-import BusManagement from './Admin/BusManagement';
-import OperatorManagement from './Admin/OperatorManagement';
-import RouteManagement from './Admin/RouteManagement';
-import ScheduleManagement from './Admin/ScheduleManagement';
-import CityManagement from './Admin/CityManagement';
-import AdminDashboard from './Admin/AdminDashboard';
+import AdminLayout from "./Admin/AdminLayout";
+import BusManagement from "./Admin/BusManagement";
+import OperatorManagement from "./Admin/OperatorManagement";
+import RouteManagement from "./Admin/RouteManagement";
+import ScheduleManagement from "./Admin/ScheduleManagement";
+import CityManagement from "./Admin/CityManagement";
+import AdminDashboard from "./Admin/AdminDashboard";
+
+import ProtectedRoute from "./ProtectRoutes/ProtectedRoute"
 
 // this is the main App component
 function App() {
@@ -46,34 +48,41 @@ function App() {
         <Navbar />
         <ScrollToTop /> {/* Add ScrollToTop component here */}
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/FAQs" element={<FaqS />} />
-          <Route path="/contact" element={<Contact />} />
           <Route path="/search" element={<BusSearch2 />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/bookings" element={<Bookings />} />
-          
           <Route path="/searchBuses" element={<SearchPage />} />
-
           <Route path="/termsAndConditions" element={<TermsAndConditions />} />
           <Route path="/privacyPolicy" element={<PrivacyPolicy />} />
           <Route path="/TicketPolicies" element={<TicketPolicies />} />
-          <Route path="/refunds" element={<RefundPolicies />} />
-          <Route path="/ticket-Search" element={<TicketSearch />} />
-          <Route path="/seatSelection" element={<BusSeatSelection />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blogs/:id" element={<BlogPost />} />
           <Route path="/support" element={<Support />} />
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="buses" element={<BusManagement />} />
-            <Route path="operators" element={<OperatorManagement />} />
-            <Route path="routes" element={<RouteManagement />} />
-            <Route path="schedules" element={<ScheduleManagement />} />
-            <Route path="cities" element={<CityManagement />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/FAQs" element={<FaqS />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/refunds" element={<RefundPolicies />} />
+
+          {/* Protected Passenger Routes */}
+          <Route element={<ProtectedRoute allowedRoles={['Passenger', 'Admin']} />}>
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/bookings" element={<Bookings />} />
+            <Route path="/ticket-Search" element={<TicketSearch />} />
+            <Route path="/seatSelection" element={<BusSeatSelection />} />
+          </Route>
+
+          {/* Protected Admin Routes */}
+          <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="buses" element={<BusManagement />} />
+              <Route path="operators" element={<OperatorManagement />} />
+              <Route path="routes" element={<RouteManagement />} />
+              <Route path="schedules" element={<ScheduleManagement />} />
+              <Route path="cities" element={<CityManagement />} />
+            </Route>
           </Route>
         </Routes>
         {/* Conditionally render Footer */}

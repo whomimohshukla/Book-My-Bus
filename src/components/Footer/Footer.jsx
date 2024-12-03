@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaGithub, FaDiscord, FaTwitter, FaFacebookF, FaMapMarkerAlt, FaPhone, FaEnvelope, FaBus, FaClock, FaHeadset, FaBlog } from "react-icons/fa";
-import mylogo from "/home/whomimohshukla/Desktop/Project Mine/BookMyBus/src/assets/bookMyBusLogo.jpg";
+import mylogo from "../../assets/bookMyBusLogo.jpg";
 
 function Footer() {
   return (

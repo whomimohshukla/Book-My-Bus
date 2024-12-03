@@ -43,22 +43,22 @@ function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-white2">
+    <div className="min-h-screen bg-white2 pt-24 md:pt-20">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen py-20 px-8">
+      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen py-16 md:py-20 px-4 md:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white2 mb-6">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-white2 mb-4 md:mb-6">
             Get in Touch
           </h1>
-          <p className="text-lg md:text-xl text-white2 opacity-90 max-w-2xl mx-auto">
+          <p className="text-base md:text-lg lg:text-xl text-white2 opacity-90 max-w-2xl mx-auto px-4">
             Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
           </p>
         </div>
       </div>
 
       {/* Contact Info Cards */}
-      <div className="max-w-6xl mx-auto px-8 py-16 -mt-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="max-w-6xl mx-auto px-4 md:px-8 py-12 md:py-16 -mt-16 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {[
             { icon: <FaPhoneAlt className="text-3xl" />, text: "+1 (800) 123-4567", title: "Call Us" },
             { icon: <FaEnvelope className="text-3xl" />, text: "info@bookmybus.com", title: "Email Us" },
@@ -75,9 +75,9 @@ function Contact() {
         </div>
 
         {/* Main Content */}
-        <div className="mt-16 grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="mt-12 md:mt-16 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
           {/* Map Image */}
-          <div className="relative">
+          <div className="relative h-[300px] md:h-[400px] lg:h-full">
             <div className="absolute inset-0 bg-gradient-to-r from-Darkgreen to-LightGreen opacity-10 rounded-xl"></div>
             <img
               src={busImage}
@@ -87,8 +87,8 @@ function Contact() {
           </div>
 
           {/* Contact Form */}
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-8">Send us a Message</h2>
+          <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6 md:mb-8">Send us a Message</h2>
             <form ref={formRef} onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label className="block text-gray-700 font-medium mb-2">Your Name</label>
@@ -133,10 +133,10 @@ function Contact() {
       </div>
 
       {/* Social Links */}
-      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen text-white2 py-16 px-8 mt-16">
+      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen text-white2 py-12 md:py-16 px-4 md:px-8 mt-12 md:mt-16">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8">Connect With Us</h2>
-          <div className="flex justify-center gap-8">
+          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold mb-6 md:mb-8">Connect With Us</h2>
+          <div className="flex justify-center gap-4 md:gap-8">
             {[
               { icon: <FiFacebook className="text-3xl" />, url: "https://facebook.com" },
               { icon: <FiTwitter className="text-3xl" />, url: "https://twitter.com" },

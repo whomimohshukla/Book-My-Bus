@@ -110,7 +110,7 @@ function Blogs() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white2 py-12 px-4 font-poppins">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white2 pt-40 md:pt-28 px-4 pb-12 font-poppins">
       <div className="container mx-auto max-w-6xl">
         {/* Header Section */}
         <div className="text-center mb-12">

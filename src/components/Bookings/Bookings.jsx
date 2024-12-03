@@ -108,13 +108,13 @@ function Bookings() {
   const renderBookingCard = (booking) => (
     <div key={booking.id} className="bg-white rounded-lg shadow-md overflow-hidden mb-6 hover:shadow-lg transition-shadow">
       {/* Header Section */}
-      <div className="bg-gray-50 p-4 border-b border-gray-200">
-        <div className="flex justify-between items-center mb-2">
+      <div className="bg-gray-50 p-3 md:p-4 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
           <div className="flex items-center space-x-2">
             <FaBus className="text-Darkgreen text-xl" />
-            <h3 className="text-xl font-semibold text-gray-800">{booking.busName}</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-800">{booking.busName}</h3>
           </div>
-          <span className={`px-4 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.status)}`}>
+          <span className={`px-4 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.status)} w-fit`}>
             {booking.status}
           </span>
         </div>
@@ -125,9 +125,9 @@ function Bookings() {
       </div>
 
       {/* Journey Details */}
-      <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex-1">
+      <div className="p-4 md:p-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 mb-6">
+          <div className="flex-1 w-full sm:w-auto">
             <div className="relative pl-8">
               <FaMapMarkerAlt className="absolute left-0 top-0 text-green-600" />
               <p className="text-sm text-gray-600">From</p>
@@ -136,7 +136,7 @@ function Bookings() {
             </div>
           </div>
           
-          <div className="flex-1 flex justify-center">
+          <div className="hidden sm:flex flex-1 justify-center">
             <div className="w-32 h-0.5 bg-gray-300 relative">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <FaBus className="text-Darkgreen transform -rotate-90" />
@@ -144,7 +144,7 @@ function Bookings() {
             </div>
           </div>
 
-          <div className="flex-1">
+          <div className="flex-1 w-full sm:w-auto">
             <div className="relative pl-8">
               <FaMapMarkerAlt className="absolute left-0 top-0 text-red-600" />
               <p className="text-sm text-gray-600">To</p>
@@ -155,7 +155,7 @@ function Bookings() {
         </div>
 
         {/* Time and Date Details */}
-        <div className="grid grid-cols-2 gap-6 mb-6 bg-gray-50 p-4 rounded-lg">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-6 bg-gray-50 p-4 rounded-lg">
           <div className="flex items-center space-x-3">
             <FaCalendarAlt className="text-gray-600" />
             <div>
@@ -211,7 +211,7 @@ function Bookings() {
         </div>
 
         {/* Footer Section */}
-        <div className="flex justify-between items-center pt-4 border-t border-gray-200">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-gray-200">
           <div className="flex items-center space-x-2">
             <FaRupeeSign className="text-Darkgreen text-xl" />
             <div>
@@ -225,13 +225,13 @@ function Bookings() {
               <>
                 <button 
                   onClick={() => navigate(`/ticket/${booking.id}`)}
-                  className="flex items-center px-4 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700 transition-colors"
+                  className="flex items-center px-3 md:px-4 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700 transition-colors text-sm md:text-base"
                 >
                   <FaTicketAlt className="mr-2" />
                   View Ticket
                 </button>
                 <button 
-                  className="px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 transition-colors"
+                  className="px-3 md:px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 transition-colors text-sm md:text-base"
                 >
                   Cancel
                 </button>
@@ -244,15 +244,15 @@ function Bookings() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-100 pt-24 md:pt-28 pb-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-gray-900">My Bookings</h1>
-            <div className="flex items-center space-x-4">
+        <div className="bg-white rounded-lg shadow-sm p-4 md:p-6 mb-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <h1 className="text-xl md:text-2xl font-bold text-gray-900">My Bookings</h1>
+            <div className="flex items-center space-x-4 w-full sm:w-auto">
               <select 
-                className="form-select rounded-md border-gray-300 shadow-sm focus:border-Darkgreen focus:ring focus:ring-green-200"
+                className="w-full sm:w-auto form-select rounded-md border-gray-300 shadow-sm focus:border-Darkgreen focus:ring focus:ring-green-200 px-4 py-2"
                 onChange={(e) => setActiveTab(e.target.value)}
                 value={activeTab}
               >

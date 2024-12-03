@@ -78,20 +78,20 @@ function FaqS() {
   );
 
   return (
-    <div className="min-h-screen bg-white2">
+    <div className="min-h-screen bg-white2 pt-24 md:pt-28">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen py-20 px-8">
+      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen py-16 md:py-20 px-4 md:px-8">
         <div className="max-w-6xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white2 mb-6">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white2 mb-4 md:mb-6">
             Frequently Asked Questions
           </h1>
-          <p className="text-lg md:text-xl text-white2 opacity-90 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-white2 opacity-90 max-w-2xl mx-auto px-4">
             Find answers to common questions about our bus booking service
           </p>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-8 py-16 -mt-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-12 md:py-16">
         {/* Search Input */}
         <div className="relative mb-12">
           <div className="relative">
@@ -163,7 +163,7 @@ function FaqS() {
       </div>
 
       {/* Contact Section */}
-      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen text-white2 py-16 px-8 mt-16">
+      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen text-white2 py-12 md:py-16 px-4 sm:px-6 md:px-8 mt-8 md:mt-16">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
             Still have questions?

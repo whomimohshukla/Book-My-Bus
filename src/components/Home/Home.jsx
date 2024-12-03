@@ -151,7 +151,7 @@ function Home() {
   return (
     <div className="font-poppins text-gray-800">
       {/* Hero Section */}
-      <div className="relative min-h-screen bg-gradient-to-br from-gray-50 to-white2 flex flex-col justify-center">
+      <div className="relative min-h-screen bg-gradient-to-br from-gray-50 to-white2 flex flex-col justify-center mt-24 md:mt-16">
         <div className="container mx-auto px-4 py-12 md:py-20">
           <div className="flex flex-col md:flex-row items-center justify-between gap-12">
             <div className="flex flex-col gap-6 text-center md:text-left max-w-xl">

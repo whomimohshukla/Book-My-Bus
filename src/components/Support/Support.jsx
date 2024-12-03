@@ -71,20 +71,20 @@ function Support() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white2 py-12 px-4 font-poppins">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white2 pt-28 md:pt-32 px-4 sm:px-6 md:px-8 font-poppins">
       <div className="container mx-auto max-w-6xl">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-8 md:mb-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
             How Can We <span className="text-Darkgreen">Help?</span>
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
             We're here to help make your journey smooth and comfortable
           </p>
         </div>
 
         {/* Contact Cards */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-16">
           <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
             <div className="w-12 h-12 bg-gradient-to-r from-Darkgreen to-LightGreen rounded-full flex items-center justify-center mb-4">
               <FaPhone className="text-white text-xl" />
@@ -131,16 +131,16 @@ function Support() {
         </div>
 
         {/* FAQ Section */}
-        <div className="mb-16">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+        <div className="mb-12 md:mb-16">
+          <div className="text-center mb-6 md:mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
               Frequently Asked Questions
             </h2>
-            <p className="text-gray-600">
+            <p className="text-base sm:text-lg text-gray-600">
               Find quick answers to common questions about our services
             </p>
           </div>
-          <div className="bg-white rounded-xl shadow-lg p-6 md:p-8">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 md:p-8">
             {faqs.map((faq, index) => (
               <FAQItem key={index} {...faq} />
             ))}
@@ -148,7 +148,7 @@ function Support() {
         </div>
 
         {/* Contact Form */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
+        <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
           <div className="max-w-2xl mx-auto">
             <div className="text-center mb-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">

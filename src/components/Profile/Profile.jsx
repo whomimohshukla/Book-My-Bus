@@ -109,29 +109,29 @@ function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-8">
+    <div className="min-h-screen bg-gray-100 pt-28 md:pt-32 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-6 sm:p-8">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">My Profile</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">My Profile</h1>
           <button
             onClick={() => setIsEditing(!isEditing)}
-            className="px-4 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700 transition-colors"
+            className="px-3 sm:px-4 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700 transition-colors text-sm sm:text-base"
             disabled={isLoading}
           >
             {isEditing ? 'Cancel' : 'Edit Profile'}
           </button>
         </div>
 
-        <div className="flex items-center space-x-6 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 mb-8">
           <img
             src={user.image}
             alt={`${user.name}'s avatar`}
-            className="w-24 h-24 rounded-full border-4 border-Darkgreen"
+            className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-Darkgreen mb-4 sm:mb-0"
           />
-          <div>
-            <h2 className="text-2xl font-semibold text-gray-800">{user.name}</h2>
-            <p className="text-gray-600">{user.email}</p>
-            <span className="inline-block px-3 py-1 mt-2 bg-green-100 text-Darkgreen rounded-full text-sm">
+          <div className="break-words">
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 truncate">{user.name}</h2>
+            <p className="text-gray-600 text-sm sm:text-base break-all">{user.email}</p>
+            <span className="inline-block px-3 py-1 mt-2 bg-green-100 text-Darkgreen rounded-full text-xs sm:text-sm">
               {user.role} - {user.passengerType}
             </span>
           </div>
@@ -265,11 +265,11 @@ function Profile() {
               <dl className="divide-y divide-gray-200">
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">Full name</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.name}</dd>
+                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-words">{user.name}</dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">Email address</dt>
-                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.email}</dd>
+                  <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2 break-all">{user.email}</dd>
                 </div>
                 <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
                   <dt className="text-sm font-medium text-gray-500">Role</dt>

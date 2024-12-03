@@ -122,8 +122,8 @@ function Login() {
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      <div className="min-h-screen bg-gradient-to-br from-Darkgreen/5 to-LightGreen/5">
-        <div className="flex flex-col items-center justify-center min-h-screen px-4">
+      <div className="min-h-screen bg-gradient-to-br from-Darkgreen/5 to-LightGreen/5 pt-24 md:pt-28">
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-6rem)] md:min-h-[calc(100vh-7rem)] px-4 py-8">
           {/* Logo Section */}
           <div className="mb-8 text-center">
             <div className="w-16 h-16 bg-gradient-to-r from-Darkgreen to-LightGreen rounded-full flex items-center justify-center mx-auto mb-4">

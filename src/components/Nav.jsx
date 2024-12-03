@@ -96,37 +96,13 @@ function Nav() {
             />
           </Link>
 
-          {/* Hamburger Menu for Mobile */}
-          <button
-            ref={hamburgerRef}
-            className="lg:hidden p-1.5 rounded-lg hover:bg-neutral-100 transition-colors"
-            onClick={toggleMobileMenu}
-            aria-label="Toggle menu"
-          >
-            <svg
-              className="w-5 h-5 text-neutral-700"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"}
-              />
-            </svg>
-          </button>
-
-          {/* Navigation Links - Desktop */}
-          <div className="hidden lg:flex items-center space-x-8">
+          {/* Desktop Navigation Links */}
+          <div className="hidden lg:flex items-center space-x-6">
             <NavLink
               to="/"
               className={({ isActive }) =>
-                `px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  isActive 
-                    ? 'text-primary-600 bg-primary-50' 
-                    : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50'
+                `text-sm font-medium ${
+                  isActive ? 'text-Darkgreen' : 'text-gray-700 hover:text-Darkgreen'
                 }`
               }
             >
@@ -135,10 +111,8 @@ function Nav() {
             <NavLink
               to="/about"
               className={({ isActive }) =>
-                `px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  isActive 
-                    ? 'text-primary-600 bg-primary-50' 
-                    : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50'
+                `text-sm font-medium ${
+                  isActive ? 'text-Darkgreen' : 'text-gray-700 hover:text-Darkgreen'
                 }`
               }
             >
@@ -147,10 +121,8 @@ function Nav() {
             <NavLink
               to="/FAQs"
               className={({ isActive }) =>
-                `px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  isActive 
-                    ? 'text-primary-600 bg-primary-50' 
-                    : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50'
+                `text-sm font-medium ${
+                  isActive ? 'text-Darkgreen' : 'text-gray-700 hover:text-Darkgreen'
                 }`
               }
             >
@@ -159,10 +131,8 @@ function Nav() {
             <NavLink
               to="/contact"
               className={({ isActive }) =>
-                `px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  isActive 
-                    ? 'text-primary-600 bg-primary-50' 
-                    : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50'
+                `text-sm font-medium ${
+                  isActive ? 'text-Darkgreen' : 'text-gray-700 hover:text-Darkgreen'
                 }`
               }
             >
@@ -171,10 +141,8 @@ function Nav() {
             <NavLink
               to="/blogs"
               className={({ isActive }) =>
-                `px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  isActive 
-                    ? 'text-primary-600 bg-primary-50' 
-                    : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50'
+                `text-sm font-medium ${
+                  isActive ? 'text-Darkgreen' : 'text-gray-700 hover:text-Darkgreen'
                 }`
               }
             >
@@ -183,16 +151,38 @@ function Nav() {
             <NavLink
               to="/support"
               className={({ isActive }) =>
-                `px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                  isActive 
-                    ? 'text-primary-600 bg-primary-50' 
-                    : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50'
+                `text-sm font-medium ${
+                  isActive ? 'text-Darkgreen' : 'text-gray-700 hover:text-Darkgreen'
                 }`
               }
             >
               Support
             </NavLink>
           </div>
+
+          {/* Mobile Menu Button - Three Dots */}
+          <button
+            ref={hamburgerRef}
+            className="lg:hidden w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+            onClick={toggleMobileMenu}
+            aria-label="Toggle menu"
+          >
+            {user ? (
+              <div className="w-8 h-8 rounded-full bg-Darkgreen text-white flex items-center justify-center text-sm font-medium">
+                {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+              </div>
+            ) : (
+              <svg
+                className="w-5 h-5 text-neutral-700"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <circle cx="5" cy="12" r="2" />
+                <circle cx="12" cy="12" r="2" />
+                <circle cx="19" cy="12" r="2" />
+              </svg>
+            )}
+          </button>
 
           {/* Mobile Menu */}
           <div
@@ -204,14 +194,47 @@ function Nav() {
             } max-h-[calc(100vh-68px)] sm:max-h-[calc(100vh-96px)] overflow-y-auto`}
           >
             <div className="bg-white shadow-lg rounded-b-2xl border-t border-neutral-100">
+              {user ? (
+                <div className="px-4 py-3 border-b border-neutral-100">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-full bg-Darkgreen text-white flex items-center justify-center text-lg font-medium">
+                      {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">{user.name || 'User'}</p>
+                      <p className="text-xs text-gray-500">{user.email}</p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="px-4 py-3 border-b border-neutral-100">
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link
+                      to="/login"
+                      className="flex items-center justify-center px-4 py-2 text-sm font-medium text-Darkgreen bg-white border border-Darkgreen rounded-md hover:bg-gray-50 transition-all duration-300"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      to="/signup"
+                      className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-Darkgreen to-LightGreen rounded-md shadow-sm hover:shadow transition-all duration-300"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                </div>
+              )}
+
               <div className="px-4 py-3 space-y-1">
                 <NavLink
                   to="/"
                   className={({ isActive }) =>
                     `block w-full px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                       isActive 
-                        ? 'text-primary-600 bg-primary-50' 
-                        : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50'
+                        ? 'text-Darkgreen bg-gray-100' 
+                        : 'text-gray-700 hover:text-Darkgreen hover:bg-gray-100'
                     }`
                   }
                   onClick={() => setMobileMenuOpen(false)}
@@ -223,8 +246,8 @@ function Nav() {
                   className={({ isActive }) =>
                     `block w-full px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                       isActive 
-                        ? 'text-primary-600 bg-primary-50' 
-                        : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50'
+                        ? 'text-Darkgreen bg-gray-100' 
+                        : 'text-gray-700 hover:text-Darkgreen hover:bg-gray-100'
                     }`
                   }
                   onClick={() => setMobileMenuOpen(false)}
@@ -236,8 +259,8 @@ function Nav() {
                   className={({ isActive }) =>
                     `block w-full px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                       isActive 
-                        ? 'text-primary-600 bg-primary-50' 
-                        : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50'
+                        ? 'text-Darkgreen bg-gray-100' 
+                        : 'text-gray-700 hover:text-Darkgreen hover:bg-gray-100'
                     }`
                   }
                   onClick={() => setMobileMenuOpen(false)}
@@ -249,8 +272,8 @@ function Nav() {
                   className={({ isActive }) =>
                     `block w-full px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                       isActive 
-                        ? 'text-primary-600 bg-primary-50' 
-                        : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50'
+                        ? 'text-Darkgreen bg-gray-100' 
+                        : 'text-gray-700 hover:text-Darkgreen hover:bg-gray-100'
                     }`
                   }
                   onClick={() => setMobileMenuOpen(false)}
@@ -262,8 +285,8 @@ function Nav() {
                   className={({ isActive }) =>
                     `block w-full px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                       isActive 
-                        ? 'text-primary-600 bg-primary-50' 
-                        : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50'
+                        ? 'text-Darkgreen bg-gray-100' 
+                        : 'text-gray-700 hover:text-Darkgreen hover:bg-gray-100'
                     }`
                   }
                   onClick={() => setMobileMenuOpen(false)}
@@ -275,8 +298,8 @@ function Nav() {
                   className={({ isActive }) =>
                     `block w-full px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                       isActive 
-                        ? 'text-primary-600 bg-primary-50' 
-                        : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50'
+                        ? 'text-Darkgreen bg-gray-100' 
+                        : 'text-gray-700 hover:text-Darkgreen hover:bg-gray-100'
                     }`
                   }
                   onClick={() => setMobileMenuOpen(false)}
@@ -284,177 +307,27 @@ function Nav() {
                   Support
                 </NavLink>
               </div>
-
-              {!user ? (
-                <div className="px-3 py-3 border-t border-neutral-100 bg-gray-50">
-                  <div className="grid grid-cols-2 gap-2">
-                    <Link
-                      to="/signup"
-                      className="flex items-center justify-center px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-Darkgreen to-LightGreen rounded-md shadow-sm hover:shadow transition-all duration-300"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Sign Up
-                    </Link>
-                    <Link
-                      to="/login"
-                      className="flex items-center justify-center px-3 py-1.5 text-xs font-medium text-Darkgreen bg-white border border-Darkgreen rounded-md hover:bg-gray-50 transition-all duration-300"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Login
-                    </Link>
-                  </div>
-                </div>
-              ) : null}
             </div>
           </div>
 
-          {/* Profile Section */}
-          <div className="flex justify-center items-center space-x-4">
-            {!user ? (
-              <div className="flex items-center space-x-3">
-                <CTAButton active={true} linkto="/signup">
-                  Sign Up
-                </CTAButton>
-                <CTAButton active={false} linkto="/login">
-                  Login
-                </CTAButton>
+          {/* Desktop Auth Buttons */}
+          {!user ? (
+            <div className="hidden lg:flex items-center space-x-3">
+              <CTAButton active={false} linkto="/login">
+                Login
+              </CTAButton>
+              <CTAButton active={true} linkto="/signup">
+                Sign Up
+              </CTAButton>
+            </div>
+          ) : (
+            <div className="hidden lg:flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-full bg-Darkgreen text-white flex items-center justify-center text-lg font-medium cursor-pointer hover:bg-Darkgreen/90 transition-colors"
+                   onClick={toggleMobileMenu}>
+                {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>
-            ) : (
-              <div className="relative flex items-center space-x-4">
-                {/* Profile Button - Simplified */}
-                <button
-                  ref={avatarRef}
-                  className="flex items-center space-x-2 focus:outline-none group"
-                  onClick={toggleDropdown}
-                  aria-label="Toggle profile menu"
-                >
-                  <div className="relative w-10 h-10 rounded-full bg-gradient-to-r from-Darkgreen to-LightGreen p-[2px] overflow-hidden transition-transform duration-200 hover:scale-105">
-                    <div className="w-full h-full rounded-full overflow-hidden bg-white">
-                      {user?.image ? (
-                        <img
-                          src={user.image}
-                          alt="Profile"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gray-100 text-Darkgreen">
-                          <svg
-                            className="w-6 h-6"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </button>
-
-                {/* Enhanced Dropdown Menu */}
-                {isDropdownOpen && (
-                  <div
-                    ref={dropdownRef}
-                    className="absolute right-0 top-14 w-72 bg-white rounded-xl shadow-2xl py-3 z-50 transform origin-top-right transition-all duration-200 ease-out border border-neutral-100"
-                    style={{
-                      maxHeight: 'calc(100vh - 96px)',
-                      overflowY: 'auto'
-                    }}
-                  >
-                    {/* Profile Header */}
-                    <div className="px-4 py-2 border-b border-neutral-100">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-r from-primary-500 to-primary-600 p-[2px] shadow-lg">
-                          <div className="w-full h-full rounded-full overflow-hidden bg-white">
-                            {user?.image ? (
-                              <img src={user.image} alt="Profile" className="w-full h-full object-cover" />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-primary-50">
-                                <svg className="w-7 h-7 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                                </svg>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-base font-semibold text-neutral-800 truncate">
-                            {user?.name || 'User'}
-                          </p>
-                          <p className="text-sm text-neutral-500 truncate">
-                            {user?.email}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Menu Items */}
-                    <div className="py-2">
-                      {/* Admin Dashboard */}
-                      {isAdmin && (
-                        <Link
-                          to="/admin"
-                          className="flex items-center px-4 py-2.5 text-sm text-neutral-700 hover:bg-primary-50 hover:text-primary-600 group"
-                          onClick={() => setDropdownOpen(false)}
-                        >
-                          <span className="w-9 h-9 flex items-center justify-center rounded-lg bg-primary-100 text-primary-600 mr-3">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
-                            </svg>
-                          </span>
-                          Admin Dashboard
-                        </Link>
-                      )}
-
-                      <Link
-                        to="/profile"
-                        className="flex items-center px-4 py-2.5 text-sm text-neutral-700 hover:bg-primary-50 hover:text-primary-600 group"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        <span className="w-9 h-9 flex items-center justify-center rounded-lg bg-primary-100 text-primary-600 mr-3">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                        </span>
-                        Profile Settings
-                      </Link>
-
-                      <Link
-                        to="/bookings"
-                        className="flex items-center px-4 py-2.5 text-sm text-neutral-700 hover:bg-primary-50 hover:text-primary-600 group"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        <span className="w-9 h-9 flex items-center justify-center rounded-lg bg-primary-100 text-primary-600 mr-3">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                          </svg>
-                        </span>
-                        My Bookings
-                      </Link>
-
-                      <div className="border-t border-neutral-100 my-2"></div>
-
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center w-full px-4 py-2.5 text-sm text-error-600 hover:bg-error-50 group"
-                      >
-                        <span className="w-9 h-9 flex items-center justify-center rounded-lg bg-error-100 text-error-600 mr-3">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                          </svg>
-                        </span>
-                        Sign Out
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </nav>
     </header>

@@ -50,7 +50,7 @@ function Login() {
           token: credentialResponse.credential,
         }
       );
-      login(response.data.token);
+      login(data.token, data.role);
       toast.success("Logged in with Google successfully!");
       navigate("/");
     } catch (error) {
@@ -79,11 +79,14 @@ function Login() {
     }
 
     try {
-      const response = await axios.post("http://localhost:8000/api/user/login", {
-        email,
-        password,
-      });
-      login(response.data.token);
+      const response = await axios.post(
+        "http://localhost:8000/api/user/login",
+        {
+          email,
+          password,
+        }
+      );
+      login(response.data.token,response.data.role);
       toast.success("Logged in successfully!");
       navigate("/getTicket");
       setEmail("");
@@ -110,7 +113,9 @@ function Login() {
               <FaBus className="text-white2 text-3xl" />
             </div>
             <h1 className="text-3xl font-bold text-gray-800">Welcome Back!</h1>
-            <p className="text-gray-600 mt-2">Sign in to continue your journey</p>
+            <p className="text-gray-600 mt-2">
+              Sign in to continue your journey
+            </p>
           </div>
 
           {/* Login Card */}
@@ -119,7 +124,9 @@ function Login() {
             <div className="mb-8">
               <button
                 onClick={() => {
-                  const googleLoginBtn = document.querySelector('.google-login-button');
+                  const googleLoginBtn = document.querySelector(
+                    ".google-login-button"
+                  );
                   if (googleLoginBtn) {
                     googleLoginBtn.click();
                   }
@@ -127,16 +134,16 @@ function Login() {
                 className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-lg border-2 border-gray-200 hover:border-LightGreen hover:bg-gray-50 hover:shadow-md transition-all duration-300 group relative overflow-hidden"
               >
                 <div className="absolute inset-0 w-3 bg-gradient-to-r from-Darkgreen to-LightGreen transform -skew-x-12 -translate-x-full transition-transform duration-500 ease-out group-hover:translate-x-full"></div>
-                <img 
-                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" 
-                  alt="Google" 
+                <img
+                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                  alt="Google"
                   className="w-6 h-6 transform group-hover:scale-110 transition-transform duration-300"
                 />
                 <span className="text-gray-700 font-medium text-base transform group-hover:scale-105 transition-transform duration-300">
                   Continue with Google
                 </span>
               </button>
-              
+
               {/* Hidden Google Login Component */}
               <div className="hidden">
                 <GoogleLogin
@@ -209,17 +216,26 @@ function Login() {
             <div className="mt-8 text-center text-sm text-gray-600">
               <p className="mb-4">
                 By continuing, you agree to our{" "}
-                <Link to="/termsAndConditions" className="text-Darkgreen hover:underline">
+                <Link
+                  to="/termsAndConditions"
+                  className="text-Darkgreen hover:underline"
+                >
                   Terms & Conditions
                 </Link>{" "}
                 and{" "}
-                <Link to="/privacyPolicy" className="text-Darkgreen hover:underline">
+                <Link
+                  to="/privacyPolicy"
+                  className="text-Darkgreen hover:underline"
+                >
                   Privacy Policy
                 </Link>
               </p>
               <p>
                 Don't have an account?{" "}
-                <Link to="/signup" className="text-Darkgreen font-semibold hover:underline">
+                <Link
+                  to="/signup"
+                  className="text-Darkgreen font-semibold hover:underline"
+                >
                   Create Account
                 </Link>
               </p>
@@ -227,7 +243,7 @@ function Login() {
           </div>
         </div>
 
-        <ToastContainer 
+        <ToastContainer
           position="bottom-right"
           autoClose={3000}
           hideProgressBar={false}

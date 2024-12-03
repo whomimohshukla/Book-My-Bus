@@ -253,110 +253,92 @@ function Nav() {
                   {isDropdownOpen && (
                     <div
                       ref={dropdownRef}
-                      className="absolute right-0 top-14 w-64 bg-grayWhite rounded-xl shadow-xl py-2 z-50 transform opacity-100 scale-100 transition-all duration-200 border border-gray-700"
+                      className="absolute right-0 top-14 w-72 bg-white rounded-xl shadow-2xl py-3 z-50 transform transition-all duration-200 ease-out border border-neutral-100"
                     >
-                      {/* User Info Section */}
-                      <div className="px-4 py-3 border-b border-gray-700">
-                        <p className="text-sm font-semibold text-gray-200">
-                          {user?.name || 'User'}
-                        </p>
-                        <p className="text-xs text-gray-400 truncate">
-                          {user?.email}
-                        </p>
+                      {/* Profile Header */}
+                      <div className="px-4 py-2 border-b border-neutral-100">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-r from-primary-500 to-primary-600 p-[2px] shadow-lg">
+                            <div className="w-full h-full rounded-full overflow-hidden bg-white">
+                              {user?.image ? (
+                                <img src={user.image} alt="Profile" className="w-full h-full object-cover" />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-primary-50">
+                                  <svg className="w-7 h-7 text-primary-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                  </svg>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-base font-semibold text-neutral-800 truncate">
+                              {user?.name || 'User'}
+                            </p>
+                            <p className="text-sm text-neutral-500 truncate">
+                              {user?.email}
+                            </p>
+                          </div>
+                        </div>
                       </div>
 
-                      {/* Quick Actions */}
+                      {/* Menu Items */}
                       <div className="py-2">
                         {/* Admin Dashboard */}
                         {isAdmin && (
                           <Link
                             to="/admin"
-                            className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-Darkgreen transition-colors duration-150"
+                            className="flex items-center px-4 py-2.5 text-sm text-neutral-700 hover:bg-primary-50 hover:text-primary-600 group"
                             onClick={() => setDropdownOpen(false)}
                           >
-                            <svg
-                              className="w-4 h-4 mr-3"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
-                              />
-                            </svg>
+                            <span className="w-9 h-9 flex items-center justify-center rounded-lg bg-primary-100 text-primary-600 mr-3">
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                              </svg>
+                            </span>
                             Admin Dashboard
                           </Link>
                         )}
 
-                        {/* Profile */}
                         <Link
                           to="/profile"
-                          className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-Darkgreen transition-colors duration-150"
+                          className="flex items-center px-4 py-2.5 text-sm text-neutral-700 hover:bg-primary-50 hover:text-primary-600 group"
                           onClick={() => setDropdownOpen(false)}
                         >
-                          <svg
-                            className="w-4 h-4 mr-3"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                            />
-                          </svg>
+                          <span className="w-9 h-9 flex items-center justify-center rounded-lg bg-primary-100 text-primary-600 mr-3">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                          </span>
                           Profile Settings
                         </Link>
 
-                        {/* Bookings */}
                         <Link
                           to="/bookings"
-                          className="flex items-center px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-Darkgreen transition-colors duration-150"
+                          className="flex items-center px-4 py-2.5 text-sm text-neutral-700 hover:bg-primary-50 hover:text-primary-600 group"
                           onClick={() => setDropdownOpen(false)}
                         >
-                          <svg
-                            className="w-4 h-4 mr-3"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                            />
-                          </svg>
+                          <span className="w-9 h-9 flex items-center justify-center rounded-lg bg-primary-100 text-primary-600 mr-3">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                            </svg>
+                          </span>
                           My Bookings
                         </Link>
 
-                        {/* Logout */}
-                        <div className="border-t border-gray-700 mt-2">
-                          <button
-                            onClick={handleLogout}
-                            className="flex items-center w-full px-4 py-2 text-sm text-red-400 hover:bg-gray-700 hover:text-red-300 transition-colors duration-150"
-                          >
-                            <svg
-                              className="w-4 h-4 mr-3"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                              />
+                        <div className="border-t border-neutral-100 my-2"></div>
+
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center w-full px-4 py-2.5 text-sm text-error-600 hover:bg-error-50 group"
+                        >
+                          <span className="w-9 h-9 flex items-center justify-center rounded-lg bg-error-100 text-error-600 mr-3">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>
-                            Sign Out
-                          </button>
-                        </div>
+                          </span>
+                          Sign Out
+                        </button>
                       </div>
                     </div>
                   )}

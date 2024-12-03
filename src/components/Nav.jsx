@@ -23,6 +23,7 @@ function Nav() {
     const handleScroll = () => {
       const scrollPosition = window.scrollY;
       setIsScrolled(scrollPosition > 20);
+      // Only close mobile menu on scroll, not dropdown
       if (isMobileMenuOpen) {
         setMobileMenuOpen(false);
       }
@@ -350,7 +351,11 @@ function Nav() {
                 {isDropdownOpen && (
                   <div
                     ref={dropdownRef}
-                    className="absolute right-0 top-14 w-72 bg-white rounded-xl shadow-2xl py-3 z-50 transform transition-all duration-200 ease-out border border-neutral-100"
+                    className="absolute right-0 top-14 w-72 bg-white rounded-xl shadow-2xl py-3 z-50 transform origin-top-right transition-all duration-200 ease-out border border-neutral-100"
+                    style={{
+                      maxHeight: 'calc(100vh - 96px)',
+                      overflowY: 'auto'
+                    }}
                   >
                     {/* Profile Header */}
                     <div className="px-4 py-2 border-b border-neutral-100">

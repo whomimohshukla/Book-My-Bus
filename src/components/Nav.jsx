@@ -86,25 +86,25 @@ function Nav() {
           : 'bg-grayWhite'
       }`}
     >
-      <nav className="mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <nav className="mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-3">
         <div className="flex justify-between items-center max-w-7xl mx-auto">
           <Link to="/" className="flex items-center space-x-2 relative">
             <img
               src={mylogo}
               alt="Logo"
-              className="w-[120px] h-[80px] object-contain"
+              className="w-[80px] h-[50px] sm:w-[120px] sm:h-[80px] object-contain"
             />
           </Link>
 
           {/* Hamburger Menu for Mobile */}
           <button
             ref={hamburgerRef}
-            className="lg:hidden p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+            className="lg:hidden p-1.5 rounded-lg hover:bg-neutral-100 transition-colors"
             onClick={toggleMobileMenu}
             aria-label="Toggle menu"
           >
             <svg
-              className="w-6 h-6 text-neutral-700"
+              className="w-5 h-5 text-neutral-700"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -197,11 +197,11 @@ function Nav() {
           {/* Mobile Menu */}
           <div
             ref={mobileMenuRef}
-            className={`lg:hidden fixed inset-x-0 top-[96px] transition-all duration-300 transform ${
+            className={`lg:hidden fixed inset-x-0 top-[68px] sm:top-[96px] transition-all duration-300 transform ${
               isMobileMenuOpen 
                 ? 'translate-x-0 opacity-100' 
                 : 'translate-x-full opacity-0'
-            } max-h-[calc(100vh-96px)] overflow-y-auto`}
+            } max-h-[calc(100vh-68px)] sm:max-h-[calc(100vh-96px)] overflow-y-auto`}
           >
             <div className="bg-white shadow-lg rounded-b-2xl border-t border-neutral-100">
               <div className="px-4 py-3 space-y-1">
@@ -286,14 +286,22 @@ function Nav() {
               </div>
 
               {!user ? (
-                <div className="px-4 py-3 border-t border-neutral-100">
-                  <div className="grid gap-2 pb-4">
-                    <CTAButton active={true} linkto="/signup" className="w-full">
+                <div className="px-3 py-3 border-t border-neutral-100 bg-gray-50">
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link
+                      to="/signup"
+                      className="flex items-center justify-center px-3 py-1.5 text-xs font-medium text-white bg-gradient-to-r from-Darkgreen to-LightGreen rounded-md shadow-sm hover:shadow transition-all duration-300"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
                       Sign Up
-                    </CTAButton>
-                    <CTAButton active={false} linkto="/login" className="w-full">
+                    </Link>
+                    <Link
+                      to="/login"
+                      className="flex items-center justify-center px-3 py-1.5 text-xs font-medium text-Darkgreen bg-white border border-Darkgreen rounded-md hover:bg-gray-50 transition-all duration-300"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
                       Login
-                    </CTAButton>
+                    </Link>
                   </div>
                 </div>
               ) : null}

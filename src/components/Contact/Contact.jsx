@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { FaPhoneAlt, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 import { FiFacebook, FiTwitter, FiInstagram, FiLinkedin } from "react-icons/fi";
-import busImage from "/home/whomimohshukla/Desktop/Project Mine/BookMyBus/src/assets/maps.jpg";
+import busImage from "../../assets/maps.jpg";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 

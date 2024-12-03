@@ -10,25 +10,25 @@ function BusSchedule({ schedule }) {
           <p className="text-lg font-semibold">
             {format(new Date(schedule.departureTime), "h:mm a")}
           </p>
-          <p className="text-sm text-gray-500">Departure</p>
+          <p className="text-sm text-neutral-500">Departure</p>
         </div>
-        <div className="flex-1 mx-4 border-t-2 border-dashed border-gray-300"></div>
+        <div className="flex-1 mx-4 border-t-2 border-dashed border-neutral-300"></div>
         <div>
           <p className="text-lg font-semibold">
             {format(new Date(schedule.arrivalTime), "h:mm a")}
           </p>
-          <p className="text-sm text-gray-500">Arrival</p>
+          <p className="text-sm text-neutral-500">Arrival</p>
         </div>
       </div>
       <div className="mt-4 flex justify-between items-center">
         <div className="text-sm">
           <span className="font-semibold">Available Seats:</span>{" "}
-          <span className={`${schedule.availableSeats > 5 ? 'text-green-600' : 'text-red-600'}`}>
+          <span className={`${schedule.availableSeats > 5 ? 'text-success-600' : 'text-error-600'}`}>
             {schedule.availableSeats}
           </span>
         </div>
         <button
-          className="bg-Darkgreen text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-colors"
+          className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
           onClick={() => {/* TODO: Implement booking logic */}}
         >
           Book Now
@@ -40,10 +40,10 @@ function BusSchedule({ schedule }) {
 
 function BusResult({ bus }) {
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+    <div className="bg-neutral-50 rounded-xl shadow-lg p-6 mb-6">
       <div className="border-b pb-4 mb-4">
-        <h3 className="text-xl font-bold text-gray-800">{bus.name || 'Bus Service'}</h3>
-        <p className="text-sm text-gray-600">Bus ID: {bus._id}</p>
+        <h3 className="text-xl font-bold text-neutral-800">{bus.name || 'Bus Service'}</h3>
+        <p className="text-sm text-neutral-600">Bus ID: {bus._id}</p>
       </div>
       
       {bus.schedules && bus.schedules.length > 0 ? (
@@ -53,7 +53,7 @@ function BusResult({ bus }) {
           ))}
         </div>
       ) : (
-        <p className="text-center text-gray-500 py-4">No schedules available</p>
+        <p className="text-center text-neutral-500 py-4">No schedules available</p>
       )}
     </div>
   );
@@ -112,14 +112,14 @@ function BusSearch2() {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="bg-white rounded-xl shadow-2xl p-8 mb-8">
-        <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
+        <h2 className="text-3xl font-bold text-center mb-8 text-neutral-800">
           Search for Buses
         </h2>
         
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-neutral-700 mb-2">
                 From
               </label>
               <input
@@ -127,7 +127,7 @@ function BusSearch2() {
                 type="text"
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-Darkgreen focus:border-transparent"
+                className="w-full p-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent"
                 required
                 placeholder="Select departure city"
               />
@@ -139,7 +139,7 @@ function BusSearch2() {
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-neutral-700 mb-2">
                 To
               </label>
               <input
@@ -147,7 +147,7 @@ function BusSearch2() {
                 type="text"
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-Darkgreen focus:border-transparent"
+                className="w-full p-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent"
                 required
                 placeholder="Select destination city"
               />
@@ -160,7 +160,7 @@ function BusSearch2() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-neutral-700 mb-2">
               Date of Journey
             </label>
             <input
@@ -168,7 +168,7 @@ function BusSearch2() {
               value={date}
               onChange={(e) => setDate(e.target.value)}
               min={today}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-Darkgreen focus:border-transparent"
+              className="w-full p-3 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary-600 focus:border-transparent"
               required
             />
           </div>
@@ -176,7 +176,7 @@ function BusSearch2() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-Darkgreen text-white font-semibold rounded-lg hover:bg-opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 bg-primary-600 text-white font-semibold rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Searching..." : "Search Buses"}
           </button>
@@ -184,14 +184,14 @@ function BusSearch2() {
       </div>
 
       {error && (
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-8">
-          <p className="text-red-700">{error}</p>
+        <div className="bg-error-50 border-l-4 border-error-500 p-4 mb-8">
+          <p className="text-error-700">{error}</p>
         </div>
       )}
 
       {searchResults && (
         <div className="mt-8">
-          <h3 className="text-2xl font-bold mb-6 text-center text-gray-800">
+          <h3 className="text-2xl font-bold mb-6 text-center text-neutral-800">
             {searchResults.length > 0
               ? "Available Buses"
               : "No buses found for this route"}

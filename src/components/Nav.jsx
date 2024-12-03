@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import mylogo from "/home/whomimohshukla/Desktop/Project Mine/BookMyBus/src/assets/bookMyBusLogo.jpg";
+import mylogo from "../assets/bookMyBusLogo.jpg";
 import CTAButton from "../Utls/Home/Button";
 import { useAuth } from "../contexts/AuthProvider";
 

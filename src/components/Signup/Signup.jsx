@@ -139,9 +139,9 @@ function Signup() {
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white2 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white2 flex items-center justify-center pt-24 md:pt-28 px-4 sm:px-6 lg:px-8">
         <ToastContainer />
-        <div className="max-w-md w-full space-y-8 bg-white rounded-2xl shadow-lg p-8">
+        <div className="w-full max-w-md space-y-8 bg-white rounded-2xl shadow-lg p-8 my-8">
           {/* Logo and Title */}
           <div className="text-center">
             <div className="w-16 h-16 bg-gradient-to-r from-Darkgreen to-LightGreen rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-105 transition-transform duration-300">

@@ -107,7 +107,7 @@ const BusManagement = () => {
           let operatorId = null;
           
           if (bus.operatorId) {
-            if (typeof bus.operatorId === 'object') {
+            if (typeof bus.operatorId === 'object' && bus.operatorId._id) {
               operatorId = bus.operatorId._id;
             } else if (typeof bus.operatorId === 'string') {
               operatorId = bus.operatorId;
@@ -126,7 +126,6 @@ const BusManagement = () => {
       }
     } catch (err) {
       setError('Failed to fetch buses: ' + (err.response?.data?.message || err.message));
-      console.error('Fetch buses error:', err);
       setBuses([]);
     } finally {
       setLoading(false);
@@ -159,7 +158,6 @@ const BusManagement = () => {
         setOperators([]);
       }
     } catch (err) {
-      console.error('Failed to fetch operators:', err);
       setOperators([]);
     }
   };
@@ -170,7 +168,6 @@ const BusManagement = () => {
     setError(null);
 
     try {
-      // Validate required fields
       const requiredFields = ['busNumber', 'busName', 'operatorId', 'busType', 'totalSeats'];
       const missingFields = requiredFields.filter(field => !formData[field]);
       
@@ -178,13 +175,11 @@ const BusManagement = () => {
         throw new Error(`Please fill in all required fields: ${missingFields.join(', ')}`);
       }
 
-      // Validate total seats
       const totalSeats = parseInt(formData.totalSeats);
       if (isNaN(totalSeats) || totalSeats <= 0) {
         throw new Error('Total seats must be a positive number');
       }
 
-      // Prepare the request data
       const requestData = {
         busNumber: formData.busNumber.trim(),
         busName: formData.busName.trim(),
@@ -208,18 +203,14 @@ const BusManagement = () => {
         }
       };
 
-      console.log('Sending request with data:', requestData);
-
       try {
         if (selectedBus) {
-          const response = await api.put(`/busRoute/buses/${selectedBus._id}`, requestData);
-          console.log('Update response:', response.data);
+          await api.put(`/busRoute/buses/${selectedBus._id}`, requestData);
         } else {
-          const response = await api.post('/busRoute/buses', requestData);
-          console.log('Create response:', response.data);
+          await api.post('/busRoute/buses', requestData);
         }
         
-        await fetchBuses(); // Refresh the list after successful operation
+        await fetchBuses();
         setShowForm(false);
         setFormData({
           busNumber: '',
@@ -231,7 +222,6 @@ const BusManagement = () => {
         });
         setSelectedBus(null);
       } catch (err) {
-        console.error('API Error:', err.response || err);
         const errorMessage = err.response?.data?.error || 
                            err.response?.data?.message || 
                            err.message || 
@@ -240,7 +230,6 @@ const BusManagement = () => {
       }
     } catch (err) {
       setError(err.message || 'Failed to create bus');
-      console.error('Error details:', err);
     } finally {
       setLoading(false);
     }
@@ -255,10 +244,9 @@ const BusManagement = () => {
       setLoading(true);
       setError(null);
       await api.delete(`/busRoute/buses/${id}`);
-      await fetchBuses(); // Refresh the list after successful deletion
+      await fetchBuses();
     } catch (err) {
       setError('Failed to delete bus: ' + (err.response?.data?.message || err.message));
-      console.error('Delete error:', err);
     } finally {
       setLoading(false);
     }
@@ -266,7 +254,6 @@ const BusManagement = () => {
 
   const handleEdit = (bus) => {
     if (!bus || !bus._id) {
-      console.error('Invalid bus data for editing');
       return;
     }
 
@@ -286,17 +273,17 @@ const BusManagement = () => {
     <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Section with Stats */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6 relative z-10">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800 font-poppins">Bus Management</h1>
+              <h1 className="text-3xl font-bold text-[#349E4D] font-poppins">Bus Management</h1>
               <p className="mt-2 text-sm text-gray-600 font-roboto">Manage your bus fleet and services</p>
             </div>
             <button
               onClick={() => setShowForm(!showForm)}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm 
-              font-medium text-white bg-blue-600 hover:bg-blue-700 hover:shadow-md
-              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+              font-medium text-white bg-[#349E4D] hover:bg-[#2C8440] hover:shadow-md
+              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#349E4D] 
               transition-all duration-300 ease-in-out transform hover:scale-105 font-roboto"
             >
               <FaPlus className="mr-2 -ml-1 h-5 w-5" />
@@ -306,16 +293,16 @@ const BusManagement = () => {
 
           {/* Stats Grid */}
           <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
+            <div className="bg-gradient-to-br from-[#E8F5EA] to-[#F7FBF7] overflow-hidden shadow rounded-lg">
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <FaBus className="h-6 w-6 text-blue-600" />
+                    <FaBus className="h-6 w-6 text-[#349E4D]" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
                       <dt className="text-sm font-medium text-gray-600 truncate font-roboto">Total Buses</dt>
-                      <dd className="text-2xl font-semibold text-gray-900 font-poppins">
+                      <dd className="text-2xl font-semibold text-[#349E4D] font-poppins">
                         {buses.length}
                       </dd>
                     </dl>
@@ -324,16 +311,16 @@ const BusManagement = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
+            <div className="bg-gradient-to-br from-[#E8F5EA] to-[#F7FBF7] overflow-hidden shadow rounded-lg">
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <FaUsers className="h-6 w-6 text-blue-600" />
+                    <FaUsers className="h-6 w-6 text-[#349E4D]" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
                       <dt className="text-sm font-medium text-gray-600 truncate font-roboto">Total Operators</dt>
-                      <dd className="text-2xl font-semibold text-gray-900 font-poppins">
+                      <dd className="text-2xl font-semibold text-[#349E4D] font-poppins">
                         {operators.length}
                       </dd>
                     </dl>
@@ -342,16 +329,16 @@ const BusManagement = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
+            <div className="bg-gradient-to-br from-[#E8F5EA] to-[#F7FBF7] overflow-hidden shadow rounded-lg">
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <FaRoute className="h-6 w-6 text-blue-600" />
+                    <FaRoute className="h-6 w-6 text-[#349E4D]" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
                       <dt className="text-sm font-medium text-gray-600 truncate font-roboto">Bus Types</dt>
-                      <dd className="text-2xl font-semibold text-gray-900 font-poppins">
+                      <dd className="text-2xl font-semibold text-[#349E4D] font-poppins">
                         {BUS_TYPES.length}
                       </dd>
                     </dl>
@@ -360,16 +347,16 @@ const BusManagement = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
+            <div className="bg-gradient-to-br from-[#E8F5EA] to-[#F7FBF7] overflow-hidden shadow rounded-lg">
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <FaWifi className="h-6 w-6 text-blue-600" />
+                    <FaWifi className="h-6 w-6 text-[#349E4D]" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
                       <dt className="text-sm font-medium text-gray-600 truncate font-roboto">Available Amenities</dt>
-                      <dd className="text-2xl font-semibold text-gray-900 font-poppins">
+                      <dd className="text-2xl font-semibold text-[#349E4D] font-poppins">
                         {availableAmenities.length}
                       </dd>
                     </dl>
@@ -383,16 +370,16 @@ const BusManagement = () => {
           <div className="mt-6">
             <div className="relative rounded-md shadow-sm">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FaSearch className="h-5 w-5 text-blue-600" />
+                <FaSearch className="h-5 w-5 text-[#349E4D]" />
               </div>
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="h-12 focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-12 
+                className="h-12 focus:ring-[#349E4D] focus:border-[#349E4D] block w-full pl-10 pr-12 
                 sm:text-sm border-gray-300 rounded-md bg-white shadow-sm 
                 transition-all duration-300 ease-in-out
-                hover:shadow-md hover:bg-gray-50 hover:border-blue-400
+                hover:shadow-md hover:bg-gray-50 hover:border-[#349E4D]
                 font-roboto"
                 placeholder="Search buses by number, name, or type..."
               />
@@ -541,9 +528,9 @@ const BusManagement = () => {
                     });
                   }}
                   className="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm 
-                  text-base font-medium rounded-md text-gray-800 bg-white 
-                  hover:bg-gray-50 hover:shadow-md hover:border-blue-400
-                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+                  text-base font-medium rounded-md text-gray-700 bg-white 
+                  hover:bg-gray-50 hover:shadow-md hover:border-[#349E4D]
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#349E4D] 
                   transition-all duration-300 ease-in-out font-roboto"
                 >
                   Cancel
@@ -551,9 +538,9 @@ const BusManagement = () => {
                 <button
                   type="submit"
                   className="inline-flex items-center px-6 py-3 border border-transparent rounded-md 
-                  shadow-sm text-base font-medium text-white bg-blue-600 
-                  hover:bg-blue-700 hover:shadow-md
-                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 
+                  shadow-sm text-base font-medium text-white bg-[#349E4D] 
+                  hover:bg-[#2C8440] hover:shadow-md
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#349E4D] 
                   transition-all duration-300 ease-in-out transform hover:scale-105 font-roboto"
                   disabled={loading}
                 >
@@ -589,7 +576,7 @@ const BusManagement = () => {
                         {(() => {
                           let operatorId = null;
                           if (bus.operatorId) {
-                            if (typeof bus.operatorId === 'object' && bus.operatorId._id) {
+                            if (typeof bus.operatorId === 'object') {
                               operatorId = bus.operatorId._id;
                             } else if (typeof bus.operatorId === 'string') {
                               operatorId = bus.operatorId;

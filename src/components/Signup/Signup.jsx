@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { useNavigate, Link } from "react-router-dom";
 import { FaGoogle, FaBus, FaUser, FaEnvelope, FaLock, FaIdCard, FaUserTag } from "react-icons/fa";
+import { useAuth } from "../../contexts/AuthProvider";
 
 function InputField({ label, type, name, value, onChange, placeholder, icon: Icon, error, as = "input", options = [] }) {
   return (
@@ -45,6 +46,7 @@ function InputField({ label, type, name, value, onChange, placeholder, icon: Ico
 
 function Signup() {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -56,10 +58,45 @@ function Signup() {
   });
   const [errors, setErrors] = useState({});
   const [otpSent, setOtpSent] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: "" });
+    }
+  };
+
+  const handleGoogleSignupSuccess = async (credentialResponse) => {
+    try {
+      setIsLoading(true);
+      const response = await axios.post(
+        "http://localhost:8000/api/user/google-signup",
+        {
+          token: credentialResponse.credential,
+        }
+      );
+      
+      if (response.status === 200) {
+        // Log in the user automatically after successful signup
+        const { token, user } = response.data;
+        login(token, user.role);
+        toast.success("Signup successful! You're now logged in.");
+        navigate("/"); // Navigate to home or dashboard
+      }
+    } catch (error) {
+      console.error("Google signup error:", error);
+      toast.error(error.response?.data?.message || "Google signup failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignupError = () => {
+    console.error("Google Sign-Up was unsuccessful.");
+    toast.error("Google signup failed. Please try again.");
   };
 
   const validate = () => {
@@ -97,7 +134,7 @@ function Signup() {
   const handleResendOtp = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/v1/resendOtp",
+        "http://localhost:8000/api/user/resend-otp",
         { email: formData.email }
       );
       if (response.status === 200) {
@@ -112,212 +149,252 @@ function Signup() {
     e.preventDefault();
     if (validate()) {
       try {
-        const response = await axios.post(
+        setIsLoading(true);
+        // First signup request
+        const signupResponse = await axios.post(
           "http://localhost:8000/api/user/signup",
           formData,
           { headers: { "Content-Type": "application/json" } }
         );
 
-        if (response.status === 200) {
-          toast.success("Signup successful");
-          setFormData({
-            name: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-            otp: "",
-            role: "Passenger",
-            passengerType: "Adult",
-          });
-          navigate("/");
+        if (signupResponse.status === 200) {
+          // Automatically login after successful signup
+          const loginResponse = await axios.post(
+            "http://localhost:8000/api/user/login",
+            {
+              email: formData.email,
+              password: formData.password,
+            }
+          );
+
+          if (loginResponse.status === 200) {
+            const { token, user } = loginResponse.data;
+            // Store auth data using the login function from context
+            login(token, user.role);
+            
+            toast.success("Account created successfully! You're now logged in.");
+            
+            // Clear form
+            setFormData({
+              name: "",
+              email: "",
+              password: "",
+              confirmPassword: "",
+              otp: "",
+              role: "Passenger",
+              passengerType: "Adult",
+            });
+
+            // Navigate based on role
+            if (user.role === 'Admin') {
+              navigate("/admin");
+            } else {
+              navigate("/getTicket");
+            }
+          }
         }
       } catch (err) {
+        console.error('Signup/Login error:', err);
         toast.error(err.response?.data?.message || "Something went wrong");
+      } finally {
+        setIsLoading(false);
       }
     }
   };
 
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white2 flex items-center justify-center pt-24 md:pt-28 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white2 flex items-center justify-center py-6 px-4 sm:px-6 lg:px-8">
         <ToastContainer />
-        <div className="w-full max-w-md space-y-8 bg-white rounded-2xl shadow-lg p-8 my-8">
+        <div className="w-full max-w-md space-y-6 sm:space-y-8">
           {/* Logo and Title */}
-          <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-Darkgreen to-LightGreen rounded-full flex items-center justify-center mx-auto mb-4 transform hover:scale-105 transition-transform duration-300">
-              <FaBus className="text-white2 text-3xl" />
+          <div className="text-center transform hover:scale-105 transition-transform duration-300">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-Darkgreen to-LightGreen rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg hover:shadow-xl transition-all duration-300">
+              <FaBus className="text-white2 text-3xl sm:text-4xl" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">Create Account</h2>
-            <p className="text-gray-600">Join us for a better journey</p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">Create Account</h2>
+            <p className="text-gray-600 text-sm sm:text-base">Join us for a better journey</p>
           </div>
 
-          {/* Google Sign In Button */}
-          <div>
-            <button
-              onClick={() => {
-                const googleLoginBtn = document.querySelector('.google-login-button');
-                if (googleLoginBtn) googleLoginBtn.click();
-              }}
-              className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-lg border-2 border-gray-200 hover:border-LightGreen hover:bg-gray-50 transition-all duration-300 group"
-            >
-              <FaGoogle className="w-5 h-5 text-Darkgreen group-hover:scale-110 transition-transform duration-300" />
-              <span className="text-gray-700 font-medium">Continue with Google</span>
-            </button>
-            <div className="hidden">
-              <GoogleLogin
-                className="google-login-button"
-                onSuccess={(response) => console.log("Google login success:", response)}
-                onError={() => console.log("Google login error")}
-                useOneTap
-                theme="filled_blue"
-                shape="pill"
-              />
-            </div>
-          </div>
-
-          {/* Divider */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">or sign up with email</span>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <InputField
-              label="Full Name"
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="John Doe"
-              icon={FaUser}
-              error={errors.name}
-            />
-
-            <InputField
-              label="Email Address"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="john@example.com"
-              icon={FaEnvelope}
-              error={errors.email}
-            />
-
-            <InputField
-              label="Password"
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              icon={FaLock}
-              error={errors.password}
-            />
-
-            <InputField
-              label="Confirm Password"
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="••••••••"
-              icon={FaLock}
-              error={errors.confirmPassword}
-            />
-
-            <InputField
-              label="Role"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              icon={FaIdCard}
-              error={errors.role}
-              as="select"
-              options={[
-                { value: "Admin", label: "Admin" },
-                { value: "Passenger", label: "Passenger" }
-              ]}
-            />
-
-            <InputField
-              label="Passenger Type"
-              name="passengerType"
-              value={formData.passengerType}
-              onChange={handleChange}
-              icon={FaUserTag}
-              error={errors.passengerType}
-              as="select"
-              options={[
-                { value: "Adult", label: "Adult" },
-                { value: "Child", label: "Child" },
-                { value: "Senior", label: "Senior" },
-                { value: "Student", label: "Student" }
-              ]}
-            />
-
-            {otpSent && (
-              <div className="space-y-2">
-                <InputField
-                  label="OTP"
-                  type="text"
-                  name="otp"
-                  value={formData.otp}
-                  onChange={handleChange}
-                  placeholder="Enter OTP"
-                  icon={FaLock}
-                  error={errors.otp}
+          {/* Main Card */}
+          <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 space-y-6 sm:space-y-8">
+            {/* Google Sign In Button */}
+            <div>
+              <button
+                onClick={() => {
+                  const googleLoginBtn = document.querySelector('.google-login-button');
+                  if (googleLoginBtn) googleLoginBtn.click();
+                }}
+                className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-xl border-2 border-gray-200 hover:border-LightGreen hover:bg-gray-50 transition-all duration-300 group"
+                disabled={isLoading}
+              >
+                <FaGoogle className="w-5 h-5 text-Darkgreen group-hover:scale-110 transition-transform duration-300" />
+                <span className="text-gray-700 font-medium">
+                  {isLoading ? "Signing up..." : "Continue with Google"}
+                </span>
+              </button>
+              <div className="hidden">
+                <GoogleLogin
+                  className="google-login-button"
+                  onSuccess={handleGoogleSignupSuccess}
+                  onError={handleGoogleSignupError}
+                  useOneTap
+                  theme="filled_blue"
+                  shape="pill"
                 />
-                <button
-                  type="button"
-                  onClick={handleResendOtp}
-                  className="text-sm text-Darkgreen hover:text-LightGreen transition-colors duration-300"
-                >
-                  Resend OTP
-                </button>
               </div>
-            )}
+            </div>
 
-            {!otpSent ? (
-              <button
-                type="button"
-                onClick={handleSendOtp}
-                className="w-full py-3 bg-gradient-to-r from-Darkgreen to-LightGreen text-white2 font-semibold rounded-lg hover:opacity-90 transform hover:scale-[0.99] transition-all duration-300"
-              >
-                Send OTP
-              </button>
-            ) : (
-              <button
-                type="submit"
-                className="w-full py-3 bg-gradient-to-r from-Darkgreen to-LightGreen text-white2 font-semibold rounded-lg hover:opacity-90 transform hover:scale-[0.99] transition-all duration-300"
-              >
-                Create Account
-              </button>
-            )}
-          </form>
+            {/* Divider */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-200"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white text-gray-500">or sign up with email</span>
+              </div>
+            </div>
 
-          {/* Footer */}
-          <div className="text-center space-y-4">
-            <p className="text-sm text-gray-600">
-              By signing up, you agree to our{" "}
-              <Link to="/termsAndConditions" className="text-Darkgreen hover:text-LightGreen transition-colors duration-300">
-                Terms & Conditions
-              </Link>{" "}
-              and{" "}
-              <Link to="/privacy" className="text-Darkgreen hover:text-LightGreen transition-colors duration-300">
-                Privacy Policy
-              </Link>
-            </p>
-            <p className="text-sm text-gray-600">
-              Already have an account?{" "}
-              <Link to="/login" className="text-Darkgreen font-semibold hover:text-LightGreen transition-colors duration-300">
-                Sign in
-              </Link>
-            </p>
+            {/* Signup Form */}
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                <div className="sm:col-span-2">
+                  <InputField
+                    label="Full Name"
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="John Doe"
+                    icon={FaUser}
+                    error={errors.name}
+                  />
+                </div>
+
+                <div className="sm:col-span-2">
+                  <InputField
+                    label="Email Address"
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="john@example.com"
+                    icon={FaEnvelope}
+                    error={errors.email}
+                  />
+                </div>
+
+                <InputField
+                  label="Password"
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  icon={FaLock}
+                  error={errors.password}
+                />
+
+                <InputField
+                  label="Confirm Password"
+                  type="password"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  icon={FaLock}
+                  error={errors.confirmPassword}
+                />
+
+                <InputField
+                  label="Role"
+                  name="role"
+                  value={formData.role}
+                  onChange={handleChange}
+                  icon={FaIdCard}
+                  error={errors.role}
+                  as="select"
+                  options={[
+                    { value: "Admin", label: "Admin" },
+                    { value: "Passenger", label: "Passenger" }
+                  ]}
+                />
+
+                <InputField
+                  label="Passenger Type"
+                  name="passengerType"
+                  value={formData.passengerType}
+                  onChange={handleChange}
+                  icon={FaUserTag}
+                  error={errors.passengerType}
+                  as="select"
+                  options={[
+                    { value: "Adult", label: "Adult" },
+                    { value: "Child", label: "Child" },
+                    { value: "Senior", label: "Senior" },
+                    { value: "Student", label: "Student" }
+                  ]}
+                />
+              </div>
+
+              {otpSent && (
+                <div className="space-y-3">
+                  <InputField
+                    label="OTP"
+                    type="text"
+                    name="otp"
+                    value={formData.otp}
+                    onChange={handleChange}
+                    placeholder="Enter OTP"
+                    icon={FaLock}
+                    error={errors.otp}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleResendOtp}
+                    className="text-sm text-Darkgreen hover:text-LightGreen transition-colors duration-300"
+                  >
+                    Resend OTP
+                  </button>
+                </div>
+              )}
+
+              <button
+                type={otpSent ? "submit" : "button"}
+                onClick={otpSent ? undefined : handleSendOtp}
+                disabled={isLoading}
+                className="w-full py-3.5 bg-gradient-to-r from-Darkgreen to-LightGreen text-white2 font-semibold rounded-xl hover:opacity-90 transform hover:scale-[0.99] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+              >
+                {isLoading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="w-5 h-5 border-2 border-white2 border-t-transparent rounded-full animate-spin mr-2"></div>
+                    {otpSent ? "Creating Account..." : "Sending OTP..."}
+                  </div>
+                ) : (
+                  otpSent ? "Create Account" : "Send OTP"
+                )}
+              </button>
+            </form>
+
+            {/* Footer */}
+            <div className="text-center space-y-4">
+              <p className="text-sm text-gray-600">
+                By signing up, you agree to our{" "}
+                <Link to="/termsAndConditions" className="text-Darkgreen hover:text-LightGreen transition-colors duration-300">
+                  Terms & Conditions
+                </Link>{" "}
+                and{" "}
+                <Link to="/privacy" className="text-Darkgreen hover:text-LightGreen transition-colors duration-300">
+                  Privacy Policy
+                </Link>
+              </p>
+              <p className="text-sm text-gray-600">
+                Already have an account?{" "}
+                <Link to="/login" className="text-Darkgreen font-semibold hover:text-LightGreen transition-colors duration-300">
+                  Sign in
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
       </div>

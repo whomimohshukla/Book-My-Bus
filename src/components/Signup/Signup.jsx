@@ -53,7 +53,7 @@ function Signup() {
     password: "",
     confirmPassword: "",
     otp: "",
-    role: "Passenger",
+    role: "",
     passengerType: "Adult",
   });
   const [errors, setErrors] = useState({});
@@ -70,6 +70,10 @@ function Signup() {
   };
 
   const handleGoogleSignupSuccess = async (credentialResponse) => {
+    const toastId = toast.loading("Signing in with Google...", {
+      position: "bottom-right",
+    });
+
     try {
       setIsLoading(true);
       console.log('Google credential response:', credentialResponse);
@@ -95,7 +99,12 @@ function Signup() {
       if (response.status === 200 && response.data.token && response.data.user) {
         const { token, user } = response.data;
         login(token, user.role);
-        toast.success("Signup successful! You're now logged in.");
+        toast.update(toastId, {
+          render: "Successfully signed in with Google! Redirecting...",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
         navigate(user.role === 'Admin' ? "/admin" : "/");
       } else {
         throw new Error('Invalid response from server');
@@ -116,7 +125,12 @@ function Signup() {
         errorMessage += "Please try again.";
       }
       
-      toast.error(errorMessage);
+      toast.update(toastId, {
+        render: errorMessage,
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -142,6 +156,10 @@ function Signup() {
 
   const handleSendOtp = async () => {
     if (formData.email) {
+      const toastId = toast.loading("Sending OTP to your email...", {
+        position: "bottom-right",
+      });
+
       try {
         const response = await axios.post(
           "http://localhost:8000/api/user/otp-Verify",
@@ -149,33 +167,61 @@ function Signup() {
         );
         if (response.status === 200) {
           setOtpSent(true);
-          toast.success("OTP sent to your email");
+          toast.update(toastId, {
+            render: "OTP sent successfully! Please check your email",
+            type: "success",
+            isLoading: false,
+            autoClose: 5000,
+          });
         }
       } catch (err) {
-        toast.error(err.response?.data?.message || "Error sending OTP");
+        toast.update(toastId, {
+          render: err.response?.data?.message || "Failed to send OTP. Please try again",
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
       }
     } else {
-      toast.error("Please enter an email first");
+      toast.error("Please enter an email address first");
     }
   };
 
   const handleResendOtp = async () => {
+    const toastId = toast.loading("Resending OTP...", {
+      position: "bottom-right",
+    });
+
     try {
       const response = await axios.post(
         "http://localhost:8000/api/user/resend-otp",
         { email: formData.email }
       );
       if (response.status === 200) {
-        toast.success("OTP resent to your email");
+        toast.update(toastId, {
+          render: "OTP resent successfully! Please check your email",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error resending OTP");
+      toast.update(toastId, {
+        render: err.response?.data?.message || "Failed to resend OTP. Please try again",
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
+      const toastId = toast.loading("Creating your account...", {
+        position: "bottom-right",
+      });
+
       try {
         setIsLoading(true);
         // First signup request
@@ -186,6 +232,13 @@ function Signup() {
         );
 
         if (signupResponse.status === 200) {
+          // Update toast to show signup success
+          toast.update(toastId, {
+            render: "Account created! Logging you in...",
+            type: "success",
+            isLoading: true,
+          });
+
           // Automatically login after successful signup
           const loginResponse = await axios.post(
             "http://localhost:8000/api/user/login",
@@ -197,10 +250,14 @@ function Signup() {
 
           if (loginResponse.status === 200) {
             const { token, user } = loginResponse.data;
-            // Store auth data using the login function from context
             login(token, user.role);
             
-            toast.success("Account created successfully! You're now logged in.");
+            toast.update(toastId, {
+              render: "Welcome to BookMyBus! Redirecting...",
+              type: "success",
+              isLoading: false,
+              autoClose: 3000,
+            });
             
             // Clear form
             setFormData({
@@ -223,7 +280,12 @@ function Signup() {
         }
       } catch (err) {
         console.error('Signup/Login error:', err);
-        toast.error(err.response?.data?.message || "Something went wrong");
+        toast.update(toastId, {
+          render: err.response?.data?.message || "Something went wrong. Please try again",
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -233,7 +295,19 @@ function Signup() {
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white2 pt-28 md:pt-32 lg:pt-36">
-        <ToastContainer />
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+          style={{ zIndex: 9999 }}
+        />
         <div className="container mx-auto px-4 py-8 flex justify-center">
           <div className="w-full max-w-md space-y-6 sm:space-y-8">
             {/* Logo and Title */}

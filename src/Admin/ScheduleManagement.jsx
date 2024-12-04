@@ -243,7 +243,7 @@ const ScheduleManagement = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-DarkGreen"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-[#349E4D]"></div>
       </div>
     );
   }
@@ -253,7 +253,7 @@ const ScheduleManagement = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="container mx-auto p-4 space-y-6"
+      className="container mx-auto p-4 mt-20 space-y-6"
     >
       {error && (
         <motion.div
@@ -267,14 +267,14 @@ const ScheduleManagement = () => {
         </motion.div>
       )}
 
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-gradient-to-r from-DarkGreen to-LightGreen p-6 rounded-lg shadow-md">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-gradient-to-r from-[#349E4D] to-[#2C8440] p-6 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold text-white flex items-center gap-2">
           <FaBus className="text-white" />
           Schedule Management
         </h1>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-white text-DarkGreen px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-md"
+          className="bg-white text-[#349E4D] px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 shadow-lg font-semibold"
         >
           <FaPlus /> {showForm ? "Cancel" : "Add New Schedule"}
         </button>
@@ -288,21 +288,21 @@ const ScheduleManagement = () => {
         >
           <form
             onSubmit={handleSubmit}
-            className="bg-white p-8 rounded-lg shadow-lg space-y-6 border border-gray-200"
+            className="bg-white p-8 rounded-lg shadow-lg space-y-6 border border-gray-200 hover:shadow-xl transition-all duration-300"
           >
             <h2 className="text-2xl font-semibold text-gray-800 mb-6">
               {editingId ? "Edit Schedule" : "Add New Schedule"}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="form-group">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  <FaBus className="inline mr-2 text-DarkGreen" />
+                <label className="block text-sm font-semibold text-gray-700 mb-2 font-poppins">
+                  <FaBus className="inline mr-2 text-[#349E4D]" />
                   Bus
                 </label>
                 <select
                   value={formData.busId}
                   onChange={(e) => setFormData({ ...formData, busId: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-DarkGreen focus:border-transparent transition-all duration-300"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#349E4D] focus:border-transparent transition-all duration-300 font-roboto"
                   required
                 >
                   <option value="">Select Bus</option>
@@ -316,14 +316,14 @@ const ScheduleManagement = () => {
               </div>
 
               <div className="form-group">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  <FaRoute className="inline mr-2 text-DarkGreen" />
+                <label className="block text-sm font-semibold text-gray-700 mb-2 font-poppins">
+                  <FaRoute className="inline mr-2 text-[#349E4D]" />
                   Route
                 </label>
                 <select
                   value={formData.routeId}
                   onChange={(e) => setFormData({ ...formData, routeId: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-DarkGreen focus:border-transparent transition-all duration-300"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#349E4D] focus:border-transparent transition-all duration-300 font-roboto"
                   required
                 >
                   <option value="">Select Route</option>
@@ -338,43 +338,43 @@ const ScheduleManagement = () => {
               </div>
 
               <div className="form-group">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  <FaClock className="inline mr-2 text-DarkGreen" />
+                <label className="block text-sm font-semibold text-gray-700 mb-2 font-poppins">
+                  <FaClock className="inline mr-2 text-[#349E4D]" />
                   Departure Time
                 </label>
                 <input
                   type="datetime-local"
                   value={formData.departureTime}
                   onChange={(e) => setFormData({ ...formData, departureTime: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-DarkGreen focus:border-transparent transition-all duration-300"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#349E4D] focus:border-transparent transition-all duration-300 font-roboto"
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  <FaClock className="inline mr-2 text-DarkGreen" />
+                <label className="block text-sm font-semibold text-gray-700 mb-2 font-poppins">
+                  <FaClock className="inline mr-2 text-[#349E4D]" />
                   Arrival Time
                 </label>
                 <input
                   type="datetime-local"
                   value={formData.arrivalTime}
                   onChange={(e) => setFormData({ ...formData, arrivalTime: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-DarkGreen focus:border-transparent transition-all duration-300"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#349E4D] focus:border-transparent transition-all duration-300 font-roboto"
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  <FaRupeeSign className="inline mr-2 text-DarkGreen" />
+                <label className="block text-sm font-semibold text-gray-700 mb-2 font-poppins">
+                  <FaRupeeSign className="inline mr-2 text-[#349E4D]" />
                   Fare
                 </label>
                 <input
                   type="number"
                   value={formData.fare}
                   onChange={(e) => setFormData({ ...formData, fare: e.target.value })}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-DarkGreen focus:border-transparent transition-all duration-300"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#349E4D] focus:border-transparent transition-all duration-300 font-roboto"
                   required
                   min="0"
                   step="0.01"
@@ -385,7 +385,7 @@ const ScheduleManagement = () => {
             <div className="flex justify-end pt-4">
               <button
                 type="submit"
-                className="bg-DarkGreen text-white px-8 py-3 rounded-lg hover:bg-LightGreen transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-md"
+                className="bg-[#349E4D] text-white px-8 py-3 rounded-lg hover:bg-[#2C8440] transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg font-semibold"
                 disabled={loading}
               >
                 {loading ? (
@@ -409,9 +409,9 @@ const ScheduleManagement = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-shadow duration-300"
+              className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300 group"
             >
-              <div className="bg-gradient-to-r from-DarkGreen to-LightGreen p-4">
+              <div className="bg-gradient-to-r from-[#349E4D] to-[#2C8440] p-4 group-hover:from-[#2C8440] group-hover:to-[#349E4D] transition-all duration-300">
                 <h3 className="text-lg font-semibold text-white">
                   {getBusNumber(schedule.busId)}
                 </h3>
@@ -422,7 +422,7 @@ const ScheduleManagement = () => {
               
               <div className="p-4 space-y-3">
                 <div className="flex items-center gap-2 text-gray-600">
-                  <FaClock className="text-DarkGreen" />
+                  <FaClock className="text-[#349E4D]" />
                   <div>
                     <p className="text-sm font-medium">Departure</p>
                     <p className="text-sm">{new Date(schedule.departureTime).toLocaleString()}</p>
@@ -430,7 +430,7 @@ const ScheduleManagement = () => {
                 </div>
                 
                 <div className="flex items-center gap-2 text-gray-600">
-                  <FaClock className="text-DarkGreen" />
+                  <FaClock className="text-[#349E4D]" />
                   <div>
                     <p className="text-sm font-medium">Arrival</p>
                     <p className="text-sm">{new Date(schedule.arrivalTime).toLocaleString()}</p>
@@ -438,7 +438,7 @@ const ScheduleManagement = () => {
                 </div>
                 
                 <div className="flex items-center gap-2 text-gray-600">
-                  <FaRupeeSign className="text-DarkGreen" />
+                  <FaRupeeSign className="text-[#349E4D]" />
                   <div>
                     <p className="text-sm font-medium">Fare</p>
                     <p className="text-sm">₹{(
@@ -453,13 +453,13 @@ const ScheduleManagement = () => {
               <div className="border-t border-gray-200 p-4 flex justify-end gap-2">
                 <button
                   onClick={() => handleEdit(schedule)}
-                  className="text-blue-600 hover:text-blue-800 px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-1"
+                  className="text-[#349E4D] hover:text-[#2C8440] px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-1 font-semibold"
                 >
                   <FaEdit /> Edit
                 </button>
                 <button
                   onClick={() => handleDelete(schedule._id)}
-                  className="text-red-600 hover:text-red-800 px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-1"
+                  className="text-red-600 hover:text-red-800 px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-1 font-semibold"
                 >
                   <FaTrash /> Delete
                 </button>

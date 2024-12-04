@@ -154,32 +154,32 @@ const OperatorManagement = () => {
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="min-h-screen bg-gray-50 py-6 mt-20 px-4 sm:px-6 lg:px-8">
       {/* Statistics Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-gradient-to-r from-green-500 to-green-600 p-4 rounded-lg shadow-lg">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-4 rounded-lg shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white text-sm">Total Operators</p>
-              <h3 className="text-white text-2xl font-bold">{stats.totalOperators}</h3>
+              <p className="text-white text-sm font-roboto">Total Operators</p>
+              <h3 className="text-white text-2xl font-bold font-poppins">{stats.totalOperators}</h3>
             </div>
             <FaUserTie className="text-white text-3xl opacity-80" />
           </div>
         </div>
-        <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-lg shadow-lg">
+        <div className="bg-gradient-to-r from-secondary-500 to-secondary-600 p-4 rounded-lg shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white text-sm">Active Buses</p>
-              <h3 className="text-white text-2xl font-bold">{stats.activeBuses}</h3>
+              <p className="text-white text-sm font-roboto">Active Buses</p>
+              <h3 className="text-white text-2xl font-bold font-poppins">{stats.activeBuses}</h3>
             </div>
             <FaBus className="text-white text-3xl opacity-80" />
           </div>
         </div>
-        <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-4 rounded-lg shadow-lg">
+        <div className="bg-gradient-to-r from-primary-400 to-primary-500 p-4 rounded-lg shadow-lg sm:col-span-2 lg:col-span-1">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white text-sm">Total Routes</p>
-              <h3 className="text-white text-2xl font-bold">{stats.totalRoutes}</h3>
+              <p className="text-white text-sm font-roboto">Total Routes</p>
+              <h3 className="text-white text-2xl font-bold font-poppins">{stats.totalRoutes}</h3>
             </div>
             <FaBus className="text-white text-3xl opacity-80" />
           </div>
@@ -192,22 +192,22 @@ const OperatorManagement = () => {
         </div>
       )}
 
-      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        <h1 className="text-2xl font-bold text-gray-800">Operator Management</h1>
-        <div className="flex gap-4 w-full md:w-auto">
-          <div className="relative flex-grow md:flex-grow-0">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+        <h1 className="text-2xl font-bold text-gray-800 font-poppins">Operator Management</h1>
+        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+          <div className="relative flex-grow sm:flex-grow-0 w-full sm:w-auto">
             <input
               type="text"
               placeholder="Search operators..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent pl-10"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent pl-10 font-roboto"
             />
             <FaSearch className="absolute left-3 top-3 text-gray-400" />
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-green-700 transition-colors whitespace-nowrap"
+            className="bg-primary-500 text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-600 transition-colors w-full sm:w-auto font-roboto"
           >
             <FaPlus /> {showForm ? 'Cancel' : 'Add Operator'}
           </button>
@@ -215,43 +215,43 @@ const OperatorManagement = () => {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="mb-8 bg-white p-6 rounded-lg shadow-md border border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="mb-8 bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1 font-roboto">Name</label>
               <div className="relative">
                 <FaUserTie className="absolute left-3 top-3 text-gray-400" />
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent font-roboto"
                   required
                 />
               </div>
             </div>
             <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1 font-roboto">Email</label>
               <div className="relative">
                 <FaEnvelope className="absolute left-3 top-3 text-gray-400" />
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent font-roboto"
                   required
                 />
               </div>
             </div>
             <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1 font-roboto">Phone</label>
               <div className="relative">
                 <FaPhoneAlt className="absolute left-3 top-3 text-gray-400" />
                 <input
                   type="tel"
                   value={formData.contact}
                   onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent font-roboto"
                   required
                   pattern="[0-9]{10}"
                   title="Please enter a valid 10-digit phone number"
@@ -259,20 +259,20 @@ const OperatorManagement = () => {
               </div>
             </div>
             <div className="form-group">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1 font-roboto">Address</label>
               <input
                 type="text"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent font-roboto"
                 required
               />
             </div>
           </div>
-          <div className="mt-4">
+          <div className="mt-4 flex justify-end">
             <button
               type="submit"
-              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+              className="w-full sm:w-auto bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors flex items-center justify-center gap-2 font-roboto"
               disabled={loading}
             >
               {loading ? (
@@ -294,21 +294,21 @@ const OperatorManagement = () => {
       <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-primary-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-primary-700 uppercase tracking-wider font-roboto">Name</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-primary-700 uppercase tracking-wider hidden sm:table-cell font-roboto">Email</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-primary-700 uppercase tracking-wider font-roboto">Phone</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-primary-700 uppercase tracking-wider hidden md:table-cell font-roboto">Address</th>
+                <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-primary-700 uppercase tracking-wider font-roboto">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan="5" className="px-6 py-4 text-center">
+                  <td colSpan="5" className="px-4 sm:px-6 py-4 text-center">
                     <div className="flex justify-center items-center">
-                      <svg className="animate-spin h-5 w-5 text-green-600 mr-3" viewBox="0 0 24 24">
+                      <svg className="animate-spin h-5 w-5 text-primary-500 mr-3" viewBox="0 0 24 24">
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                       </svg>
@@ -318,30 +318,32 @@ const OperatorManagement = () => {
                 </tr>
               ) : filteredOperators.length > 0 ? (
                 filteredOperators.map((operator) => (
-                  <tr key={operator._id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">{operator.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{operator.email}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{operator.contact}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{operator.address}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <button
-                        onClick={() => handleEdit(operator)}
-                        className="text-blue-600 hover:text-blue-900 mr-4 transition-colors"
-                      >
-                        <FaEdit className="inline mr-1" /> Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(operator._id)}
-                        className="text-red-600 hover:text-red-900 transition-colors"
-                      >
-                        <FaTrash className="inline mr-1" /> Delete
-                      </button>
+                  <tr key={operator._id} className="hover:bg-primary-50 transition-colors">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap font-roboto">{operator.name}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell font-roboto">{operator.email}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap font-roboto">{operator.contact}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden md:table-cell font-roboto">{operator.address}</td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
+                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                        <button
+                          onClick={() => handleEdit(operator)}
+                          className="text-secondary-600 hover:text-secondary-800 transition-colors flex items-center gap-1 font-roboto"
+                        >
+                          <FaEdit /> <span className="hidden sm:inline">Edit</span>
+                        </button>
+                        <button
+                          onClick={() => handleDelete(operator._id)}
+                          className="text-red-600 hover:text-red-800 transition-colors flex items-center gap-1 font-roboto"
+                        >
+                          <FaTrash /> <span className="hidden sm:inline">Delete</span>
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan="5" className="px-4 sm:px-6 py-4 text-center text-gray-500 font-roboto">
                     No operators found
                   </td>
                 </tr>

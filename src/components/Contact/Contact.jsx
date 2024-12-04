@@ -19,8 +19,14 @@ function Contact() {
       message: formData.get("message"),
     };
 
+    // Show sending notification
+    const toastId = toast.loading("Sending your message...", {
+      position: "bottom-right",
+      autoClose: false,
+    });
+
     try {
-      const response = await fetch("http://localhost:8000/api/v2/contact", {
+      const response = await fetch("http://localhost:8000/api/contact/contactMessage", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -29,14 +35,41 @@ function Contact() {
       });
 
       if (response.ok) {
-        toast.success("Message sent successfully!");
+        // Update the loading toast to success
+        toast.update(toastId, {
+          render: "Thank you for your message! We'll get back to you soon.",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+          closeButton: true,
+          closeOnClick: true,
+          draggable: true,
+        });
         formRef.current.reset();
       } else {
-        toast.error("Failed to send message.");
+        // Update the loading toast to error
+        toast.update(toastId, {
+          render: "Failed to send message. Please try again.",
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+          closeButton: true,
+          closeOnClick: true,
+          draggable: true,
+        });
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("An error occurred. Please try again.");
+      // Update the loading toast to error
+      toast.update(toastId, {
+        render: "Network error. Please check your connection and try again.",
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+        closeButton: true,
+        closeOnClick: true,
+        draggable: true,
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -157,7 +190,19 @@ function Contact() {
         </div>
       </div>
 
-      <ToastContainer position="bottom-right" />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        style={{ zIndex: 9999 }}
+      />
     </div>
   );
 }

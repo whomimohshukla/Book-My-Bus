@@ -90,10 +90,10 @@ const CityManagement = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-6 px-4 sm:px-6 lg:px-8 mt-20">
       <div className="max-w-7xl mx-auto">
         {/* Header Section with Stats */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <div className="flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
             <div>
               <h1 className="text-3xl font-bold text-gray-800 font-poppins">City Management</h1>
@@ -102,8 +102,8 @@ const CityManagement = () => {
             <button
               onClick={() => setShowForm(!showForm)}
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm 
-              font-medium text-white bg-blue-600 hover:bg-blue-700 hover:shadow-md
-              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+              font-medium text-white bg-[#349E4D] hover:bg-[#2C8440] hover:shadow-md
+              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#349E4D] 
               transition-all duration-300 ease-in-out transform hover:scale-105 font-roboto"
             >
               <FaPlus className="mr-2 -ml-1 h-5 w-5" />
@@ -113,11 +113,11 @@ const CityManagement = () => {
 
           {/* Stats Grid */}
           <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
+            <div className="bg-gradient-to-br from-[#349E4D]/10 to-[#2C8440]/10 overflow-hidden shadow rounded-lg">
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <FaCity className="h-6 w-6 text-blue-600" />
+                    <FaCity className="h-6 w-6 text-[#349E4D]" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
@@ -133,11 +133,11 @@ const CityManagement = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
+            <div className="bg-gradient-to-br from-[#349E4D]/10 to-[#2C8440]/10 overflow-hidden shadow rounded-lg">
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <FaStar className="h-6 w-6 text-blue-600" />
+                    <FaStar className="h-6 w-6 text-[#349E4D]" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
@@ -153,11 +153,11 @@ const CityManagement = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
+            <div className="bg-gradient-to-br from-[#349E4D]/10 to-[#2C8440]/10 overflow-hidden shadow rounded-lg">
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <FaBus className="h-6 w-6 text-blue-600" />
+                    <FaBus className="h-6 w-6 text-[#349E4D]" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
@@ -173,11 +173,11 @@ const CityManagement = () => {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden shadow rounded-lg">
+            <div className="bg-gradient-to-br from-[#349E4D]/10 to-[#2C8440]/10 overflow-hidden shadow rounded-lg">
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
-                    <FaMapMarkedAlt className="h-6 w-6 text-blue-600" />
+                    <FaMapMarkedAlt className="h-6 w-6 text-[#349E4D]" />
                   </div>
                   <div className="ml-5 w-0 flex-1">
                     <dl>
@@ -204,16 +204,16 @@ const CityManagement = () => {
             </div>
             <div className="relative rounded-md shadow-sm">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FaSearch className="h-5 w-5 text-blue-600" />
+                <FaSearch className="h-5 w-5 text-[#349E4D]" />
               </div>
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="h-12 focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-12 
+                className="h-12 focus:ring-[#349E4D] focus:border-[#349E4D] block w-full pl-10 pr-12 
                 sm:text-sm border-gray-300 rounded-md bg-white shadow-sm 
                 transition-all duration-300 ease-in-out
-                hover:shadow-md hover:bg-gray-50 hover:border-blue-600
+                hover:shadow-md hover:bg-gray-50 hover:border-[#349E4D]
                 font-roboto"
                 placeholder="Search cities..."
               />
@@ -223,7 +223,7 @@ const CityManagement = () => {
 
         {/* Form */}
         {showForm && (
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4 font-poppins">
               {editingId ? 'Edit City' : 'Add New City'}
             </h2>
@@ -236,13 +236,13 @@ const CityManagement = () => {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="h-12 mt-1 block w-full rounded-md border-gray-300 bg-white 
-                    shadow-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 
-                    hover:border-blue-800 hover:shadow-md hover:bg-gray-50
+                    shadow-sm focus:ring-2 focus:ring-[#349E4D] focus:border-[#349E4D] 
+                    hover:border-[#349E4D] hover:shadow-md hover:bg-gray-50
                     transition-all duration-300 ease-in-out text-base font-roboto"
                     required
                     placeholder="Enter city name"
                   />
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-blue-600 mt-6">
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#349E4D] mt-6">
                     {formData.name && <FaCheck className="h-5 w-5" />}
                   </div>
                 </div>
@@ -253,13 +253,13 @@ const CityManagement = () => {
                     value={formData.state}
                     onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                     className="h-12 mt-1 block w-full rounded-md border-gray-300 bg-white 
-                    shadow-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600 
-                    hover:border-blue-800 hover:shadow-md hover:bg-gray-50
+                    shadow-sm focus:ring-2 focus:ring-[#349E4D] focus:border-[#349E4D] 
+                    hover:border-[#349E4D] hover:shadow-md hover:bg-gray-50
                     transition-all duration-300 ease-in-out text-base font-roboto"
                     required
                     placeholder="Enter state name"
                   />
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-blue-600 mt-6">
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-[#349E4D] mt-6">
                     {formData.state && <FaCheck className="h-5 w-5" />}
                   </div>
                 </div>
@@ -270,12 +270,12 @@ const CityManagement = () => {
                     type="checkbox"
                     checked={formData.isPopular}
                     onChange={(e) => setFormData({ ...formData, isPopular: e.target.checked })}
-                    className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 
+                    className="h-5 w-5 text-[#349E4D] focus:ring-[#349E4D] border-gray-300 
                     rounded transition-all duration-300 ease-in-out cursor-pointer
-                    hover:border-blue-800 hover:shadow-sm"
+                    hover:border-[#349E4D] hover:shadow-sm"
                   />
                   <span className="text-sm font-medium text-gray-800 flex items-center font-roboto">
-                    <FaStar className="h-4 w-4 text-blue-600 mr-2" />
+                    <FaStar className="h-4 w-4 text-[#349E4D] mr-2" />
                     Mark as Popular City
                   </span>
                 </label>
@@ -290,8 +290,8 @@ const CityManagement = () => {
                   }}
                   className="inline-flex items-center px-6 py-3 border border-gray-300 shadow-sm 
                   text-base font-medium rounded-md text-gray-800 bg-white 
-                  hover:bg-gray-50 hover:shadow-md hover:border-blue-400
-                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 
+                  hover:bg-gray-50 hover:shadow-md hover:border-[#349E4D]
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#349E4D] 
                   transition-all duration-300 ease-in-out font-roboto"
                 >
                   Cancel
@@ -299,9 +299,9 @@ const CityManagement = () => {
                 <button
                   type="submit"
                   className="inline-flex items-center px-6 py-3 border border-transparent rounded-md 
-                  shadow-sm text-base font-medium text-white bg-blue-600 
-                  hover:bg-blue-700 hover:shadow-md
-                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 
+                  shadow-sm text-base font-medium text-white bg-[#349E4D] 
+                  hover:bg-[#2C8440] hover:shadow-md
+                  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#349E4D] 
                   transition-all duration-300 ease-in-out transform hover:scale-105 font-roboto"
                 >
                   {editingId ? 'Update City' : 'Add City'}
@@ -312,7 +312,7 @@ const CityManagement = () => {
         )}
 
         {/* Table */}
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -336,7 +336,7 @@ const CityManagement = () => {
                   <tr>
                     <td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-600">
                       <div className="flex justify-center items-center space-x-2">
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#349E4D]"></div>
                         <span>Loading cities...</span>
                       </div>
                     </td>
@@ -358,7 +358,7 @@ const CityManagement = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-roboto">{city.state}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-roboto">
                         {city.isPopular && (
-                          <FaStar className="h-5 w-5 text-blue-600" />
+                          <FaStar className="h-5 w-5 text-[#349E4D]" />
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-roboto">
@@ -373,7 +373,7 @@ const CityManagement = () => {
                               setEditingId(city._id);
                               setShowForm(true);
                             }}
-                            className="text-blue-600 hover:text-blue-900 transition-colors duration-200"
+                            className="text-[#349E4D] hover:text-[#2C8440] transition-colors duration-200"
                           >
                             <FaEdit className="h-5 w-5" />
                           </button>

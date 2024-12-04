@@ -10,6 +10,7 @@ const scheduleRoutes = require("./routes/Schedule.Routes/schedule.routes");
 const operatorRoute = require("./routes/Operator.Routes/operator.Routes");
 const busTravelRoute = require("./routes/BusTravelRoute.routes/busTravel.Routes");
 const searchBusesRoute = require("./routes/SearchBuses.Routes/searchBuses.routes");
+const contactRoute = require("./routes/contact.routes/contact.Routes");
 const cors = require("cors");
 // connect to MongoDB
 connnectDb();
@@ -27,6 +28,7 @@ app.use("/api/scheduleRoutes", scheduleRoutes);
 app.use("/api/operatorRoute", operatorRoute);
 app.use("/api/busTravelRoute", busTravelRoute);
 app.use("/api/searchBuses", searchBusesRoute);
+app.use("/api/contact", contactRoute);
 
 // port activation
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

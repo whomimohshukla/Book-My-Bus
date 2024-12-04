@@ -13,6 +13,7 @@ const {
   resetPassword,
   updateProfile,
   updatePassword,
+  googleSignup,
 } = require("../../controllers/User.Controller.Auth/User.Auth.controller");
 const { auth } = require("../../middleware/User.Auth.Middleware");
 
@@ -22,6 +23,7 @@ routes.post("/otp-Verify", otpSender);
 routes.post("/signup", signup);
 routes.post("/resend-otp", resendOtp);
 routes.post("/login", login);
+routes.post("/google-signup", googleSignup);
 routes.post("/forgotPassword", forgotPassword);
 routes.post("/resetPassword", resetPassword);
 routes.put("/profile", auth, updateProfile);

@@ -4,6 +4,8 @@ const OTP = require("../../models/Otp.model/otp.model");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { sendEmail } = require("../../utls/emailSender.utls/mailSender");
+const { OAuth2Client } = require("google-auth-library");
+const client = new OAuth2Client(process.env.VITE_GOOGLE_CLIENT_ID);
 
 // otp sender api
 
@@ -347,5 +349,84 @@ exports.updatePassword = async (req, res) => {
   } catch (error) {
     console.error("Error in updatePassword:", error);
     res.status(500).json({ message: "Error occurred while updating password" });
+  }
+};
+
+// Google signup
+exports.googleSignup = async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ message: "Token is required" });
+    }
+
+    // Verify Google token
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.VITE_GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
+
+    // Check if user exists
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // User exists, generate JWT and return
+      const token = jwt.sign(
+        { id: user._id, email: user.email, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: "24h" }
+      );
+
+      return res.status(200).json({
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
+    }
+
+    // Create new user
+    const password = await bcrypt.hash(email + process.env.JWT_SECRET, 10); // Create a secure random password
+
+    if (!user) {
+      await User.create({
+        name,
+        email,
+        password,
+        role: "Passenger", // Default role for Google signup
+        passengerType: "Adult", // Default passenger type
+        isEmailVerified: true, // Google accounts are already verified
+        profilePicture: picture,
+      });
+    }
+    // Generate JWT
+    const jwtToken = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    res.status(200).json({
+      token: jwtToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error("Google signup error:", error);
+    res.status(500).json({
+      message: "Google signup failed",
+      error: error.message,
+    });
   }
 };

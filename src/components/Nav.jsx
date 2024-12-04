@@ -321,11 +321,61 @@ function Nav() {
               </CTAButton>
             </div>
           ) : (
-            <div className="hidden lg:flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-Darkgreen text-white flex items-center justify-center text-lg font-medium cursor-pointer hover:bg-Darkgreen/90 transition-colors"
-                   onClick={toggleMobileMenu}>
+            <div className="hidden lg:flex items-center space-x-3 relative">
+              <div 
+                ref={avatarRef}
+                className="w-10 h-10 rounded-full bg-Darkgreen text-white flex items-center justify-center text-lg font-medium cursor-pointer hover:bg-Darkgreen/90 transition-colors"
+                onClick={toggleDropdown}
+              >
                 {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>
+
+              {/* Desktop Dropdown Menu */}
+              {isDropdownOpen && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute right-0 top-12 w-64 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50"
+                >
+                  {/* User Info */}
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <p className="text-sm font-medium text-gray-900">{user.name || 'User'}</p>
+                    <p className="text-xs text-gray-500">{user.email}</p>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="py-2">
+                    <Link
+                      to="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-Darkgreen transition-colors"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      Profile Settings
+                    </Link>
+                    {isAdmin && (
+                      <Link
+                        to="/admin"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-Darkgreen transition-colors"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        Admin Dashboard
+                      </Link>
+                    )}
+                    <Link
+                      to="/my-bookings"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-Darkgreen transition-colors"
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      My Bookings
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

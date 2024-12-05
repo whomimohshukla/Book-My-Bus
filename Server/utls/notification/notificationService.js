@@ -40,22 +40,22 @@ exports.sendSMS = async (phoneNumber, message) => {
 // utils/notification/notificationService.js
 
 exports.sendEmail = async (
-    to,
-    subject,
-    { location, emergencyType, description, busId, timestamp }
-  ) => {
-    const emergencyTypeMap = {
-      medical: "Medical Emergency 🚑",
-      accident: "Accident Emergency 🚨",
-      security: "Security Emergency 👮",
-      fire: "Fire Emergency 🚒",
-      other: "Emergency Alert ⚠️",
-    };
-  
-    const googleMapsLink = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
-    const formattedTime = new Date(timestamp || Date.now()).toLocaleString();
-  
-    const htmlContent = `
+  to,
+  subject,
+  { location, emergencyType, description, busId, timestamp }
+) => {
+  const emergencyTypeMap = {
+    medical: "Medical Emergency 🚑",
+    accident: "Accident Emergency 🚨",
+    security: "Security Emergency 👮",
+    fire: "Fire Emergency 🚒",
+    other: "Emergency Alert ⚠️",
+  };
+
+  const googleMapsLink = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
+  const formattedTime = new Date(timestamp || Date.now()).toLocaleString();
+
+  const htmlContent = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa; border-radius: 10px;">
               <div style="background-color: #dc3545; color: white; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
                   <h1 style="margin: 0; font-size: 24px;">⚠️ EMERGENCY ALERT ⚠️</h1>
@@ -116,17 +116,17 @@ exports.sendEmail = async (
               </div>
           </div>
       `;
-  
-    const mailOptions = {
-      from: {
-        name: "BookMyBus Emergency Alert",
-        address: process.env.EMAIL_USER,
-      },
-      to: to,
-      subject: `🚨 ${subject} - Immediate Action Required`,
-      html: htmlContent,
-      // Plain text version for email clients that don't support HTML
-      text: `
+
+  const mailOptions = {
+    from: {
+      name: "BookMyBus Emergency Alert",
+      address: process.env.EMAIL_USER,
+    },
+    to: to,
+    subject: `🚨 ${subject} - Immediate Action Required`,
+    html: htmlContent,
+    // Plain text version for email clients that don't support HTML
+    text: `
   EMERGENCY ALERT - ${emergencyTypeMap[emergencyType] || "Emergency Alert"}
   
   Time: ${formattedTime}
@@ -149,15 +149,14 @@ exports.sendEmail = async (
   
   DO NOT REPLY TO THIS EMAIL. For immediate assistance, contact emergency services.
           `,
-    };
-  
-    try {
-      const response = await emailTransporter.sendMail(mailOptions);
-      console.log("Emergency email sent successfully:", response.messageId);
-      return response;
-    } catch (error) {
-      console.error("Emergency email sending failed:", error);
-      throw error;
-    }
   };
-  
+
+  try {
+    const response = await emailTransporter.sendMail(mailOptions);
+    console.log("Emergency email sent successfully:", response.messageId);
+    return response;
+  } catch (error) {
+    console.error("Emergency email sending failed:", error);
+    throw error;
+  }
+};

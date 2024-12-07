@@ -7,11 +7,11 @@ const sosAlertSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    busId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Bus",
-      required: true,
-    },
+    // busId: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "Bus",
+    //   required: true,
+    // },
     location: {
       latitude: {
         type: Number,

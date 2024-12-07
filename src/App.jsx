@@ -32,6 +32,7 @@ import RouteManagement from "./Admin/RouteManagement";
 import ScheduleManagement from "./Admin/ScheduleManagement";
 import CityManagement from "./Admin/CityManagement";
 import AdminDashboard from "./Admin/AdminDashboard";
+import Emergency from "./components/SOS-Component/Emergency"
 
 import ProtectedRoute from "./ProtectRoutes/ProtectedRoute"
 
@@ -65,6 +66,7 @@ function App() {
           <Route path="/FAQs" element={<FaqS />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/refunds" element={<RefundPolicies />} />
+          <Route path="/Emergency" element={<Emergency />} />
 
           {/* Protected Passenger Routes */}
           <Route element={<ProtectedRoute allowedRoles={['Passenger', 'Admin']} />}>

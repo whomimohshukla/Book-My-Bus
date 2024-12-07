@@ -13,12 +13,12 @@ const {
 
 exports.triggerSOS = async (req, res) => {
   try {
-    const { userId, busId, location, description, emergencyType } = req.body;
+    const { userId, location, description, emergencyType } = req.body;
 
     // Create new SOS alert
     const sosAlert = await SOSAlert.create({
       userId,
-      busId,
+      // busId,
       location,
       description,
       emergencyType,
@@ -32,19 +32,17 @@ exports.triggerSOS = async (req, res) => {
     if (emergencyContacts) {
       for (const contact of emergencyContacts.contacts) {
         if (contact.isActive) {
-        //   // Send SMS notification
-        //   await sendSMS(
-        //     contact.phoneNumber,
-        //     `EMERGENCY ALERT: Contact requiring immediate assistance. Location: ${location.latitude}, ${location.longitude}. Type: ${emergencyType}. View map: https://www.google.com/maps?q=${location.latitude},${location.longitude}`
-        //   );
+          //   // Send SMS notification
+          //   await sendSMS(
+          //     contact.phoneNumber,
+          //     `EMERGENCY ALERT: Contact requiring immediate assistance. Location: ${location.latitude}, ${location.longitude}. Type: ${emergencyType}. View map: https://www.google.com/maps?q=${location.latitude},${location.longitude}`
+          //   );
 
           // Send Enhanced Email notification
           if (contact.email) {
             await sendEmail(contact.email, "Emergency Alert", {
               location,
               emergencyType,
-              description,
-              busId,
               timestamp: sosAlert.createdAt,
             });
           }

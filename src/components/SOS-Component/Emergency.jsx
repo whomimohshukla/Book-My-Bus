@@ -41,7 +41,7 @@ function Emergency() {
     initializeLocation();
   }, []);
 
-  // Check if user is authenticated
+  // Check if user is authenticated--
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50 flex items-center justify-center px-4">

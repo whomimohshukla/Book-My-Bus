@@ -3,6 +3,8 @@
   animation: pulse 2s infinite;
 }
 
+
+// animation 
 @keyframes pulse {
   0% {
       transform: scale(1);

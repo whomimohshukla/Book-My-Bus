@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaPlus, FaMapMarkerAlt, FaClock, FaRoute } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-
-const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
+import api from '../utils/api';
+// const api = axios.create({
+//   baseURL: 'http://localhost:8000/api',
+//   headers: {
+//     'Content-Type': 'application/json'
+//   }
+// });
 
 const RouteManagement = () => {
   const [routes, setRoutes] = useState([]);

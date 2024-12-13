@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthProvider";
 import { FaEnvelope, FaLock, FaBus, FaGoogle } from "react-icons/fa";
+import api from "../../utils/api";
 
 function InputField({ label, type, value, onChange, placeholder, icon: Icon }) {
   return (
@@ -80,22 +81,26 @@ function Login() {
     }
 
     try {
-      const response = await axios.post("http://localhost:8000/api/user/login", {
+      // const response = await axios.post("http://localhost:8000/api/user/login", {
+      //   email,
+      //   password,
+      // });
+      const response = await api.post("/user/login", {
         email,
         password,
       });
 
-      console.log('Login response:', response.data);
+      console.log("Login response:", response.data);
 
       const { token, user } = response.data;
 
       if (!token || !user) {
-        throw new Error('Invalid server response');
+        throw new Error("Invalid server response");
       }
 
       // Store auth data
       login(token, user);
-      
+
       toast.success(`Welcome back, ${user.name}!`);
 
       // Clear form
@@ -103,17 +108,18 @@ function Login() {
       setPassword("");
 
       // Navigate based on role
-      if (user.role === 'Admin') {
-        console.log('Admin user detected, navigating to admin dashboard');
+      if (user.role === "Admin") {
+        console.log("Admin user detected, navigating to admin dashboard");
         navigate("/admin");
       } else {
-        console.log('Regular user detected, navigating to ticket page');
+        console.log("Regular user detected, navigating to ticket page");
         const from = location.state?.from?.pathname || "/getTicket";
         navigate(from);
       }
     } catch (error) {
-      console.error('Login error:', error);
-      const message = error.response?.data?.message || "Login failed. Please try again.";
+      console.error("Login error:", error);
+      const message =
+        error.response?.data?.message || "Login failed. Please try again.";
       setErrorMessage(message);
       toast.error(message);
       setIsLoading(false);

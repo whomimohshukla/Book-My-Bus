@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { FaEdit, FaTrash, FaPlus, FaBus, FaRoute, FaClock, FaRupeeSign } from "react-icons/fa";
 import axios from "axios";
 import { motion } from "framer-motion";
+import api from "../utils/api";
 
-const api = axios.create({
-  baseURL: "http://localhost:8000/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+// const api = axios.create({
+//   baseURL: "http://localhost:8000/api",
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+// });
 
 const ScheduleManagement = () => {
   const [schedules, setSchedules] = useState([]);

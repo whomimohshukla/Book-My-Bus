@@ -4,10 +4,30 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { useNavigate, Link } from "react-router-dom";
-import { FaGoogle, FaBus, FaUser, FaEnvelope, FaLock, FaIdCard, FaUserTag } from "react-icons/fa";
+import {
+  FaGoogle,
+  FaBus,
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaIdCard,
+  FaUserTag,
+} from "react-icons/fa";
 import { useAuth } from "../../contexts/AuthProvider";
+import api from "../../utils/api";
 
-function InputField({ label, type, name, value, onChange, placeholder, icon: Icon, error, as = "input", options = [] }) {
+function InputField({
+  label,
+  type,
+  name,
+  value,
+  onChange,
+  placeholder,
+  icon: Icon,
+  error,
+  as = "input",
+  options = [],
+}) {
   return (
     <div className="mb-4">
       <label className=" text-sm md:text-base font-semibold text-gray-700 mb-2 flex items-center">
@@ -76,10 +96,10 @@ function Signup() {
 
     try {
       setIsLoading(true);
-      console.log('Google credential response:', credentialResponse);
-      
+      console.log("Google credential response:", credentialResponse);
+
       if (!credentialResponse.credential) {
-        throw new Error('No credential received from Google');
+        throw new Error("No credential received from Google");
       }
 
       const response = await axios.post(
@@ -89,14 +109,18 @@ function Signup() {
         },
         {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
-      
-      console.log('Server response:', response.data);
-      
-      if (response.status === 200 && response.data.token && response.data.user) {
+
+      console.log("Server response:", response.data);
+
+      if (
+        response.status === 200 &&
+        response.data.token &&
+        response.data.user
+      ) {
         const { token, user } = response.data;
         login(token, user.role);
         toast.update(toastId, {
@@ -105,17 +129,17 @@ function Signup() {
           isLoading: false,
           autoClose: 3000,
         });
-        navigate(user.role === 'Admin' ? "/admin" : "/");
+        navigate(user.role === "Admin" ? "/admin" : "/");
       } else {
-        throw new Error('Invalid response from server');
+        throw new Error("Invalid response from server");
       }
     } catch (error) {
       console.error("Google signup error details:", {
         message: error.message,
         response: error.response?.data,
-        status: error.response?.status
+        status: error.response?.status,
       });
-      
+
       let errorMessage = "Google signup failed. ";
       if (error.response?.data?.message) {
         errorMessage += error.response.data.message;
@@ -124,7 +148,7 @@ function Signup() {
       } else {
         errorMessage += "Please try again.";
       }
-      
+
       toast.update(toastId, {
         render: errorMessage,
         type: "error",
@@ -138,7 +162,9 @@ function Signup() {
 
   const handleGoogleSignupError = (error) => {
     console.error("Google Sign-Up error:", error);
-    toast.error("Google signup failed. Please make sure you're using a valid Google account.");
+    toast.error(
+      "Google signup failed. Please make sure you're using a valid Google account."
+    );
   };
 
   const validate = () => {
@@ -161,8 +187,8 @@ function Signup() {
       });
 
       try {
-        const response = await axios.post(
-          "http://localhost:8000/api/user/otp-Verify",
+        const response = await api.post(
+          "/user/otp-Verify",
           { email: formData.email }
         );
         if (response.status === 200) {
@@ -176,7 +202,9 @@ function Signup() {
         }
       } catch (err) {
         toast.update(toastId, {
-          render: err.response?.data?.message || "Failed to send OTP. Please try again",
+          render:
+            err.response?.data?.message ||
+            "Failed to send OTP. Please try again",
           type: "error",
           isLoading: false,
           autoClose: 5000,
@@ -193,8 +221,8 @@ function Signup() {
     });
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/api/user/resend-otp",
+      const response = await api.post(
+        "/user/resend-otp",
         { email: formData.email }
       );
       if (response.status === 200) {
@@ -207,7 +235,9 @@ function Signup() {
       }
     } catch (err) {
       toast.update(toastId, {
-        render: err.response?.data?.message || "Failed to resend OTP. Please try again",
+        render:
+          err.response?.data?.message ||
+          "Failed to resend OTP. Please try again",
         type: "error",
         isLoading: false,
         autoClose: 5000,
@@ -225,8 +255,8 @@ function Signup() {
       try {
         setIsLoading(true);
         // First signup request
-        const signupResponse = await axios.post(
-          "http://localhost:8000/api/user/signup",
+        const signupResponse = await api.post(
+          "/user/signup",
           formData,
           { headers: { "Content-Type": "application/json" } }
         );
@@ -251,14 +281,14 @@ function Signup() {
           if (loginResponse.status === 200) {
             const { token, user } = loginResponse.data;
             login(token, user.role);
-            
+
             toast.update(toastId, {
               render: "Welcome to BookMyBus! Redirecting...",
               type: "success",
               isLoading: false,
               autoClose: 3000,
             });
-            
+
             // Clear form
             setFormData({
               name: "",
@@ -271,7 +301,7 @@ function Signup() {
             });
 
             // Navigate based on role
-            if (user.role === 'Admin') {
+            if (user.role === "Admin") {
               navigate("/admin");
             } else {
               navigate("/getTicket");
@@ -279,9 +309,11 @@ function Signup() {
           }
         }
       } catch (err) {
-        console.error('Signup/Login error:', err);
+        console.error("Signup/Login error:", err);
         toast.update(toastId, {
-          render: err.response?.data?.message || "Something went wrong. Please try again",
+          render:
+            err.response?.data?.message ||
+            "Something went wrong. Please try again",
           type: "error",
           isLoading: false,
           autoClose: 5000,
@@ -315,8 +347,12 @@ function Signup() {
               <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-Darkgreen to-LightGreen rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg hover:shadow-xl transition-all duration-300">
                 <FaBus className="text-white2 text-3xl sm:text-4xl" />
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">Create Account</h2>
-              <p className="text-gray-600 text-sm sm:text-base">Join us for a better journey</p>
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-2">
+                Create Account
+              </h2>
+              <p className="text-gray-600 text-sm sm:text-base">
+                Join us for a better journey
+              </p>
             </div>
 
             {/* Main Card */}
@@ -325,7 +361,8 @@ function Signup() {
               <div className="w-full">
                 <button
                   onClick={() => {
-                    const googleLoginBtn = document.querySelector('[role="button"]');
+                    const googleLoginBtn =
+                      document.querySelector('[role="button"]');
                     if (googleLoginBtn) googleLoginBtn.click();
                   }}
                   className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-xl bg-gradient-to-r from-Darkgreen to-LightGreen text-white2 font-semibold hover:opacity-90 transform hover:scale-[0.99] transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
@@ -356,7 +393,9 @@ function Signup() {
                   <div className="w-full border-t border-gray-200"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500">or sign up with email</span>
+                  <span className="px-4 bg-white text-gray-500">
+                    or sign up with email
+                  </span>
                 </div>
               </div>
 
@@ -421,7 +460,7 @@ function Signup() {
                     as="select"
                     options={[
                       { value: "Admin", label: "Admin" },
-                      { value: "Passenger", label: "Passenger" }
+                      { value: "Passenger", label: "Passenger" },
                     ]}
                   />
 
@@ -437,7 +476,7 @@ function Signup() {
                       { value: "Adult", label: "Adult" },
                       { value: "Child", label: "Child" },
                       { value: "Senior", label: "Senior" },
-                      { value: "Student", label: "Student" }
+                      { value: "Student", label: "Student" },
                     ]}
                   />
                 </div>
@@ -475,8 +514,10 @@ function Signup() {
                       <div className="w-5 h-5 border-2 border-white2 border-t-transparent rounded-full animate-spin mr-2"></div>
                       {otpSent ? "Creating Account..." : "Sending OTP..."}
                     </div>
+                  ) : otpSent ? (
+                    "Create Account"
                   ) : (
-                    otpSent ? "Create Account" : "Send OTP"
+                    "Send OTP"
                   )}
                 </button>
               </form>
@@ -485,17 +526,26 @@ function Signup() {
               <div className="text-center space-y-4">
                 <p className="text-sm text-gray-600">
                   By signing up, you agree to our{" "}
-                  <Link to="/termsAndConditions" className="text-Darkgreen hover:text-LightGreen transition-colors duration-300">
+                  <Link
+                    to="/termsAndConditions"
+                    className="text-Darkgreen hover:text-LightGreen transition-colors duration-300"
+                  >
                     Terms & Conditions
                   </Link>{" "}
                   and{" "}
-                  <Link to="/privacy" className="text-Darkgreen hover:text-LightGreen transition-colors duration-300">
+                  <Link
+                    to="/privacy"
+                    className="text-Darkgreen hover:text-LightGreen transition-colors duration-300"
+                  >
                     Privacy Policy
                   </Link>
                 </p>
                 <p className="text-sm text-gray-600">
                   Already have an account?{" "}
-                  <Link to="/login" className="text-Darkgreen font-semibold hover:text-LightGreen transition-colors duration-300">
+                  <Link
+                    to="/login"
+                    className="text-Darkgreen font-semibold hover:text-LightGreen transition-colors duration-300"
+                  >
                     Sign in
                   </Link>
                 </p>

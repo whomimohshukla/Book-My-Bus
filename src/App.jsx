@@ -37,6 +37,10 @@ import Emergency from "./components/SOS-Component/Emergency"
 import ProtectedRoute from "./ProtectRoutes/ProtectedRoute"
 
 // this is the main App component
+
+
+
+
 function App() {
   const location = useLocation();
 

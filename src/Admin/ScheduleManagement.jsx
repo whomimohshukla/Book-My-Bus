@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrash, FaPlus, FaBus, FaRoute, FaClock, FaRupeeSign } from "react-icons/fa";
-import axios from "axios";
+import {
+  FaEdit,
+  FaTrash,
+  FaPlus,
+  FaBus,
+  FaRoute,
+  FaClock,
+  FaRupeeSign,
+} from "react-icons/fa";
+
 import { motion } from "framer-motion";
 import api from "../utils/api";
 
-// const api = axios.create({
-//   baseURL: "http://localhost:8000/api",
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// });
+
 
 const ScheduleManagement = () => {
   const [schedules, setSchedules] = useState([]);
@@ -35,29 +38,45 @@ const ScheduleManagement = () => {
 
   const fetchSchedules = async () => {
     try {
+      // console.log("Fetching schedules...");
       setLoading(true);
       setError(null);
+      
       const response = await api.get("scheduleRoutes/schedule");
-      const scheduleData = response.data;
-      console.log("Individual schedule examples:", {
-        first: scheduleData[0],
-        withBus: scheduleData.find(s => s.busId !== null),
-        withRoute: scheduleData.find(s => s.routeId !== null)
-      });
+      // console.log("Raw schedule response:", {
+      //   status: response.status,
+      //   data: response.data
+      // });
 
+      const scheduleData = response.data;
+      
+      let processedSchedules = [];
       if (Array.isArray(scheduleData)) {
-        setSchedules(scheduleData);
-      } else if (scheduleData && typeof scheduleData === "object") {
-        setSchedules(scheduleData.schedules || scheduleData.data || []);
-      } else {
-        setSchedules([]);
+        processedSchedules = scheduleData;
+      } else if (scheduleData?.schedules) {
+        processedSchedules = scheduleData.schedules;
+      } else if (scheduleData?.data) {
+        processedSchedules = scheduleData.data;
       }
+
+      // console.log("Processed schedules:", {
+      //   count: processedSchedules.length,
+      //   sample: processedSchedules[0]
+      // });
+
+      setSchedules(processedSchedules);
+      
+      // if (processedSchedules.length === 0) {
+      //   console.log("No schedules found in the response");
+      // }
     } catch (err) {
-      setError(
-        "Failed to fetch schedules: " +
-          (err.response?.data?.message || err.message)
-      );
-      console.error("Fetch schedules error:", err);
+      const errorMessage = err.response?.data?.message || err.message;
+      console.error("Schedule fetch error:", {
+        message: errorMessage,
+        status: err.response?.status,
+        data: err.response?.data
+      });
+      setError(`Failed to fetch schedules: ${errorMessage}`);
       setSchedules([]);
     } finally {
       setLoading(false);
@@ -68,31 +87,78 @@ const ScheduleManagement = () => {
     try {
       const response = await api.get("/busRoute/buses");
       const busData = response.data;
-      if (busData && busData.data) {
-        setBuses(busData.data);
+
+      if (Array.isArray(busData) && busData.length > 0) {
+        const processedBuses = busData.map(bus => ({
+          _id: bus._id,
+          busNumber: bus.busNumber,
+          busName: bus.busName,
+          type: bus.type,
+          totalSeats: bus.totalSeats || 40,
+          operatorName: bus.operatorId?.name || 'Unknown Operator',
+          amenities: bus.amenities || []
+        }));
+        setBuses(processedBuses);
       } else {
         setBuses([]);
       }
     } catch (err) {
-      console.error("Failed to fetch buses:", err);
+      console.error("Failed to fetch buses:", err.message);
       setBuses([]);
     }
   };
 
   const fetchRoutes = async () => {
     try {
+      // console.log("Fetching routes...");
       const response = await api.get("/busTravelRoute/Travelroutes");
-      const routeData = response.data;
-      console.log("Raw route data:", routeData);
       
-      if (routeData && routeData.routes) {
-        console.log("First route example:", routeData.routes[0]);
-        setRoutes(routeData.routes);
+      // Log the entire response structure
+      // console.log("Raw route response:", {
+      //   status: response.status,
+      //   statusText: response.statusText,
+      //   data: response.data
+      // });
+
+      const routeData = response.data;
+      
+      if (routeData?.routes && Array.isArray(routeData.routes)) {
+        const processedRoutes = routeData.routes.map(route => ({
+          _id: route._id,
+          source: {
+            name: route.source?.city?.name || route.source?.name || 'Unknown',
+            city: route.source?.city?.name || route.source?.name || 'Unknown'
+          },
+          destination: {
+            name: route.destination?.city?.name || route.destination?.name || 'Unknown',
+            city: route.destination?.city?.name || route.destination?.name || 'Unknown'
+          },
+          distance: route.distance,
+          duration: route.duration
+        }));
+        
+        // console.log("Processed routes:", {
+        //   count: processedRoutes.length,
+        //   sample: processedRoutes[0]
+        // });
+        
+        setRoutes(processedRoutes);
       } else {
+        console.warn("Invalid route data structure:", {
+          hasRoutes: Boolean(routeData?.routes),
+          dataType: typeof routeData?.routes,
+          rawData: routeData
+        });
         setRoutes([]);
       }
     } catch (err) {
-      console.error("Failed to fetch routes:", err);
+      console.error("Route fetch error:", {
+        message: err.message,
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        responseData: err.response?.data,
+        stack: err.stack
+      });
       setRoutes([]);
     }
   };
@@ -135,15 +201,16 @@ const ScheduleManagement = () => {
         fareDetails: {
           baseFare: fare,
           tax: fare * 0.1, // 10% tax
-          serviceFee: 20 // Fixed service fee
+          serviceFee: 20, // Fixed service fee
         },
         driverDetails: {
           name: "Not Assigned",
           phone: "Not Assigned",
-          license: "Not Assigned"
+          license: "Not Assigned",
         },
         status: "Active",
-        availableSeats: buses.find(bus => bus._id === formData.busId)?.totalSeats || 40
+        availableSeats:
+          buses.find((bus) => bus._id === formData.busId)?.totalSeats || 40,
       };
 
       if (editingId) {
@@ -203,9 +270,10 @@ const ScheduleManagement = () => {
       return;
     }
 
-    const totalFare = (schedule.fareDetails?.baseFare || 0) + 
-                     (schedule.fareDetails?.tax || 0) + 
-                     (schedule.fareDetails?.serviceFee || 0);
+    const totalFare =
+      (schedule.fareDetails?.baseFare || 0) +
+      (schedule.fareDetails?.tax || 0) +
+      (schedule.fareDetails?.serviceFee || 0);
 
     setFormData({
       busId: schedule.busId?._id || schedule.busId || "",
@@ -225,19 +293,21 @@ const ScheduleManagement = () => {
   const getBusNumber = (busId) => {
     if (!busId) return "No Bus Assigned";
     // If busId is an object with _id property
-    const id = typeof busId === 'object' ? busId._id : busId;
-    const bus = buses.find(bus => bus._id === id);
+    const id = typeof busId === "object" ? busId._id : busId;
+    const bus = buses.find((bus) => bus._id === id);
     return bus?.busNumber || "No Bus Assigned";
   };
 
   const getRouteString = (routeId) => {
     if (!routeId) return "No Route Assigned";
-    const id = typeof routeId === 'object' ? routeId._id : routeId;
-    const route = routes.find(route => route._id === id);
+    const id = typeof routeId === "object" ? routeId._id : routeId;
+    const route = routes.find((route) => route._id === id);
     if (!route) return "No Route Assigned";
-    
-    const sourceCity = route.source?.city?.name || route.source?.name || 'Unknown';
-    const destCity = route.destination?.city?.name || route.destination?.name || 'Unknown';
+
+    const sourceCity =
+      route.source?.city?.name || route.source?.name || "Unknown";
+    const destCity =
+      route.destination?.city?.name || route.destination?.name || "Unknown";
     return `${sourceCity} to ${destCity}`;
   };
 
@@ -250,7 +320,7 @@ const ScheduleManagement = () => {
   }
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -302,7 +372,9 @@ const ScheduleManagement = () => {
                 </label>
                 <select
                   value={formData.busId}
-                  onChange={(e) => setFormData({ ...formData, busId: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, busId: e.target.value })
+                  }
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#349E4D] focus:border-transparent transition-all duration-300 font-roboto"
                   required
                 >
@@ -323,7 +395,9 @@ const ScheduleManagement = () => {
                 </label>
                 <select
                   value={formData.routeId}
-                  onChange={(e) => setFormData({ ...formData, routeId: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, routeId: e.target.value })
+                  }
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#349E4D] focus:border-transparent transition-all duration-300 font-roboto"
                   required
                 >
@@ -331,8 +405,13 @@ const ScheduleManagement = () => {
                   {Array.isArray(routes) &&
                     routes.map((route) => (
                       <option key={route._id} value={route._id}>
-                        {route.source?.city?.name || route.source?.name || 'Unknown'} to{' '}
-                        {route.destination?.city?.name || route.destination?.name || 'Unknown'}
+                        {route.source?.city?.name ||
+                          route.source?.name ||
+                          "Unknown"}{" "}
+                        to{" "}
+                        {route.destination?.city?.name ||
+                          route.destination?.name ||
+                          "Unknown"}
                       </option>
                     ))}
                 </select>
@@ -346,7 +425,9 @@ const ScheduleManagement = () => {
                 <input
                   type="datetime-local"
                   value={formData.departureTime}
-                  onChange={(e) => setFormData({ ...formData, departureTime: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, departureTime: e.target.value })
+                  }
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#349E4D] focus:border-transparent transition-all duration-300 font-roboto"
                   required
                 />
@@ -360,7 +441,9 @@ const ScheduleManagement = () => {
                 <input
                   type="datetime-local"
                   value={formData.arrivalTime}
-                  onChange={(e) => setFormData({ ...formData, arrivalTime: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, arrivalTime: e.target.value })
+                  }
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#349E4D] focus:border-transparent transition-all duration-300 font-roboto"
                   required
                 />
@@ -374,7 +457,9 @@ const ScheduleManagement = () => {
                 <input
                   type="number"
                   value={formData.fare}
-                  onChange={(e) => setFormData({ ...formData, fare: e.target.value })}
+                  onChange={(e) =>
+                    setFormData({ ...formData, fare: e.target.value })
+                  }
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-[#349E4D] focus:border-transparent transition-all duration-300 font-roboto"
                   required
                   min="0"
@@ -420,37 +505,44 @@ const ScheduleManagement = () => {
                   {getRouteString(schedule.routeId)}
                 </p>
               </div>
-              
+
               <div className="p-4 space-y-3">
                 <div className="flex items-center gap-2 text-gray-600">
                   <FaClock className="text-[#349E4D]" />
                   <div>
                     <p className="text-sm font-medium">Departure</p>
-                    <p className="text-sm">{new Date(schedule.departureTime).toLocaleString()}</p>
+                    <p className="text-sm">
+                      {new Date(schedule.departureTime).toLocaleString()}
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2 text-gray-600">
                   <FaClock className="text-[#349E4D]" />
                   <div>
                     <p className="text-sm font-medium">Arrival</p>
-                    <p className="text-sm">{new Date(schedule.arrivalTime).toLocaleString()}</p>
+                    <p className="text-sm">
+                      {new Date(schedule.arrivalTime).toLocaleString()}
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-2 text-gray-600">
                   <FaRupeeSign className="text-[#349E4D]" />
                   <div>
                     <p className="text-sm font-medium">Fare</p>
-                    <p className="text-sm">₹{(
-                      (schedule.fareDetails?.baseFare || 0) +
-                      (schedule.fareDetails?.tax || 0) +
-                      (schedule.fareDetails?.serviceFee || 0)
-                    ).toFixed(2)}</p>
+                    <p className="text-sm">
+                      ₹
+                      {(
+                        (schedule.fareDetails?.baseFare || 0) +
+                        (schedule.fareDetails?.tax || 0) +
+                        (schedule.fareDetails?.serviceFee || 0)
+                      ).toFixed(2)}
+                    </p>
                   </div>
                 </div>
               </div>
-              
+
               <div className="border-t border-gray-200 p-4 flex justify-end gap-2">
                 <button
                   onClick={() => handleEdit(schedule)}

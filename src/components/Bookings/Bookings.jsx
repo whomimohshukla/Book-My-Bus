@@ -1,95 +1,109 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthProvider';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../../utils/axiosConfig';
 import { FaBus, FaMapMarkerAlt, FaClock, FaRupeeSign, FaTicketAlt, FaUser, FaCalendarAlt } from 'react-icons/fa';
 import { MdAirlineSeatReclineNormal } from 'react-icons/md';
 
 function Bookings() {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('upcoming');
+  const [bookings, setBookings] = useState({
+    upcoming: [],
+    past: [],
+    cancelled: []
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Dummy data for demonstration
-  const dummyBookings = {
-    upcoming: [
-      {
-        id: 'BK001',
-        busName: 'Express Liner AC Sleeper',
-        from: 'Mumbai',
-        to: 'Pune',
-        departureDate: '2024-03-25',
-        departureTime: '10:00 AM',
-        arrivalTime: '01:00 PM',
-        seatNumbers: ['A1', 'A2'],
-        status: 'Confirmed',
-        price: 800,
-        busType: 'AC Sleeper',
-        boardingPoint: 'Dadar Bus Stand',
-        droppingPoint: 'Pune Station',
-        passengers: [
-          { name: 'John Doe', age: 28, seatNo: 'A1', gender: 'Male' },
-          { name: 'Jane Doe', age: 25, seatNo: 'A2', gender: 'Female' }
-        ]
-      },
-      {
-        id: 'BK002',
-        busName: 'Night Rider Volvo',
-        from: 'Delhi',
-        to: 'Jaipur',
-        departureDate: '2024-04-01',
-        departureTime: '11:30 PM',
-        arrivalTime: '05:30 AM',
-        seatNumbers: ['B3'],
-        status: 'Confirmed',
-        price: 1200,
-        busType: 'Volvo AC',
-        boardingPoint: 'Kashmere Gate ISBT',
-        droppingPoint: 'Jaipur Central Bus Stand',
-        passengers: [
-          { name: 'Alice Smith', age: 30, seatNo: 'B3', gender: 'Female' }
-        ]
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login', { state: { from: '/bookings' } });
+      return;
+    }
+
+    if (user?._id) {
+      fetchBookings();
+    } else {
+      setLoading(false);
+      setError('User information not available');
+    }
+  }, [user, isAuthenticated]);
+
+  const fetchBookings = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axiosInstance.get(`/api/booking/user/${user._id}`);
+      
+      // Sort bookings based on status and date
+      const allBookings = response.data.data;
+      const sorted = {
+        upcoming: [],
+        past: [],
+        cancelled: []
+      };
+
+      allBookings.forEach(booking => {
+        const departureTime = new Date(booking.scheduleId.departureTime);
+        const now = new Date();
+
+        if (booking.status === 'cancelled') {
+          sorted.cancelled.push(booking);
+        } else if (departureTime < now) {
+          sorted.past.push(booking);
+        } else {
+          sorted.upcoming.push(booking);
+        }
+      });
+
+      // Sort each category by departure time
+      Object.keys(sorted).forEach(key => {
+        sorted[key].sort((a, b) => 
+          new Date(b.scheduleId.departureTime) - new Date(a.scheduleId.departureTime)
+        );
+      });
+
+      setBookings(sorted);
+    } catch (error) {
+      setError(error.response?.data?.message || 'Failed to fetch bookings');
+      
+      if (error.response?.status === 401) {
+        navigate('/login', { state: { from: '/bookings' } });
       }
-    ],
-    past: [
-      {
-        id: 'BK003',
-        busName: 'City Connect',
-        from: 'Bangalore',
-        to: 'Chennai',
-        departureDate: '2024-02-15',
-        departureTime: '08:00 AM',
-        arrivalTime: '02:00 PM',
-        seatNumbers: ['C4'],
-        status: 'Completed',
-        price: 1500,
-        busType: 'Non-AC Seater',
-        boardingPoint: 'Majestic Bus Stand',
-        droppingPoint: 'Chennai Central Bus Stand',
-        passengers: [
-          { name: 'Bob Wilson', age: 35, seatNo: 'C4', gender: 'Male' }
-        ]
-      }
-    ],
-    cancelled: [
-      {
-        id: 'BK004',
-        busName: 'Super Express',
-        from: 'Hyderabad',
-        to: 'Vijayawada',
-        departureDate: '2024-03-10',
-        departureTime: '09:00 AM',
-        arrivalTime: '01:00 PM',
-        seatNumbers: ['D5'],
-        status: 'Cancelled',
-        price: 900,
-        busType: 'AC Sleeper',
-        boardingPoint: 'Secunderabad Bus Stand',
-        droppingPoint: 'Vijayawada Bus Stand',
-        passengers: [
-          { name: 'Charlie Brown', age: 40, seatNo: 'D5', gender: 'Male' }
-        ]
-      }
-    ]
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCancelBooking = async (bookingId) => {
+    try {
+      const confirmed = window.confirm('Are you sure you want to cancel this booking?');
+      if (!confirmed) return;
+
+      await axiosInstance.put(`/api/booking/${bookingId}/cancel`, {
+        reason: 'Customer requested cancellation'
+      });
+
+      // Show success message
+      setError({ type: 'success', message: 'Booking cancelled successfully' });
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setError(null);
+      }, 3000);
+
+      fetchBookings(); // Refresh bookings list
+    } catch (error) {
+      setError(error.message || 'Failed to cancel booking');
+      
+      // Clear error message after 3 seconds
+      setTimeout(() => {
+        setError(null);
+      }, 3000);
+    }
   };
 
   const getStatusColor = (status) => {
@@ -105,22 +119,34 @@ function Bookings() {
     }
   };
 
+  const formatDateTime = (dateString) => {
+    return new Date(dateString).toLocaleString('en-US', {
+      weekday: 'short',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   const renderBookingCard = (booking) => (
-    <div key={booking.id} className="bg-white rounded-lg shadow-md overflow-hidden mb-6 hover:shadow-lg transition-shadow">
+    <div key={booking._id} className="bg-white rounded-lg shadow-md overflow-hidden mb-6 hover:shadow-lg transition-shadow">
       {/* Header Section */}
       <div className="bg-gray-50 p-3 md:p-4 border-b border-gray-200">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
           <div className="flex items-center space-x-2">
             <FaBus className="text-Darkgreen text-xl" />
-            <h3 className="text-lg md:text-xl font-semibold text-gray-800">{booking.busName}</h3>
+            <h3 className="text-lg md:text-xl font-semibold text-gray-800">
+              {booking.scheduleId.busId.busNumber} - {booking.scheduleId.busId.busType}
+            </h3>
           </div>
           <span className={`px-4 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.status)} w-fit`}>
             {booking.status}
           </span>
         </div>
         <p className="text-sm text-gray-600">
-          <span className="font-medium">Booking ID:</span> {booking.id} | 
-          <span className="font-medium ml-2">Bus Type:</span> {booking.busType}
+          <span className="font-medium">Booking ID:</span> {booking._id}
         </p>
       </div>
 
@@ -131,8 +157,7 @@ function Bookings() {
             <div className="relative pl-8">
               <FaMapMarkerAlt className="absolute left-0 top-0 text-green-600" />
               <p className="text-sm text-gray-600">From</p>
-              <p className="font-semibold text-gray-800">{booking.from}</p>
-              <p className="text-sm text-gray-600">{booking.boardingPoint}</p>
+              <p className="font-semibold text-gray-800">{booking.scheduleId.routeId.source.name}</p>
             </div>
           </div>
           
@@ -148,8 +173,7 @@ function Bookings() {
             <div className="relative pl-8">
               <FaMapMarkerAlt className="absolute left-0 top-0 text-red-600" />
               <p className="text-sm text-gray-600">To</p>
-              <p className="font-semibold text-gray-800">{booking.to}</p>
-              <p className="text-sm text-gray-600">{booking.droppingPoint}</p>
+              <p className="font-semibold text-gray-800">{booking.scheduleId.routeId.destination.name}</p>
             </div>
           </div>
         </div>
@@ -159,23 +183,18 @@ function Bookings() {
           <div className="flex items-center space-x-3">
             <FaCalendarAlt className="text-gray-600" />
             <div>
-              <p className="text-sm text-gray-600">Travel Date</p>
+              <p className="text-sm text-gray-600">Departure</p>
               <p className="font-medium text-gray-800">
-                {new Date(booking.departureDate).toLocaleDateString('en-US', {
-                  weekday: 'short',
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric'
-                })}
+                {formatDateTime(booking.scheduleId.departureTime)}
               </p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
             <FaClock className="text-gray-600" />
             <div>
-              <p className="text-sm text-gray-600">Duration</p>
+              <p className="text-sm text-gray-600">Arrival</p>
               <p className="font-medium text-gray-800">
-                {booking.departureTime} - {booking.arrivalTime}
+                {formatDateTime(booking.scheduleId.arrivalTime)}
               </p>
             </div>
           </div>
@@ -196,14 +215,12 @@ function Bookings() {
                   </div>
                   <div>
                     <p className="font-medium text-gray-800">{passenger.name}</p>
-                    <p className="text-sm text-gray-600">
-                      {passenger.age} yrs | {passenger.gender}
-                    </p>
+                    <p className="text-sm text-gray-600">{passenger.age} yrs</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <MdAirlineSeatReclineNormal className="text-gray-600" />
-                  <span className="font-medium text-gray-800">{passenger.seatNo}</span>
+                  <span className="font-medium text-gray-800">{booking.seats[index].seatNumber}</span>
                 </div>
               </div>
             ))}
@@ -216,21 +233,22 @@ function Bookings() {
             <FaRupeeSign className="text-Darkgreen text-xl" />
             <div>
               <p className="text-sm text-gray-600">Total Fare</p>
-              <p className="text-xl font-bold text-Darkgreen">₹{booking.price}</p>
+              <p className="text-xl font-bold text-Darkgreen">₹{booking.totalAmount}</p>
             </div>
           </div>
           
           <div className="flex space-x-3">
-            {booking.status === 'Confirmed' && (
+            {booking.status === 'confirmed' && (
               <>
                 <button 
-                  onClick={() => navigate(`/ticket/${booking.id}`)}
+                  onClick={() => navigate(`/ticket/${booking._id}`)}
                   className="flex items-center px-3 md:px-4 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700 transition-colors text-sm md:text-base"
                 >
                   <FaTicketAlt className="mr-2" />
                   View Ticket
                 </button>
                 <button 
+                  onClick={() => handleCancelBooking(booking._id)}
                   className="px-3 md:px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 transition-colors text-sm md:text-base"
                 >
                   Cancel
@@ -264,24 +282,43 @@ function Bookings() {
           </div>
         </div>
 
-        {/* Booking Cards */}
-        <div className="space-y-6">
-          {dummyBookings[activeTab].length > 0 ? (
-            dummyBookings[activeTab].map(booking => renderBookingCard(booking))
-          ) : (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
-              <FaTicketAlt className="mx-auto text-4xl text-gray-400 mb-4" />
-              <p className="text-xl font-medium text-gray-600 mb-2">No {activeTab} bookings found</p>
-              <p className="text-gray-500">When you book a trip, it will appear here.</p>
-              <button
-                onClick={() => navigate('/search')}
-                className="mt-4 px-6 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700 transition-colors"
-              >
-                Book a Bus
-              </button>
-            </div>
-          )}
-        </div>
+        {/* Error/Success Messages */}
+        {error && (
+          <div className={`mb-4 p-4 rounded-md ${
+            error.type === 'success' 
+              ? 'bg-green-50 text-green-700 border border-green-200'
+              : 'bg-red-50 text-red-700 border border-red-200'
+          }`}>
+            {error.message}
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading ? (
+          <div className="bg-white rounded-lg shadow-md p-8 text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-Darkgreen mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading bookings...</p>
+          </div>
+        ) : (
+          /* Booking Cards */
+          <div className="space-y-6">
+            {bookings[activeTab].length > 0 ? (
+              bookings[activeTab].map(booking => renderBookingCard(booking))
+            ) : (
+              <div className="bg-white rounded-lg shadow-md p-8 text-center">
+                <FaTicketAlt className="mx-auto text-4xl text-gray-400 mb-4" />
+                <p className="text-xl font-medium text-gray-600 mb-2">No {activeTab} bookings found</p>
+                <p className="text-gray-500">When you book a trip, it will appear here.</p>
+                <button
+                  onClick={() => navigate('/search')}
+                  className="mt-4 px-6 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700 transition-colors"
+                >
+                  Book a Bus
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -98,17 +98,28 @@ function Login() {
         throw new Error("Invalid server response");
       }
 
-      // Store auth data
-      login(token, user);
+      // Normalize user role to lowercase
+      const normalizedUser = {
+        ...user,
+        role: user.role ? user.role.toLowerCase() : null
+      };
 
-      toast.success(`Welcome back, ${user.name}!`);
+      console.log('Normalized user data before login:', normalizedUser);
+
+      // Store auth data
+      login(token, normalizedUser);
+
+      toast.success(`Welcome back, ${normalizedUser.name}!`);
 
       // Clear form
       setEmail("");
       setPassword("");
 
-      // Navigate based on role
-      if (user.role === "Admin") {
+      // Navigate based on role (case-insensitive)
+      const userRole = normalizedUser.role?.toLowerCase();
+      console.log('User role for navigation:', userRole);
+
+      if (userRole === 'admin') {
         console.log("Admin user detected, navigating to admin dashboard");
         navigate("/admin");
       } else {

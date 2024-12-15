@@ -34,8 +34,12 @@ import CityManagement from "./Admin/CityManagement";
 import AdminDashboard from "./Admin/AdminDashboard";
 import Emergency from "./components/SOS-Component/Emergency"
 
-import ProtectedRoute from "./ProtectRoutes/ProtectedRoute"
+// import ProtectedRoute from "./ProtectRoutes/ProtectedRoute"
+{/* <ProtectedRoute allowedRoles={['admin', 'operator']}>
+  <Route path="/admin" element={<AdminDashboard />} />
+</ProtectedRoute> */}
 
+import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute"
 // this is the main App component
 
 
@@ -73,7 +77,7 @@ function App() {
           <Route path="/Emergency" element={<Emergency />} />
 
           {/* Protected Passenger Routes */}
-          <Route element={<ProtectedRoute allowedRoles={['Passenger', 'Admin']} />}>
+          <Route element={<ProtectedRoute allowedRoles={['passenger', 'admin']} />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/bookings" element={<Bookings />} />
             <Route path="/ticket-Search" element={<TicketSearch />} />

@@ -2,6 +2,8 @@ const Booking = require("../../models/Booking.Model/booking.model");
 const Schedule = require("../../models/Schedule.model/schedule.model");
 const User = require("../../models/User.Login.Signup/user.model");
 const mailSender = require("../../utls/emailSender.utls/bookingEmail/bookingEmail");
+const { createPaymentOrder, verifyPaymentSignature } = require('../../utls/payment.utils');
+
 exports.createBooking = async (req, res) => {
   try {
     const { scheduleId, seats, passengers, contactDetails } = req.body;
@@ -49,7 +51,7 @@ exports.createBooking = async (req, res) => {
       passengers,
       contactDetails,
       totalAmount,
-      status: "confirmed",
+      status: "pending",
       paymentStatus: "pending", // You might want to integrate with a payment gateway
     });
 
@@ -78,10 +80,10 @@ exports.createBooking = async (req, res) => {
     });
 
     // Send booking confirmation email with the populated schedule data
-    await mailSender.sendBookingConfirmation(
-      populatedBooking,
-      populatedBooking.scheduleId
-    );
+    // await mailSender.sendBookingConfirmation(
+    //   populatedBooking,
+    //   populatedBooking.scheduleId
+    // );
 
     res.status(201).json({
       success: true,
@@ -262,4 +264,145 @@ const calculateRefundAmount = (totalAmount, hoursToDeparture) => {
     refundPercentage = 0.5; // 50% refund
   }
   return totalAmount * refundPercentage;
+};
+
+// Initiate payment for a booking
+exports.initiatePayment = async (req, res) => {
+  try {
+    const { bookingId } = req.body;
+    const booking = await Booking.findById(bookingId)
+      .populate('userId', 'name email')
+      .populate({
+        path: 'scheduleId',
+        populate: [
+          { path: 'routeId', select: 'routeName source destination' },
+          { path: 'busId', select: 'busNumber busType' }
+        ]
+      });
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found"
+      });
+    }
+
+    // Verify booking belongs to user
+    if (booking.userId._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized"
+      });
+    }
+
+    // Check if booking has expired
+    if (booking.expiresAt && new Date() > booking.expiresAt) {
+      booking.status = "expired";
+      await booking.save();
+      return res.status(400).json({
+        success: false,
+        message: "Booking has expired. Please create a new booking."
+      });
+    }
+
+    // Create Razorpay order
+    const order = await createPaymentOrder(booking);
+
+    // Save order details to booking
+    booking.paymentDetails = {
+      orderId: order.id,
+      status: 'created'
+    };
+    await booking.save();
+
+    res.status(200).json({
+      success: true,
+      data: {
+        orderId: order.id,
+        amount: order.amount,
+        currency: order.currency,
+        bookingId: booking._id,
+        key: process.env.RAZORPAY_KEY_ID,
+        userInfo: {
+          name: booking.userId.name,
+          email: booking.userId.email,
+          contact: booking.contactDetails.phone
+        },
+        bookingInfo: {
+          source: booking.scheduleId.routeId.source,
+          destination: booking.scheduleId.routeId.destination,
+          date: booking.scheduleId.departureTime,
+          busNumber: booking.scheduleId.busId.busNumber
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Error initiating payment:', error);
+    res.status(500).json({
+      success: false,
+      message: "Error initiating payment"
+    });
+  }
+};
+
+// Handle payment verification webhook
+exports.handlePaymentWebhook = async (req, res) => {
+  try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature
+    } = req.body;
+
+    // Verify payment signature
+    const isValid = verifyPaymentSignature(
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature
+    );
+
+    if (!isValid) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid payment signature"
+      });
+    }
+
+    // Find booking by order ID
+    const booking = await Booking.findOne({
+      'paymentDetails.orderId': razorpay_order_id
+    });
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found"
+      });
+    }
+
+    // Update booking status
+    booking.status = "confirmed";
+    booking.paymentStatus = "completed";
+    booking.paymentDetails = {
+      ...booking.paymentDetails,
+      paymentId: razorpay_payment_id,
+      status: 'completed',
+      completedAt: new Date()
+    };
+    await booking.save();
+
+    // Send confirmation email
+    await mailSender.sendBookingConfirmation(booking, booking.scheduleId);
+
+    res.status(200).json({
+      success: true,
+      message: "Payment verified successfully"
+    });
+  } catch (error) {
+    console.error('Error handling payment webhook:', error);
+    res.status(500).json({
+      success: false,
+      message: "Error processing payment verification"
+    });
+  }
 };

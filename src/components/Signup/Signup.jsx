@@ -304,7 +304,7 @@ function Signup() {
             if (user.role === "Admin") {
               navigate("/admin");
             } else {
-              navigate("/getTicket");
+              navigate("/");
             }
           }
         }

@@ -22,13 +22,12 @@ export const AuthProvider = ({ children }) => {
           token,
           user: {
             ...user,
-            role: user.role || null // Ensure role is always present
+            role: user.role || null
           },
           isAuthenticated: true
         };
       }
     } catch (error) {
-      console.error('Error restoring auth state:', error);
       localStorage.removeItem('authToken');
       localStorage.removeItem('userData');
     }
@@ -40,41 +39,26 @@ export const AuthProvider = ({ children }) => {
     };
   });
 
-  // useEffect(() => {
-  // //   console.log('Auth state changed:', {
-  // //     isAuthenticated: auth.isAuthenticated,
-  // //     userRole: auth.user?.role,
-  // //     hasToken: !!auth.token,
-  // //     hasUser: !!auth.user
-  // //   });
-  // // }, [auth]);
+  useEffect(() => {
+  }, [auth]);
 
   const login = (token, user) => {
     if (!token || !user) {
-      console.error('Login failed: Missing token or user data');
       return;
     }
 
-    // Ensure user object has a role
     const userWithRole = {
       ...user,
       role: user.role || null
     };
 
-    // Store in localStorage
     localStorage.setItem('authToken', token);
     localStorage.setItem('userData', JSON.stringify(userWithRole));
 
-    // Update state
     setAuth({
       token,
       user: userWithRole,
       isAuthenticated: true
-    });
-
-    console.log('Login successful:', {
-      role: userWithRole.role,
-      email: userWithRole.email
     });
   };
 
@@ -98,9 +82,7 @@ export const AuthProvider = ({ children }) => {
       login,
       logout,
       isAdmin,
-      isPassenger,
-      user: auth.user,
-      isAuthenticated: auth.isAuthenticated
+      isPassenger
     }}>
       {children}
     </AuthContext.Provider>

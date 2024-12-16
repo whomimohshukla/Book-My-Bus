@@ -2,7 +2,7 @@ const express = require("express");
 
 const routes = express.Router();
 
-// export the schedule route controller
+
 
 const searchBuses = require("../../controllers/searchBuses.controller/searchBuses.Controller");
 

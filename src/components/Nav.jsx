@@ -16,7 +16,7 @@ function Nav() {
   const navigate = useNavigate();
 
   // Add isAdmin check
-  const isAdmin = user?.role === 'Admin';
+  const isAdmin = user?.role === 'admin';
 
   // Handle scroll effects
   useEffect(() => {

@@ -1,28 +1,55 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { FaGithub, FaDiscord, FaTwitter, FaFacebookF, FaMapMarkerAlt, FaPhone, FaEnvelope, FaBus, FaClock, FaHeadset, FaBlog } from "react-icons/fa";
+import { FaGithub, FaDiscord, FaTwitter, FaFacebookF, FaMapMarkerAlt, FaPhone, FaEnvelope, FaBus, FaClock, FaHeadset, FaBlog, FaPaperPlane } from "react-icons/fa";
 import mylogo from "../../assets/bookMyBusLogo.jpg";
 
 function Footer() {
   return (
     <footer className="bg-gradient-to-b from-gray-900 to-gray-800 text-gray-300">
       {/* Newsletter Section */}
-      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center justify-between">
-            <div className="mb-6 md:mb-0">
-              <h3 className="text-2xl font-bold text-white mb-2">Subscribe to Our Newsletter</h3>
-              <p className="text-gray-100">Stay updated with our latest offers and news</p>
-            </div>
-            <div className="flex w-full md:w-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="px-4 py-3 w-full md:w-64 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-LightGreen"
-              />
-              <button className="bg-white text-Darkgreen px-6 py-3 rounded-r-lg font-semibold hover:bg-gray-100 transition duration-300">
-                Subscribe
-              </button>
+      <div className="bg-Darkgreen">
+        <div className="container mx-auto px-4 py-16">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-LightGreen/10 rounded-2xl p-8 md:p-12 border border-white/10">
+              <div className="flex flex-col md:flex-row items-center justify-between space-y-8 md:space-y-0 md:space-x-12">
+                {/* Content */}
+                <div className="text-center md:text-left max-w-md">
+                  <span className="inline-block bg-white/10 text-white px-4 py-1 rounded-full text-sm font-medium tracking-wide mb-4">
+                    NEWSLETTER
+                  </span>
+                  <h3 className="text-3xl font-bold text-white mb-3">
+                    Stay Updated with BookMyBus
+                  </h3>
+                  <p className="text-white/80 text-lg">
+                    Get exclusive offers, travel tips, and latest updates directly in your inbox
+                  </p>
+                </div>
+                
+                {/* Subscribe Form */}
+                <div className="w-full md:w-auto">
+                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 max-w-md mx-auto md:max-w-none">
+                    <div className="relative flex-grow">
+                      <input
+                        type="email"
+                        placeholder="Enter your email"
+                        className="w-full px-12 py-4 rounded-xl sm:rounded-r-none bg-white/10 border border-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all duration-300"
+                      />
+                      <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                        <FaEnvelope className="text-white/60" />
+                      </div>
+                    </div>
+                    <button className="group bg-white rounded-xl sm:rounded-l-none text-Darkgreen font-semibold hover:bg-gray-50 transition-all duration-300">
+                      <div className="px-8 py-4 flex items-center justify-center">
+                        <span className="mr-2">Subscribe</span>
+                        <FaPaperPlane className="transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
+                      </div>
+                    </button>
+                  </div>
+                  <p className="text-white/60 text-sm mt-3 text-center md:text-left">
+                    *We promise to never spam you or share your email
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>

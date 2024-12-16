@@ -17,6 +17,7 @@ import CTAButton from "../../Utls/Home/Button";
 import BusSearch2 from "../../Utls/Home/BusSearch2";
 import Amenties from "./Amenties";
 import Testimonials from "./Testimonials";
+import SearchResults from "../../SearchPage/SearchResults";
 
 function FAQItem({ question, answer }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -89,6 +90,18 @@ function StatCard({ number, label }) {
 }
 
 function Home() {
+  const [searchResults, setSearchResults] = useState(null);
+
+  const handleSearchResults = (results) => {
+    setSearchResults(results);
+    // Scroll to results section
+    if (results && results.length > 0) {
+      setTimeout(() => {
+        document.getElementById('search-results').scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  };
+
   const faqData = [
     {
       question: "How do I book a ticket?",
@@ -181,11 +194,20 @@ function Home() {
               </div>
             </div>
             <div className="w-full md:w-1/2 mt-8 md:mt-0">
-              <BusSearch2 />
+              <BusSearch2 onSearchResults={handleSearchResults} />
             </div>
           </div>
         </div>
       </div>
+
+      {/* Search Results Section */}
+      {searchResults && (
+        <div id="search-results" className="bg-gray-50 py-16">
+          <div className="container mx-auto px-4">
+            <SearchResults results={searchResults} />
+          </div>
+        </div>
+      )}
 
       {/* Booking Steps Section */}
       <div className="bg-white py-20">

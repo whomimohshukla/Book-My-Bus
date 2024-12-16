@@ -1,39 +1,8 @@
 import React, { useState } from 'react';
-import {
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  Chip,
-  IconButton,
-  Collapse,
-  Button,
-  Divider,
-  Rating,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from '@mui/material';
-import {
-  DirectionsBus,
-  AccessTime,
-  EventSeat,
-  AttachMoney,
-  ExpandMore,
-  ExpandLess,
-  Sort,
-  FilterList,
-  LocationOn,
-  Person,
-  Phone,
-  DriveEta,
-} from '@mui/icons-material';
+import { FaFilter, FaBus, FaCalendarAlt, FaMapSigns, FaArrowRight, FaClock,
+  FaRupeeSign, FaRegClock, FaMapMarkerAlt, FaWifi, FaSnowflake,
+  FaChargingStation, FaToilet, FaExchangeAlt, FaSearch, FaStar,
+  FaChevronDown, FaChevronUp, FaUser, FaPhone, FaCar } from 'react-icons/fa';
 
 const SearchResults = ({ results }) => {
   const [expandedId, setExpandedId] = useState(null);
@@ -120,233 +89,223 @@ const SearchResults = ({ results }) => {
 
   if (!results || results.length === 0) {
     return (
-      <Box sx={{ textAlign: 'center', py: 4 }}>
-        <DirectionsBus sx={{ fontSize: 60, color: 'text.secondary', mb: 2 }} />
-        <Typography variant="h6" color="text.secondary">
+      <div className="text-center py-8">
+        <FaBus className="mx-auto text-6xl text-Darkgreen mb-4" />
+        <h3 className="text-xl font-semibold text-Darkgreen mb-2">
           No buses found for this route
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
+        </h3>
+        <p className="text-gray-600">
           Try different dates or destinations
-        </Typography>
-      </Box>
+        </p>
+      </div>
     );
   }
 
   return (
-    <Box sx={{ py: 2 }}>
-      <Box sx={{ mb: 3, display: 'flex', gap: 2, alignItems: 'center' }}>
-        <FormControl size="small" sx={{ minWidth: 120 }}>
-          <InputLabel>Sort By</InputLabel>
-          <Select
+    <div className="py-4">
+      <div className="mb-6 flex flex-wrap items-center gap-4">
+        {/* Sort Dropdown */}
+        <div className="relative">
+          <select
             value={sortBy}
-            label="Sort By"
             onChange={(e) => setSortBy(e.target.value)}
-            startAdornment={<Sort sx={{ mr: 1 }} />}
+            className="appearance-none bg-white2 border border-gray-300 rounded-lg py-2 pl-10 pr-8 focus:outline-none focus:ring-2 focus:ring-Darkgreen"
           >
-            <MenuItem value="price">Price</MenuItem>
-            <MenuItem value="duration">Duration</MenuItem>
-            <MenuItem value="departure">Departure</MenuItem>
-            <MenuItem value="seats">Available Seats</MenuItem>
-          </Select>
-        </FormControl>
+            <option value="price">Sort by Price</option>
+            <option value="duration">Sort by Duration</option>
+            <option value="departure">Sort by Departure</option>
+            <option value="seats">Sort by Available Seats</option>
+          </select>
+          <FaFilter className="absolute left-3 top-3 text-Darkgreen" />
+        </div>
 
-        <FormControl size="small" sx={{ minWidth: 120 }}>
-          <InputLabel>Filter</InputLabel>
-          <Select
+        {/* Filter Dropdown */}
+        <div className="relative">
+          <select
             value={filterBy}
-            label="Filter"
             onChange={(e) => setFilterBy(e.target.value)}
-            startAdornment={<FilterList sx={{ mr: 1 }} />}
+            className="appearance-none bg-white2 border border-gray-300 rounded-lg py-2 pl-10 pr-8 focus:outline-none focus:ring-2 focus:ring-Darkgreen"
           >
-            <MenuItem value="all">All Buses</MenuItem>
-            <MenuItem value="ac">AC</MenuItem>
-            <MenuItem value="nonAc">Non-AC</MenuItem>
-            <MenuItem value="sleeper">Sleeper</MenuItem>
-            <MenuItem value="seater">Seater</MenuItem>
-          </Select>
-        </FormControl>
+            <option value="all">All Buses</option>
+            <option value="ac">AC</option>
+            <option value="nonAc">Non-AC</option>
+            <option value="sleeper">Sleeper</option>
+            <option value="seater">Seater</option>
+          </select>
+          <FaFilter className="absolute left-3 top-3 text-Darkgreen" />
+        </div>
 
-        <Typography variant="body2" color="text.secondary">
+        <span className="text-sm text-gray-600">
           {processedResults.length} buses found
-        </Typography>
-      </Box>
+        </span>
+      </div>
 
-      <Grid container spacing={2}>
+      <div className="space-y-4">
         {processedResults.map((bus, index) => (
-          <Grid item xs={12} key={bus._id || index}>
-            <Card 
-              sx={{ 
-                '&:hover': { 
-                  boxShadow: 6,
-                  transform: 'translateY(-2px)',
-                  transition: 'all 0.2s ease-in-out'
-                }
-              }}
-            >
-              <CardContent>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid item xs={12} sm={3}>
-                    <Typography variant="h6" component="div">
-                      {bus.busId?.busName || 'Bus Name N/A'}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {bus.busId?.type || 'Type N/A'} • {bus.busId?.busNumber || 'Number N/A'}
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                      <LocationOn sx={{ fontSize: 16, mr: 0.5 }} />
-                      <Typography variant="body2" color="text.secondary">
-                        {bus.routeId?.source?.name} → {bus.routeId?.destination?.name}
-                      </Typography>
-                    </Box>
-                  </Grid>
+          <div
+            key={bus._id || index}
+            className="bg-white2 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
+          >
+            <div className="p-4">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                {/* Bus Info */}
+                <div className="md:col-span-3">
+                  <h3 className="text-lg font-semibold text-Darkgreen">
+                    {bus.busId?.busName || 'Bus Name N/A'}
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    {bus.busId?.type || 'Type N/A'} • {bus.busId?.busNumber || 'Number N/A'}
+                  </p>
+                  <div className="flex items-center mt-2 text-sm text-gray-600">
+                    <FaMapMarkerAlt className="text-Darkgreen mr-1" />
+                    <span>{bus.routeId?.source?.name} → {bus.routeId?.destination?.name}</span>
+                  </div>
+                </div>
 
-                  <Grid item xs={12} sm={3}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <AccessTime sx={{ mr: 1, fontSize: 20 }} />
-                      <Typography variant="body2">
-                        {formatTime(bus.departureTime)} - {formatTime(bus.arrivalTime)}
-                      </Typography>
-                    </Box>
-                    <Typography variant="body2" color="text.secondary">
-                      Duration: {calculateDuration(bus.departureTime, bus.arrivalTime)}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Distance: {bus.routeId?.distance || 'N/A'} km
-                    </Typography>
-                  </Grid>
+                {/* Time Info */}
+                <div className="md:col-span-3">
+                  <div className="flex items-center mb-1">
+                    <FaClock className="text-Darkgreen mr-2" />
+                    <span className="text-sm">
+                      {formatTime(bus.departureTime)} - {formatTime(bus.arrivalTime)}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600">
+                    Duration: {calculateDuration(bus.departureTime, bus.arrivalTime)}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    Distance: {bus.routeId?.distance || 'N/A'} km
+                  </p>
+                </div>
 
-                  <Grid item xs={12} sm={2}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                      <EventSeat sx={{ mr: 1, fontSize: 20 }} />
-                      <Typography variant="body2">
-                        {bus.availableSeats}/{bus.busId?.totalSeats} seats
-                      </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                      {bus.busId?.amenities?.map((amenity, i) => (
-                        <Chip 
-                          key={i} 
-                          label={amenity.name} 
-                          size="small" 
-                          variant="outlined"
-                          title={amenity.description}
-                        />
-                      ))}
-                    </Box>
-                  </Grid>
+                {/* Seats Info */}
+                <div className="md:col-span-2">
+                  <div className="flex items-center mb-2">
+                    <FaUser className="text-Darkgreen mr-2" />
+                    <span className="text-sm">
+                      {bus.availableSeats}/{bus.busId?.totalSeats} seats
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {bus.busId?.amenities?.map((amenity, i) => (
+                      <span
+                        key={i}
+                        className="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full"
+                        title={amenity.description}
+                      >
+                        {amenity.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
 
-                  <Grid item xs={12} sm={2}>
-                    <Typography variant="h6" color="primary">
-                      ₹{calculateTotalFare(bus.fareDetails)}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" display="block">
-                      Base Fare: ₹{bus.fareDetails?.baseFare}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary" display="block">
-                      +Tax: ₹{bus.fareDetails?.tax}
-                    </Typography>
-                  </Grid>
+                {/* Price Info */}
+                <div className="md:col-span-2">
+                  <div className="text-xl font-bold text-Darkgreen">
+                    ₹{calculateTotalFare(bus.fareDetails)}
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    Base Fare: ₹{bus.fareDetails?.baseFare}
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    +Tax: ₹{bus.fareDetails?.tax}
+                  </div>
+                </div>
 
-                  <Grid item xs={12} sm={2}>
-                    <Button 
-                      variant="contained" 
-                      fullWidth
-                      color="primary"
-                      onClick={() => {/* Handle booking */}}
-                    >
-                      Book Now
-                    </Button>
-                    <IconButton
-                      onClick={() => handleExpandClick(index)}
-                      sx={{ mt: 1, width: '100%' }}
-                    >
-                      {expandedId === index ? <ExpandLess /> : <ExpandMore />}
-                    </IconButton>
-                  </Grid>
-                </Grid>
+                {/* Action Buttons */}
+                <div className="md:col-span-2">
+                  <button className="w-full bg-Darkgreen hover:bg-LightGreen text-white2 font-semibold py-2 px-4 rounded-lg transition-colors mb-2">
+                    Book Now
+                  </button>
+                  <button
+                    onClick={() => handleExpandClick(index)}
+                    className="w-full flex items-center justify-center text-Darkgreen hover:text-LightGreen transition-colors"
+                  >
+                    {expandedId === index ? (
+                      <FaChevronUp className="text-xl" />
+                    ) : (
+                      <FaChevronDown className="text-xl" />
+                    )}
+                  </button>
+                </div>
+              </div>
 
-                <Collapse in={expandedId === index}>
-                  <Divider sx={{ my: 2 }} />
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <Typography variant="subtitle2" gutterBottom>
-                        Route Details
-                      </Typography>
-                      <Table size="small">
-                        <TableBody>
-                          <TableRow>
-                            <TableCell component="th" scope="row">Source</TableCell>
-                            <TableCell>
-                              {bus.routeId?.source?.name}, {bus.routeId?.source?.state}
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell component="th" scope="row">Destination</TableCell>
-                            <TableCell>
-                              {bus.routeId?.destination?.name}, {bus.routeId?.destination?.state}
-                            </TableCell>
-                          </TableRow>
-                          {bus.routeId?.viaStops?.map((stop, i) => (
-                            <TableRow key={i}>
-                              <TableCell component="th" scope="row">Via Stop {i + 1}</TableCell>
-                              <TableCell>
-                                {stop.name} ({stop.arrivalTime} - {stop.departureTime})
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </Grid>
-
-                    <Grid item xs={12} md={6}>
-                      <Typography variant="subtitle2" gutterBottom>
-                        Driver Details
-                      </Typography>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                        <Person sx={{ mr: 1, fontSize: 20 }} />
-                        <Typography variant="body2">
-                          {bus.driverDetails?.name}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                        <Phone sx={{ mr: 1, fontSize: 20 }} />
-                        <Typography variant="body2">
-                          {bus.driverDetails?.phone}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <DriveEta sx={{ mr: 1, fontSize: 20 }} />
-                        <Typography variant="body2">
-                          License: {bus.driverDetails?.license}
-                        </Typography>
-                      </Box>
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <Typography variant="subtitle2" gutterBottom>
-                        Seat Layout
-                      </Typography>
-                      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                        {bus.busId?.seatLayout?.seats?.map((seat, i) => (
-                          <Chip 
-                            key={i}
-                            label={`${seat.seatNumber} - ${seat.type}`}
-                            size="small"
-                            color={seat.isAvailable ? "primary" : "default"}
-                            variant={seat.isAvailable ? "outlined" : "filled"}
-                            sx={{ mb: 1 }}
-                          />
+              {/* Expanded Content */}
+              {expandedId === index && (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Route Details */}
+                    <div>
+                      <h4 className="font-semibold text-Darkgreen mb-3">Route Details</h4>
+                      <div className="space-y-2">
+                        <div className="grid grid-cols-3 text-sm">
+                          <span className="text-gray-600">Source:</span>
+                          <span className="col-span-2">
+                            {bus.routeId?.source?.name}, {bus.routeId?.source?.state}
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-3 text-sm">
+                          <span className="text-gray-600">Destination:</span>
+                          <span className="col-span-2">
+                            {bus.routeId?.destination?.name}, {bus.routeId?.destination?.state}
+                          </span>
+                        </div>
+                        {bus.routeId?.viaStops?.map((stop, i) => (
+                          <div key={i} className="grid grid-cols-3 text-sm">
+                            <span className="text-gray-600">Via Stop {i + 1}:</span>
+                            <span className="col-span-2">
+                              {stop.name} ({stop.arrivalTime} - {stop.departureTime})
+                            </span>
+                          </div>
                         ))}
-                      </Box>
-                    </Grid>
-                  </Grid>
-                </Collapse>
-              </CardContent>
-            </Card>
-          </Grid>
+                      </div>
+                    </div>
+
+                    {/* Driver Details */}
+                    <div>
+                      <h4 className="font-semibold text-Darkgreen mb-3">Driver Details</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center text-sm">
+                          <FaUser className="text-Darkgreen mr-2" />
+                          <span>{bus.driverDetails?.name}</span>
+                        </div>
+                        <div className="flex items-center text-sm">
+                          <FaPhone className="text-Darkgreen mr-2" />
+                          <span>{bus.driverDetails?.phone}</span>
+                        </div>
+                        <div className="flex items-center text-sm">
+                          <FaCar className="text-Darkgreen mr-2" />
+                          <span>License: {bus.driverDetails?.license}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Seat Layout */}
+                    <div className="md:col-span-2">
+                      <h4 className="font-semibold text-Darkgreen mb-3">Seat Layout</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {bus.busId?.seatLayout?.seats?.map((seat, i) => (
+                          <span
+                            key={i}
+                            className={`px-3 py-1 text-sm rounded-lg ${
+                              seat.isAvailable
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-gray-100 text-gray-600'
+                            }`}
+                          >
+                            {seat.seatNumber} - {seat.type}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         ))}
-      </Grid>
-    </Box>
+      </div>
+    </div>
   );
 };
 

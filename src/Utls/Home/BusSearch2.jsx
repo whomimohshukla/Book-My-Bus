@@ -1,53 +1,54 @@
 import React, { useState } from "react";
 import axios from "axios";
-import CTAButton from "../Home/Button";
+import api from "../../utils/api";
 
-function BusResult({ bus }) {
-  return (
-    <li className="p-4 border-b">
-      <p>{`Route: ${bus.name || 'No name available'}`}</p>
-      {bus.schedules && bus.schedules.length > 0 ? (
-        bus.schedules.map((schedule, index) => (
-          <div key={index} className="mt-2">
-            <p>{`Departure: ${new Date(schedule.departureTime).toLocaleString()}`}</p>
-            <p>{`Arrival: ${new Date(schedule.arrivalTime).toLocaleString()}`}</p>
-            <p>{`Available Seats: ${schedule.availableSeats || 'N/A'}`}</p>
-          </div>
-        ))
-      ) : (
-        <p>No available schedules</p>
-      )}
-    </li>
-  );
-}
-
-function BusSearch2() {
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
-  const [date, setDate] = useState("");
-  const [searchResults, setSearchResults] = useState(null);
+function BusSearch2({ onSearchResults }) {
+  const [formData, setFormData] = useState({
+    source: "",
+    destination: "",
+    date: "",
+  });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const formattedDate = new Date(date).toISOString();
-
     try {
-      const response = await axios.get("http://localhost:8000/api/v1/search-buses", {
-        params: {
-          origin: from,
-          destination: to,
-          time: formattedDate,
-        },
+      const searchParams = {
+        source: formData.source.trim(),
+        destination: formData.destination.trim(),
+        date: new Date(formData.date).toISOString()
+      };
+
+      console.log("Sending search params:", searchParams);
+
+      const response = await api.get("/searchBuses/buses/search", {
+        params: searchParams
       });
 
-      console.log("Search Results:", response.data); // Debugging output
-      setSearchResults(response.data);
+      console.log("Search Results:", response.data);
+      
+      if (Array.isArray(response.data)) {
+        onSearchResults(response.data);
+        setFormData({
+          source: "",
+          destination: "",
+          date: ""
+        });
+      }
     } catch (err) {
+      console.error("Search error:", err);
       if (err.response) {
         setError(err.response.data.message || "An error occurred. Please try again.");
       } else if (err.request) {
@@ -55,88 +56,81 @@ function BusSearch2() {
       } else {
         setError("An error occurred while setting up the request.");
       }
+      onSearchResults([]);
     } finally {
       setLoading(false);
-      setFrom("");
-      setTo("");
-      setDate("");
     }
   };
 
   return (
-    <div className="p-6 w-full max-w-lg mx-auto bg-white rounded-lg shadow-2xl">
-      <h2 className="text-2xl font-semibold mb-6 text-center">Search for Buses</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex gap-6">
-          <div className="w-1/2">
+    <div className="w-full">
+      <div className="bg-white rounded-2xl shadow-xl p-8">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">From</label>
+              <input
+                type="text"
+                name="source"
+                value={formData.source}
+                onChange={handleChange}
+                placeholder="Enter city"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-Darkgreen focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">To</label>
+              <input
+                type="text"
+                name="destination"
+                value={formData.destination}
+                onChange={handleChange}
+                placeholder="Enter city"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-Darkgreen focus:border-transparent transition-all duration-200"
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Travel Date</label>
             <input
-              type="text"
-              value={from}
-              onChange={(e) => setFrom(e.target.value)}
-              placeholder="From"
-              className="w-full p-2 border border-Darkgreen focus:border-Darkgreen focus:outline-Darkgreen rounded placeholder-black font-semibold"
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-Darkgreen focus:border-transparent transition-all duration-200"
               required
+              min={new Date().toISOString().split('T')[0]}
             />
           </div>
-          <div className="w-1/2">
-            <input
-              type="text"
-              value={to}
-              onChange={(e) => setTo(e.target.value)}
-              placeholder="To"
-              className="w-full p-2 border border-Darkgreen focus:border-Darkgreen focus:outline-Darkgreen rounded placeholder-black font-semibold"
-              required
-            />
-          </div>
-        </div>
 
-        <div>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full mt-5 p-2 border border-Darkgreen focus:border-Darkgreen focus:outline-Darkgreen rounded placeholder-black font-semibold"
-            required
-          />
-        </div>
-
-        <div>
           <button
             type="submit"
-            className="w-full py-2 bg-Darkgreen hover:shadow-none hover:scale-95 transition-all duration-200 text-white2 font-semibold rounded-lg hover:bg-Darkgreen shadow-md"
+            disabled={loading}
+            className="w-full bg-gradient-to-r from-Darkgreen to-LightGreen text-white py-4 rounded-lg font-semibold text-lg hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
           >
-            Search Buses
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Searching...
+              </span>
+            ) : (
+              "Search Buses"
+            )}
           </button>
-        </div>
-      </form>
+        </form>
 
-      {loading && <p className="text-center mt-4">Loading...</p>}
-      {error && (
-        <p className="text-center mt-4 text-red-500 font-semibold">{error}</p>
-      )}
-
-      {searchResults && searchResults.length === 0 && (
-        <p className="text-center mt-4 text-gray-500 font-semibold">
-          No buses found for the selected route.
-        </p>
-      )}
-
-      {searchResults &&
-        Array.isArray(searchResults) &&
-        searchResults.length > 0 && (
-          <div className="mt-6">
-            <h3 className="text-xl font-semibold text-center">Search Results</h3>
-            <ul className="mt-4">
-              {searchResults.map((route) => {
-                return route.buses && route.buses.length > 0 ? (
-                  route.buses.map((bus) => <BusResult key={bus._id} bus={bus} />)
-                ) : (
-                  <li key={route._id}>No buses available for this route</li>
-                );
-              })}
-            </ul>
+        {error && (
+          <div className="mt-4 p-4 bg-red-50 rounded-lg">
+            <p className="text-red-600 font-medium text-center">{error}</p>
           </div>
         )}
+      </div>
     </div>
   );
 }

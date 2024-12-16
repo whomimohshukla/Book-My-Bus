@@ -346,18 +346,53 @@ function Home() {
       </div>
 
       {/* CTA Section */}
-      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
-            Ready to Start Your Journey?
-          </h2>
-          <CTAButton
-            active={true}
-            linkto="/ticket-search"
-            className="bg-white text-Darkgreen hover:bg-gray-100 px-8 py-4"
-          >
-            Book Your Ticket Now
-          </CTAButton>
+      <div className="relative">
+        {/* Background Image Overlay */}
+        <div className="absolute inset-0 bg-black/50"></div>
+        
+        {/* Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=2069&auto=format&fit=crop')",
+          }}
+        ></div>
+
+        {/* Content */}
+        <div className="relative py-32">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center">
+              <span className="inline-block bg-white/20 text-white px-6 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
+                PREMIUM COMFORT • RELIABLE SERVICE
+              </span>
+              
+              <h2 className="text-5xl font-bold text-white mb-8 leading-tight">
+                Your Journey Begins <br />
+                With <span className="text-LightGreen">BookMyBus</span>
+              </h2>
+              
+              <p className="text-xl text-white/90 mb-12 leading-relaxed">
+                Experience luxury travel with state-of-the-art buses, professional drivers, and 24/7 customer support.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <CTAButton
+                  active={true}
+                  linkto="/ticket-search"
+                  className="bg-LightGreen text-white hover:bg-Darkgreen px-12 py-5 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Book Now
+                </CTAButton>
+                <CTAButton
+                  active={true}
+                  linkto="/about"
+                  className="bg-white text-Darkgreen hover:bg-gray-100 px-12 py-5 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Learn More
+                </CTAButton>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

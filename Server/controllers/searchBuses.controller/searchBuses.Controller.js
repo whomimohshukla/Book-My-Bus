@@ -76,7 +76,7 @@ exports.searchBuses = async (req, res) => {
     const buses = await Schedule.find(query)
       .populate({
         path: 'routeId',
-        select: 'source destination distance duration'
+        select: 'source destination distance viaStops'
       })
       .populate({
         path: 'busId',
@@ -111,3 +111,25 @@ exports.searchBuses = async (req, res) => {
     });
   }
 };
+
+// Get all bus schedules
+exports.getAllSchedules = async (req, res) => {
+  try {
+    const schedules = await Schedule.find()
+      .populate({
+        path: 'routeId',
+        select: 'source destination distance viaStops'
+      })
+      .populate({
+        path: 'busId',
+        select: 'busNumber type totalSeats name busName operator amenities'
+      })
+      .lean();
+
+    res.status(200).json(schedules);
+  } catch (error) {
+    console.error('Error fetching all schedules:', error);
+    res.status(500).json({ message: 'Internal server error while fetching schedules' });
+  }
+};
+

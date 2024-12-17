@@ -1,6 +1,9 @@
-import React, { useState } from "react";
-import { Box, Grid } from "@mui/material";
-import { FaExchangeAlt, FaSearch, FaMapMarkerAlt, FaCalendarAlt, FaRegClock } from "react-icons/fa";
+import React, { useState, useEffect } from "react";
+import { 
+  FaExchangeAlt, FaSearch, FaMapMarkerAlt, FaCalendarAlt,
+  FaRoute, FaClock
+} from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 
 const SearchForm = ({ onSearch, disabled }) => {
   const [formData, setFormData] = useState({
@@ -11,17 +14,10 @@ const SearchForm = ({ onSearch, disabled }) => {
   });
 
   const [formError, setFormError] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
   const [popularCities] = useState([
-    "Mumbai",
-    "Delhi",
-    "Bangalore",
-    "Chennai",
-    "Hyderabad",
-    "Kolkata",
-    "Pune",
-    "Ahmedabad",
-    "Jaipur",
-    "Goa"
+    "Mumbai", "Delhi", "Bangalore", "Chennai", "Hyderabad",
+    "Kolkata", "Pune", "Ahmedabad", "Jaipur", "Goa"
   ]);
 
   const handleChange = (e) => {
@@ -58,9 +54,20 @@ const SearchForm = ({ onSearch, disabled }) => {
     return true;
   };
 
-  const handleSubmit = (e) => {
+  const scrollToResults = () => {
+    const resultsElement = document.getElementById('searchResults');
+    if (resultsElement) {
+      resultsElement.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
+      setIsSearching(true);
       const formattedData = {
         ...formData,
         source: formData.source.trim(),
@@ -68,128 +75,97 @@ const SearchForm = ({ onSearch, disabled }) => {
         date: formData.date,
         time: formData.time || undefined
       };
+      
+      // Add animation delay before scrolling
+      await new Promise(resolve => setTimeout(resolve, 300));
+      scrollToResults();
+      
       onSearch(formattedData);
+      setIsSearching(false);
     }
   };
 
   const today = new Date().toISOString().split('T')[0];
 
   return (
-    <div className="bg-gradient-to-r from-Darkgreen to-LightGreen pt-32 pb-16">
-      <div className="container mx-auto px-4">
-        <div className="max-w-4xl mx-auto text-center mb-8">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
-            Book Your Bus Tickets
-          </h1>
-          <p className="text-lg text-white/90">
-            Travel safely and comfortably across India
-          </p>
-        </div>
-
-        <div className="bg-white rounded-lg shadow-xl p-6 max-w-5xl mx-auto">
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-4 items-end">
-              {formError && (
-                <div className="col-span-full">
-                  <div className="bg-red-50 text-red-700 px-4 py-3 rounded-lg">
-                    {formError}
-                  </div>
-                </div>
-              )}
-
-              {disabled && (
-                <div className="col-span-full">
-                  <div className="bg-yellow-50 text-yellow-700 px-4 py-3 rounded-lg">
-                    Waiting for server connection... Please wait.
-                  </div>
-                </div>
-              )}
-
+    <motion.div 
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-Darkgreen w-full"
+    >
+      <div className="container mx-auto px-4 py-12">
+        {/* Search Form */}
+        <form onSubmit={handleSubmit} className="w-full max-w-[1400px] mx-auto">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.3 }}
+            className="bg-white2 rounded-xl shadow-2xl p-6 backdrop-blur-lg border border-white/10"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-6 items-end">
               {/* Source City */}
               <div className="sm:col-span-2">
-                <label className="block text-gray-700 text-sm font-medium mb-2">From</label>
+                <label className="block text-gray-700 text-sm font-semibold mb-2">From</label>
                 <div className="relative">
                   <input
                     type="text"
                     name="source"
                     value={formData.source}
                     onChange={handleChange}
-                    placeholder="Enter city"
-                    className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-Darkgreen pl-10"
+                    placeholder="Enter source city"
+                    className="w-full px-5 py-4 rounded-lg border-2 border-gray-100 focus:border-Darkgreen focus:outline-none font-poppins text-lg transition-all"
+                    list="sourceCities"
                     disabled={disabled}
                   />
-                  <FaMapMarkerAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-Darkgreen" />
-                  {formData.source && (
-                    <div className="absolute z-20 w-full mt-1 bg-white rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                      {popularCities
-                        .filter(city => 
-                          city.toLowerCase().includes(formData.source.toLowerCase())
-                        )
-                        .map((city, index) => (
-                          <div
-                            key={index}
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => setFormData(prev => ({ ...prev, source: city }))}
-                          >
-                            {city}
-                          </div>
-                        ))
-                      }
-                    </div>
-                  )}
+                  <FaMapMarkerAlt className="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-Darkgreen" />
+                  <datalist id="sourceCities">
+                    {popularCities.map(city => (
+                      <option key={city} value={city} />
+                    ))}
+                  </datalist>
                 </div>
               </div>
 
               {/* Exchange Button */}
               <div className="hidden lg:flex justify-center">
-                <button
+                <motion.button
                   type="button"
                   onClick={handleExchange}
+                  whileHover={{ scale: 1.1, rotate: 180 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="p-4 rounded-full bg-Darkgreen text-white hover:bg-LightGreen transition-all duration-300 shadow-lg"
                   disabled={disabled}
-                  className="p-3 rounded-full bg-gray-100 text-Darkgreen hover:bg-gray-200 transition-colors"
                 >
-                  <FaExchangeAlt className="transform -rotate-90" />
-                </button>
+                  <FaExchangeAlt className="text-xl" />
+                </motion.button>
               </div>
 
               {/* Destination City */}
               <div className="sm:col-span-2">
-                <label className="block text-gray-700 text-sm font-medium mb-2">To</label>
+                <label className="block text-gray-700 text-sm font-semibold mb-2">To</label>
                 <div className="relative">
                   <input
                     type="text"
                     name="destination"
                     value={formData.destination}
                     onChange={handleChange}
-                    placeholder="Enter city"
-                    className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-Darkgreen pl-10"
+                    placeholder="Enter destination city"
+                    className="w-full px-5 py-4 rounded-lg border-2 border-gray-100 focus:border-Darkgreen focus:outline-none font-poppins text-lg transition-all"
+                    list="destinationCities"
                     disabled={disabled}
                   />
-                  <FaMapMarkerAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-Darkgreen" />
-                  {formData.destination && (
-                    <div className="absolute z-20 w-full mt-1 bg-white rounded-lg shadow-lg max-h-48 overflow-y-auto">
-                      {popularCities
-                        .filter(city => 
-                          city.toLowerCase().includes(formData.destination.toLowerCase())
-                        )
-                        .map((city, index) => (
-                          <div
-                            key={index}
-                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                            onClick={() => setFormData(prev => ({ ...prev, destination: city }))}
-                          >
-                            {city}
-                          </div>
-                        ))
-                      }
-                    </div>
-                  )}
+                  <FaMapMarkerAlt className="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-Darkgreen" />
+                  <datalist id="destinationCities">
+                    {popularCities.map(city => (
+                      <option key={city} value={city} />
+                    ))}
+                  </datalist>
                 </div>
               </div>
 
-              {/* Date */}
+              {/* Date Selection */}
               <div className="sm:col-span-1">
-                <label className="block text-gray-700 text-sm font-medium mb-2">Date</label>
+                <label className="block text-gray-700 text-sm font-semibold mb-2">Date</label>
                 <div className="relative">
                   <input
                     type="date"
@@ -197,30 +173,45 @@ const SearchForm = ({ onSearch, disabled }) => {
                     value={formData.date}
                     onChange={handleChange}
                     min={today}
-                    className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-Darkgreen pl-10"
+                    className="w-full px-5 py-4 rounded-lg border-2 border-gray-100 focus:border-Darkgreen focus:outline-none font-poppins text-lg transition-all"
                     disabled={disabled}
                   />
-                  <FaCalendarAlt className="absolute left-3 top-1/2 -translate-y-1/2 text-Darkgreen" />
+                  <FaCalendarAlt className="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-Darkgreen" />
                 </div>
               </div>
 
               {/* Search Button */}
               <div className="sm:col-span-1">
-                <button
+                <motion.button
                   type="submit"
-                  disabled={disabled}
-                  className="w-full bg-Darkgreen hover:bg-LightGreen text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
+                  disabled={disabled || isSearching}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full bg-Darkgreen text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 hover:bg-LightGreen shadow-lg hover:shadow-xl text-lg h-[58px] flex items-center justify-center gap-2"
                 >
-                  <FaSearch className="mr-2" />
-                  Search
-                </button>
+                  {isSearching ? (
+                    <>
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                        className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                      />
+                      <span>Searching</span>
+                    </>
+                  ) : (
+                    <>
+                      <FaSearch className="text-xl" />
+                      <span>Search</span>
+                    </>
+                  )}
+                </motion.button>
               </div>
             </div>
 
             {/* Popular Routes */}
-            <div className="mt-6">
-              <h3 className="text-gray-700 text-sm font-medium mb-2">Popular Routes:</h3>
-              <div className="flex flex-wrap gap-2">
+            <div className="mt-8">
+              <h3 className="text-gray-700 text-sm font-semibold mb-3">Popular Routes:</h3>
+              <div className="flex flex-wrap gap-3">
                 {[
                   "Mumbai → Pune",
                   "Delhi → Agra",
@@ -228,20 +219,25 @@ const SearchForm = ({ onSearch, disabled }) => {
                   "Chennai → Pondicherry",
                   "Hyderabad → Vijayawada"
                 ].map((route, index) => (
-                  <button
+                  <motion.button
                     key={index}
-                    type="button"
-                    className="bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full hover:bg-gray-200 transition-colors"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      const [source, destination] = route.split(" → ");
+                      setFormData(prev => ({ ...prev, source, destination }));
+                    }}
+                    className="px-4 py-2 bg-gray-50 text-gray-700 rounded-full hover:bg-Darkgreen hover:text-white transition-all duration-300 text-sm font-medium border border-gray-200 hover:border-transparent"
                   >
                     {route}
-                  </button>
+                  </motion.button>
                 ))}
               </div>
             </div>
-          </form>
-        </div>
+          </motion.div>
+        </form>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

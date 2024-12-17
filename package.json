@@ -13,7 +13,7 @@
   "dependencies": {
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
-    "@mui/icons-material": "^6.1.9",
+    "@mui/icons-material": "^6.2.0",
     "@mui/material": "^6.1.9",
     "@nextui-org/input": "^2.2.5",
     "@nextui-org/navbar": "^2.0.37",
@@ -26,7 +26,7 @@
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "date-fns": "^4.1.0",
-    "framer-motion": "^11.11.11",
+    "framer-motion": "^11.15.0",
     "nodemailer": "^6.9.16",
     "razorpay": "^2.9.5",
     "react": "^18.3.1",

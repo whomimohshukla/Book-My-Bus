@@ -102,6 +102,8 @@ exports.signup = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+   
+
     // matches the password if don't matches
 
     if (password != confirmPassword) {

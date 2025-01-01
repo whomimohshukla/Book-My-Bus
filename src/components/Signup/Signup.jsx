@@ -73,7 +73,7 @@ function Signup() {
     password: "",
     confirmPassword: "",
     otp: "",
-    role: "",
+    role: "", // Set default role to Passenger
     passengerType: "Adult",
   });
   const [errors, setErrors] = useState({});
@@ -169,13 +169,28 @@ function Signup() {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.name) newErrors.name = "Name is required";
-    if (!formData.email) newErrors.email = "Email is required";
+    
+    // Required field validations
+    if (!formData.name?.trim()) newErrors.name = "Name is required";
+    if (!formData.email?.trim()) newErrors.email = "Email is required";
     if (!formData.password) newErrors.password = "Password is required";
-    if (formData.password !== formData.confirmPassword)
-      newErrors.confirmPassword = "Passwords must match";
+    if (!formData.confirmPassword) newErrors.confirmPassword = "Please confirm your password";
+    if (!formData.role) newErrors.role = "Please select a role";
+    if (!formData.passengerType) newErrors.passengerType = "Please select passenger type";
     if (!formData.otp && otpSent) newErrors.otp = "OTP is required";
 
+    // Password match validation
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords must match";
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.email && !emailRegex.test(formData.email.trim())) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    console.log("Validation errors:", newErrors);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -247,6 +262,15 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Ensure role is set
+    if (!formData.role) {
+      setFormData(prev => ({
+        ...prev,
+        role: "Passenger" // Default to Passenger if not selected
+      }));
+    }
+
     if (validate()) {
       const toastId = toast.loading("Creating your account...", {
         position: "bottom-right",
@@ -254,32 +278,59 @@ function Signup() {
 
       try {
         setIsLoading(true);
-        // First signup request
-        const signupResponse = await api.post(
-          "/user/signup",
-          formData,
-          { headers: { "Content-Type": "application/json" } }
+        
+        // Create signup payload with guaranteed role
+        const signupPayload = {
+          ...formData,
+          role: formData.role || "Passenger",
+          passengerType: formData.passengerType || "Adult"
+        };
+
+        console.log("Sending signup data:", signupPayload);
+        
+        // First signup request with explicit headers
+        const signupResponse = await axios.post(
+          "http://localhost:8000/api/user/signup",
+          signupPayload,
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
         );
 
+        console.log("Signup response:", signupResponse.data);
+
         if (signupResponse.status === 200) {
-          // Update toast to show signup success
           toast.update(toastId, {
             render: "Account created! Logging you in...",
             type: "success",
             isLoading: true,
           });
 
-          // Automatically login after successful signup
+          // Login request
           const loginResponse = await axios.post(
             "http://localhost:8000/api/user/login",
             {
               email: formData.email,
-              password: formData.password,
+              password: formData.password
+            },
+            {
+              headers: {
+                'Content-Type': 'application/json'
+              }
             }
           );
 
+          console.log("Login response:", loginResponse.data);
+
           if (loginResponse.status === 200) {
             const { token, user } = loginResponse.data;
+            
+            // Store token
+            localStorage.setItem('token', token);
+            
+            // Call login function
             login(token, user.role);
 
             toast.update(toastId, {
@@ -301,7 +352,7 @@ function Signup() {
             });
 
             // Navigate based on role
-            if (user.role === "Admin") {
+            if (user.role === "admin") {
               navigate("/admin");
             } else {
               navigate("/");
@@ -309,11 +360,15 @@ function Signup() {
           }
         }
       } catch (err) {
-        console.error("Signup/Login error:", err);
+        console.error("Error details:", {
+          message: err.message,
+          response: err.response?.data,
+          status: err.response?.status,
+          formData: formData
+        });
+        
         toast.update(toastId, {
-          render:
-            err.response?.data?.message ||
-            "Something went wrong. Please try again",
+          render: err.response?.data?.message || "Something went wrong. Please try again",
           type: "error",
           isLoading: false,
           autoClose: 5000,
@@ -321,6 +376,8 @@ function Signup() {
       } finally {
         setIsLoading(false);
       }
+    } else {
+      toast.error("Please fill in all required fields correctly");
     }
   };
 
@@ -459,8 +516,8 @@ function Signup() {
                     error={errors.role}
                     as="select"
                     options={[
-                      { value: "Admin", label: "Admin" },
                       { value: "Passenger", label: "Passenger" },
+                      { value: "Admin", label: "Admin" }
                     ]}
                   />
 

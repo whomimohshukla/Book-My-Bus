@@ -4,7 +4,6 @@ import ourMission from "../../assets/chuttersnap-ywDi4b-z5fw-unsplash.jpg";
 import busTicketGif from "../../assets/busTicket.jpg";
 import vision from "../../assets/vision.jpg";
 
-// all about about
 function About() {
   return (
     <div className="font-poppins bg-white2 min-h-screen pt-24 md:pt-28">

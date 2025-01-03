@@ -6,8 +6,7 @@ exports.searchBuses = async (req, res) => {
     const { source, destination, date, time } = req.query;
     
     console.log("Received query params:", { source, destination, date, time });
-
-    // Validate required fields
+    
     if (!source || !destination || !date) {
       return res
         .status(400)
@@ -49,7 +48,7 @@ exports.searchBuses = async (req, res) => {
         $gte: startOfDay,
         $lte: endOfDay
       },
-      status: "Active" // Only show active schedules
+      status: "Active" 
     };
 
     if (time) {
@@ -92,7 +91,6 @@ exports.searchBuses = async (req, res) => {
         .json({ message: "No buses found for the given criteria." });
     }
 
-    // Transform the response to include formatted dates and times
     const formattedBuses = buses.map(bus => ({
       ...bus,
       departureTime: bus.departureTime.toISOString(),

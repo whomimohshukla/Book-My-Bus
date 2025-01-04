@@ -73,7 +73,7 @@ function Signup() {
     password: "",
     confirmPassword: "",
     otp: "",
-    role: "", // Set default role to Passenger
+    role: "Passenger", // Set default role to Passenger
     passengerType: "Adult",
   });
   const [errors, setErrors] = useState({});
@@ -122,14 +122,14 @@ function Signup() {
         response.data.user
       ) {
         const { token, user } = response.data;
-        login(token, user.role);
+        login(token, user); // Pass the entire user object
         toast.update(toastId, {
           render: "Successfully signed in with Google! Redirecting...",
           type: "success",
           isLoading: false,
           autoClose: 3000,
         });
-        navigate(user.role === "Admin" ? "/admin" : "/");
+        navigate(user.role === "admin" ? "/admin" : "/"); // Use lowercase 'admin'
       } else {
         throw new Error("Invalid response from server");
       }
@@ -333,7 +333,7 @@ function Signup() {
             localStorage.setItem('token', token);
             
             // Call login function
-            login(token, user.role);
+            login(token, user);
 
             toast.update(toastId, {
               render: "Welcome to BookMyBus! Redirecting...",

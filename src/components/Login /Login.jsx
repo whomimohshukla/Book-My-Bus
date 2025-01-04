@@ -43,21 +43,67 @@ function Login() {
   }, [email, password]);
 
   const handleGoogleLoginSuccess = async (credentialResponse) => {
+    const toastId = toast.loading("Signing in with Google...", {
+      position: "bottom-right",
+    });
+
     try {
       setIsLoading(true);
-      console.log("Google Login Success:", credentialResponse);
+      console.log("Google credential response:", credentialResponse);
+
+      if (!credentialResponse.credential) {
+        throw new Error("No credential received from Google");
+      }
+
       const response = await axios.post(
-        "http://localhost:8000/api/v1/google-login",
+        "http://localhost:8000/api/user/google-signup", // Use the same endpoint as signup
         {
           token: credentialResponse.credential,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
-      login(response.data.token, response.data.role);
-      toast.success("Logged in with Google successfully!");
-      navigate("/");
+
+      console.log("Server response:", response.data);
+
+      if (response.status === 200 && response.data.token && response.data.user) {
+        const { token, user } = response.data;
+        login(token, user);
+        toast.update(toastId, {
+          render: "Successfully signed in with Google! Redirecting...",
+          type: "success",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        navigate(user.role === "admin" ? "/admin" : "/");
+      } else {
+        throw new Error("Invalid response from server");
+      }
     } catch (error) {
-      console.error("Google login error:", error);
-      toast.error("Google login failed. Please try again.");
+      console.error("Google login error details:", {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
+
+      let errorMessage = "Google login failed. ";
+      if (error.response?.data?.message) {
+        errorMessage += error.response.data.message;
+      } else if (error.message) {
+        errorMessage += error.message;
+      } else {
+        errorMessage += "Please try again.";
+      }
+
+      toast.update(toastId, {
+        render: errorMessage,
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -156,43 +202,33 @@ function Login() {
           <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
             {/* Google Sign In Button */}
             <div className="mb-8">
-              <button
-                onClick={() => {
-                  const googleLoginBtn = document.querySelector(
-                    ".google-login-button"
-                  );
-                  if (googleLoginBtn) {
-                    googleLoginBtn.click();
-                  }
-                }}
-                className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-lg border-2 border-gray-200 hover:border-LightGreen hover:bg-gray-50 hover:shadow-md transition-all duration-300 group relative overflow-hidden"
-              >
-                <div className="absolute inset-0 w-3 bg-gradient-to-r from-Darkgreen to-LightGreen transform -skew-x-12 -translate-x-full transition-transform duration-500 ease-out group-hover:translate-x-full"></div>
-                <img
-                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                  alt="Google"
-                  className="w-6 h-6 transform group-hover:scale-110 transition-transform duration-300"
-                />
-                <span className="text-gray-700 font-medium text-base transform group-hover:scale-105 transition-transform duration-300">
-                  Continue with Google
-                </span>
-              </button>
-
-              {/* Hidden Google Login Component */}
-              <div className="hidden">
-                <GoogleLogin
-                  className="google-login-button"
-                  onSuccess={handleGoogleLoginSuccess}
-                  onError={handleGoogleLoginError}
-                  useOneTap
-                  theme="filled_blue"
-                  size="large"
-                  text="signin_with"
-                  shape="rectangular"
-                  width="400"
-                  locale="en"
-                />
-              </div>
+              <GoogleLogin
+                onSuccess={handleGoogleLoginSuccess}
+                onError={handleGoogleLoginError}
+                useOneTap
+                theme="filled_blue"
+                size="large"
+                text="signin_with"
+                shape="rectangular"
+                width="400"
+                locale="en"
+                render={({ onClick }) => (
+                  <button
+                    onClick={onClick}
+                    className="w-full flex items-center justify-center gap-3 py-3.5 px-4 rounded-lg border-2 border-gray-200 hover:border-LightGreen hover:bg-gray-50 hover:shadow-md transition-all duration-300 group relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 w-3 bg-gradient-to-r from-Darkgreen to-LightGreen transform -skew-x-12 -translate-x-full transition-transform duration-500 ease-out group-hover:translate-x-full"></div>
+                    <img
+                      src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                      alt="Google"
+                      className="w-6 h-6 transform group-hover:scale-110 transition-transform duration-300"
+                    />
+                    <span className="text-gray-700 font-medium text-base transform group-hover:scale-105 transition-transform duration-300">
+                      Continue with Google
+                    </span>
+                  </button>
+                )}
+              />
             </div>
 
             {/* Improved Divider */}

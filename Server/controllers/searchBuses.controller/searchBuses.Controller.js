@@ -17,7 +17,9 @@ exports.searchBuses = async (req, res) => {
     const routeQuery = {
       "source.name": new RegExp(source, "i"),
       "destination.name": new RegExp(destination, "i"),
-    };
+    };               
+
+    
     
     console.log("Route query:", routeQuery);
     

@@ -298,7 +298,9 @@ function Signup() {
             }
           }
         );
+ 
 
+        
         console.log("Signup response:", signupResponse.data);
 
         if (signupResponse.status === 200) {

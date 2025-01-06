@@ -160,10 +160,10 @@ function Nav() {
             </NavLink>
           </div>
 
-          {/* Mobile Menu Button - Three Dots */}
+          {/* Mobile Menu Button - Hamburger */}
           <button
             ref={hamburgerRef}
-            className="lg:hidden w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+            className="lg:hidden relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
             onClick={toggleMobileMenu}
             aria-label="Toggle menu"
           >
@@ -172,15 +172,17 @@ function Nav() {
                 {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>
             ) : (
-              <svg
-                className="w-5 h-5 text-neutral-700"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <circle cx="5" cy="12" r="2" />
-                <circle cx="12" cy="12" r="2" />
-                <circle cx="19" cy="12" r="2" />
-              </svg>
+              <div className={`w-6 h-5 flex flex-col justify-between transition-all duration-300 ${isMobileMenuOpen ? 'transform' : ''}`}>
+                <span className={`w-full h-0.5 bg-gray-600 rounded-full transform transition-all duration-300 ${
+                  isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''
+                }`}></span>
+                <span className={`w-full h-0.5 bg-gray-600 rounded-full transition-all duration-300 ${
+                  isMobileMenuOpen ? 'opacity-0' : ''
+                }`}></span>
+                <span className={`w-full h-0.5 bg-gray-600 rounded-full transform transition-all duration-300 ${
+                  isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''
+                }`}></span>
+              </div>
             )}
           </button>
 
@@ -195,17 +197,51 @@ function Nav() {
           >
             <div className="bg-white shadow-lg rounded-b-2xl border-t border-neutral-100">
               {user ? (
-                <div className="px-4 py-3 border-b border-neutral-100">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-Darkgreen text-white flex items-center justify-center text-lg font-medium">
-                      {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">{user.name || 'User'}</p>
-                      <p className="text-xs text-gray-500">{user.email}</p>
+                <>
+                  <div className="px-4 py-3 border-b border-neutral-100">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 rounded-full bg-Darkgreen text-white flex items-center justify-center text-lg font-medium">
+                        {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">{user.name || 'User'}</p>
+                        <p className="text-xs text-gray-500">{user.email}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                  <div className="px-4 py-2 border-b border-neutral-100">
+                    <Link
+                      to="/profile"
+                      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-Darkgreen rounded-lg transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Profile Settings
+                    </Link>
+                    {isAdmin && (
+                      <Link
+                        to="/admin"
+                        className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-Darkgreen rounded-lg transition-colors"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Admin Dashboard
+                      </Link>
+                    )}
+                    <Link
+                      to="/bookings"
+                      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-Darkgreen rounded-lg transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      My Bookings
+                    </Link>
+                    <Link
+                      to="/emergency"
+                      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-Darkgreen rounded-lg transition-colors"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      QuickHelp
+                    </Link>
+                  </div>
+                </>
               ) : (
                 <div className="px-4 py-3 border-b border-neutral-100">
                   <div className="grid grid-cols-2 gap-2">
@@ -307,6 +343,14 @@ function Nav() {
                   Support
                 </NavLink>
               </div>
+              {user && (
+                <button
+                  onClick={handleLogout}
+                  className="block w-full px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors text-left"
+                >
+                  Sign Out
+                </button>
+              )}
             </div>
           </div>
 

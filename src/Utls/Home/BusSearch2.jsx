@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import api from "../../utils/api";
 
 function BusSearch2({ onSearchResults }) {

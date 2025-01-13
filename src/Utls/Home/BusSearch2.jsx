@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+
 import api from "../../utils/api";
 
 function BusSearch2({ onSearchResults }) {
@@ -13,9 +13,9 @@ function BusSearch2({ onSearchResults }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevData => ({
+    setFormData((prevData) => ({
       ...prevData,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -28,29 +28,31 @@ function BusSearch2({ onSearchResults }) {
       const searchParams = {
         source: formData.source.trim(),
         destination: formData.destination.trim(),
-        date: new Date(formData.date).toISOString()
+        date: new Date(formData.date).toISOString(),
       };
 
       console.log("Sending search params:", searchParams);
 
       const response = await api.get("/searchBuses/buses/search", {
-        params: searchParams
+        params: searchParams,
       });
 
       console.log("Search Results:", response.data);
-      
+
       if (Array.isArray(response.data)) {
         onSearchResults(response.data);
         setFormData({
           source: "",
           destination: "",
-          date: ""
+          date: "",
         });
       }
     } catch (err) {
       console.error("Search error:", err);
       if (err.response) {
-        setError(err.response.data.message || "An error occurred. Please try again.");
+        setError(
+          err.response.data.message || "An error occurred. Please try again."
+        );
       } else if (err.request) {
         setError("No response from the server. Please check your network.");
       } else {
@@ -68,7 +70,9 @@ function BusSearch2({ onSearchResults }) {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">From</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                From
+              </label>
               <input
                 type="text"
                 name="source"
@@ -80,7 +84,9 @@ function BusSearch2({ onSearchResults }) {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">To</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                To
+              </label>
               <input
                 type="text"
                 name="destination"
@@ -94,7 +100,9 @@ function BusSearch2({ onSearchResults }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Travel Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Travel Date
+            </label>
             <input
               type="date"
               name="date"
@@ -102,7 +110,7 @@ function BusSearch2({ onSearchResults }) {
               onChange={handleChange}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-Darkgreen focus:border-transparent transition-all duration-200"
               required
-              min={new Date().toISOString().split('T')[0]}
+              min={new Date().toISOString().split("T")[0]}
             />
           </div>
 
@@ -113,9 +121,25 @@ function BusSearch2({ onSearchResults }) {
           >
             {loading ? (
               <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Searching...
               </span>

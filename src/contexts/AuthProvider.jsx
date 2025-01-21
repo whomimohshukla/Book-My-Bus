@@ -1,8 +1,7 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 
 const AuthContext = createContext();
-// token is a string
-// user is an object with the following properties:
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

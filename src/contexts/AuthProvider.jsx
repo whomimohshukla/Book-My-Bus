@@ -9,7 +9,7 @@ export const useAuth = () => {
   }
   return context;
 };
-
+// auth provider component that wraps the entire app
 export const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState(() => {
     try {

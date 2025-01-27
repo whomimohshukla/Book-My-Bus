@@ -1,6 +1,5 @@
 import React from "react";
 import CTAButton from "../Utls/CardBlocks";
-// import { TypeAnimation } from "react-type-animation";
 import { FaArrowRight } from "react-icons/fa";
 
 const CodeBlocks = ({ position, heading, subheading, ctabtn1 }) => {

@@ -1,7 +1,6 @@
 import React from "react";
 
-import { connect } from "react-redux";
-import { connectProps } from "react-redux";
+
 
 function Highlight({ text }) {
   return (

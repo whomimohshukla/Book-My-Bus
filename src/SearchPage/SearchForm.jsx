@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { 
   FaExchangeAlt, FaSearch, FaMapMarkerAlt, FaCalendarAlt,
-  FaRoute, FaClock
+  
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 

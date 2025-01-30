@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
-  FaFilter, FaBus, FaCalendarAlt, FaMapSigns, FaArrowRight, FaClock,
+  FaFilter, FaBus, FaCalendarAlt, FaMapSigns,
   FaRupeeSign, FaRegClock, FaMapMarkerAlt, FaWifi, FaSnowflake,
   FaChargingStation, FaToilet, FaExchangeAlt, FaSearch, FaStar,
   FaShieldAlt, FaUserFriends, FaRoute, FaImage, FaTicketAlt,

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import mylogo from "../assets/bookMyBusLogo.jpg";
 import CTAButton from "../Utls/Home/Button";
 import { useAuth } from "../contexts/AuthProvider";
 
@@ -88,12 +87,8 @@ function Nav() {
     >
       <nav className="mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-3">
         <div className="flex justify-between items-center max-w-7xl mx-auto">
-          <Link to="/" className="flex items-center space-x-2 relative">
-            <img
-              src={mylogo}
-              alt="Logo"
-              className="w-[80px] h-[50px] sm:w-[120px] sm:h-[80px] object-contain"
-            />
+          <Link to="/" className="flex items-center space-x-2 relative p-2">
+            <span className="text-2xl font-bold text-Darkgreen">BookMyBus</span>
           </Link>
 
           {/* Desktop Navigation Links */}

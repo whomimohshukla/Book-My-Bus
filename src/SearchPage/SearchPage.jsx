@@ -48,21 +48,25 @@ const SearchPage = () => {
   }, [results, filters, sortBy]);
 
   const applyFilters = () => {
+    console.log("Initial Results:", results);
+    console.log("Filters:", filters);
     let filtered = [...results];
 
     // Apply bus type filter
     if (filters.busTypes.length > 0) {
-      filtered = filtered.filter(bus => 
-        filters.busTypes.includes(bus.busId?.type)
-      );
+      filtered = filtered.filter((bus) => {
+        const busType = bus.busId?.type || "";
+        return filters.busTypes.includes(busType);
+      });
     }
+    // console.log("Filtered by Bus Type:", filtered);
 
     // Apply departure time filter
     if (filters.departureTime.length > 0) {
-      filtered = filtered.filter(bus => {
+      filtered = filtered.filter((bus) => {
         const hour = new Date(bus.departureTime).getHours();
-        return filters.departureTime.some(timeSlot => {
-          switch(timeSlot) {
+        return filters.departureTime.some((timeSlot) => {
+          switch (timeSlot) {
             case 'morning': return hour >= 6 && hour < 12;
             case 'afternoon': return hour >= 12 && hour < 18;
             case 'evening': return hour >= 18 && hour < 24;
@@ -72,31 +76,38 @@ const SearchPage = () => {
         });
       });
     }
+    // console.log("Filtered by Departure Time:", filtered);
 
     // Apply amenities filter
     if (filters.amenities.length > 0) {
-      filtered = filtered.filter(bus =>
-        filters.amenities.every(amenity =>
+      filtered = filtered.filter((bus) =>
+        filters.amenities.every((amenity) =>
           bus.busId?.amenities?.includes(amenity)
         )
       );
     }
+    // console.log("Filtered by Amenities:", filtered);
 
     // Apply price range filter
-    filtered = filtered.filter(bus => 
-      (bus.fare || 0) <= filters.priceRange
-    );
+    filtered = filtered.filter((bus) => {
+      const totalFare = (bus.fareDetails?.baseFare || 0) + (bus.fareDetails?.tax || 0) + (bus.fareDetails?.serviceFee || 0);
+      return totalFare <= filters.priceRange;
+    });
+    // console.log("Filtered by Price Range:", filtered);
 
     // Apply sorting
     filtered.sort((a, b) => {
-      switch(sortBy) {
+      switch (sortBy) {
         case 'price_low':
-          return (a.fare || 0) - (b.fare || 0);
+          const totalFareA = (a.fareDetails?.baseFare || 0) + (a.fareDetails?.tax || 0) + (a.fareDetails?.serviceFee || 0);
+          const totalFareB = (b.fareDetails?.baseFare || 0) + (b.fareDetails?.tax || 0) + (b.fareDetails?.serviceFee || 0);
+          return totalFareA - totalFareB;
         case 'price_high':
-          return (b.fare || 0) - (a.fare || 0);
+          const totalFareC = (a.fareDetails?.baseFare || 0) + (a.fareDetails?.tax || 0) + (a.fareDetails?.serviceFee || 0);
+          const totalFareD = (b.fareDetails?.baseFare || 0) + (b.fareDetails?.tax || 0) + (b.fareDetails?.serviceFee || 0);
+          return totalFareD - totalFareC;
         case 'duration_short':
-          return (new Date(a.arrivalTime) - new Date(a.departureTime)) - 
-                 (new Date(b.arrivalTime) - new Date(b.departureTime));
+          return (new Date(a.arrivalTime) - new Date(a.departureTime)) - (new Date(b.arrivalTime) - new Date(b.departureTime));
         case 'departure_early':
           return new Date(a.departureTime) - new Date(b.departureTime);
         default:
@@ -104,43 +115,44 @@ const SearchPage = () => {
       }
     });
 
+    // console.log("Final Filtered Results:", filtered);
     setFilteredResults(filtered);
   };
 
   const handleFilterChange = (type, value) => {
-    setFilters(prev => {
+    setFilters((prev) => {
       const newFilters = { ...prev };
-      
-      switch(type) {
+
+      switch (type) {
         case 'busType':
           if (newFilters.busTypes.includes(value)) {
-            newFilters.busTypes = newFilters.busTypes.filter(t => t !== value);
+            newFilters.busTypes = newFilters.busTypes.filter((t) => t !== value);
           } else {
             newFilters.busTypes = [...newFilters.busTypes, value];
           }
           break;
-        
+
         case 'departureTime':
           if (newFilters.departureTime.includes(value)) {
-            newFilters.departureTime = newFilters.departureTime.filter(t => t !== value);
+            newFilters.departureTime = newFilters.departureTime.filter((t) => t !== value);
           } else {
             newFilters.departureTime = [...newFilters.departureTime, value];
           }
           break;
-        
+
         case 'amenity':
           if (newFilters.amenities.includes(value)) {
-            newFilters.amenities = newFilters.amenities.filter(a => a !== value);
+            newFilters.amenities = newFilters.amenities.filter((a) => a !== value);
           } else {
             newFilters.amenities = [...newFilters.amenities, value];
           }
           break;
-        
+
         case 'priceRange':
           newFilters.priceRange = value;
           break;
       }
-      
+
       return newFilters;
     });
   };
@@ -165,7 +177,8 @@ const SearchPage = () => {
 
     try {
       const response = await api.get("/searchBuses/allbuses/all");
-      
+      // console.log("API Response:", response.data);
+
       if (response.data && Array.isArray(response.data)) {
         setResults(response.data);
       } else if (response.data && response.data.data) {
@@ -174,11 +187,11 @@ const SearchPage = () => {
         setResults([]);
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 
+      const errorMessage = error.response?.data?.message ||
         error.response ? `Server error: ${error.response.status}` :
         error.request ? "No response from server. Please check your connection." :
         error.message;
-      
+
       setError(`Failed to fetch bus schedules. ${errorMessage}`);
       setResults([]);
     } finally {
@@ -203,11 +216,11 @@ const SearchPage = () => {
         setResults([]);
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 
+      const errorMessage = error.response?.data?.message ||
         error.response ? `Server error: ${error.response.status}` :
         error.request ? "No response from server. Please check your connection." :
         error.message;
-      
+
       setError(`Failed to fetch bus data. ${errorMessage}`);
       setResults([]);
     } finally {
@@ -221,14 +234,14 @@ const SearchPage = () => {
       <div className="relative bg-Darkgreen overflow-hidden mt-24 sm:mt-28 md:mt-32 lg:mt-36">
         <Container maxWidth="xl" className="relative py-12 sm:py-16 md:py-20 lg:py-24 px-4">
           <div className="text-center text-white space-y-4 sm:space-y-6 mb-8 sm:mb-12 md:mb-16">
-            <motion.h1 
+            <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight px-2 sm:px-4"
             >
               Book Your Bus Tickets
             </motion.h1>
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -239,7 +252,7 @@ const SearchPage = () => {
           </div>
 
           {/* Search Form */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
@@ -257,7 +270,7 @@ const SearchPage = () => {
             <Loader />
           </div>
         )}
-        
+
         {!loading && results.length > 0 && (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Filter Sidebar */}
@@ -267,7 +280,7 @@ const SearchPage = () => {
                   <h3 className="text-lg font-semibold text-gray-900 flex items-center">
                     <FaFilter className="mr-2" /> Filters
                   </h3>
-                  <button 
+                  <button
                     onClick={resetFilters}
                     className="text-sm text-Darkgreen hover:text-green-700 font-medium"
                   >
@@ -372,7 +385,7 @@ const SearchPage = () => {
                   Available Buses ({filteredResults.length})
                 </h2>
                 <div className="flex items-center space-x-4">
-                  <select 
+                  <select
                     className="form-select rounded-lg border-gray-300 text-sm focus:border-Darkgreen focus:ring-Darkgreen"
                     value={sortBy}
                     onChange={handleSortChange}
@@ -390,7 +403,7 @@ const SearchPage = () => {
             </div>
           </div>
         )}
-        
+
         {!loading && results.length === 0 && !error && (
           <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-100">
             <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">
@@ -436,7 +449,7 @@ const SearchPage = () => {
       {/* Stats Section */}
       <div className="py-12 sm:py-16 md:py-20 lg:py-24 bg-white mt-8 sm:mt-12 md:mt-16">
         <Container maxWidth="xl">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"

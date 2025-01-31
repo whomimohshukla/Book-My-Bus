@@ -5,15 +5,15 @@ const bookingController = require("../../controllers/Booking.controller/booking.
 const { auth } = require("../../middleware/User.Auth.Middleware"); // Your auth middleware
 
 // Create booking
-router.post("/createBooking", auth, bookingController.createBooking);
+// router.post("/createBooking", auth, bookingController.createBooking);
 
 // Get user bookings
-router.get("/user/:userId", auth, bookingController.getUserBookings);
+// router.get("/user/:userId", auth, bookingController.getUserBookings);
 
 // Get single booking
-router.get("/:id", auth, bookingController.getBooking);
+// router.get("/:id", auth, bookingController.getBooking);
 
 // Cancel booking
-router.put("/:id/cancel", auth, bookingController.cancelBooking);
+// router.put("/:id/cancel", auth, bookingController.cancelBooking);
 
 module.exports = router;

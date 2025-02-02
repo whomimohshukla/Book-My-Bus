@@ -34,6 +34,9 @@ import CityManagement from "./Admin/CityManagement";
 import AdminDashboard from "./Admin/AdminDashboard";
 import Emergency from "./components/SOS-Component/Emergency"
 
+
+
+// this is to check the role of the user
 // import ProtectedRoute from "./ProtectRoutes/ProtectedRoute"
 {/* <ProtectedRoute allowedRoles={['admin', 'operator']}>
   <Route path="/admin" element={<AdminDashboard />} />

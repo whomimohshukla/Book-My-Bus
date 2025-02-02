@@ -16,4 +16,18 @@ const { auth } = require("../../middleware/User.Auth.Middleware"); // Your auth 
 // Cancel booking
 // router.put("/:id/cancel", auth, bookingController.cancelBooking);
 
+router.post("/initialize", auth, bookingController.initializeBooking);
+router.post("/confirm", auth, bookingController.confirmBooking);
+router.get(
+  "/details/:bookingId",
+  auth,
+  bookingController.getBookingDetails
+);
+router.post(
+  "/cancel/:bookingId",
+  auth,
+  bookingController.cancelBooking
+);
+router.get("/user-bookings", auth, bookingController.getUserBookings);
+
 module.exports = router;

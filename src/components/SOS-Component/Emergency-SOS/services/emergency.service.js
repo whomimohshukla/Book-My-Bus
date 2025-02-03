@@ -19,4 +19,12 @@ export const emergencyService = {
   updateEmergencyContacts: async (userId, contacts) => {
     return api.put(`/emergency/contacts/${userId}`, { contacts });
   },
+
+  addEmergencyContact: async (userId, contact) => {
+    return api.post(`/emergency/contacts/${userId}`, { contact });
+  },
+
+  deleteEmergencyContact: async (userId, contactId) => {
+    return api.delete(`/emergency/contacts/${userId}/${contactId}`);
+  }
 };

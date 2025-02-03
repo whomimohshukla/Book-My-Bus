@@ -26,6 +26,16 @@ function Emergency() {
   const [showContacts, setShowContacts] = React.useState(false);
   const [showHospitals, setShowHospitals] = React.useState(false);
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log('Current auth state:', {
+      user,
+      isUserObject: !!user,
+      userId: user?.id,
+      userDetails: user ? { ...user } : null
+    });
+  }, [user]);
+
   React.useEffect(() => {
     const initializeLocation = async () => {
       try {
@@ -101,13 +111,19 @@ function Emergency() {
           )}
 
           <div className="text-center mb-12">
-            <EmergencyButton
-              userId={user._id}
-              onAlertTriggered={(data) => {
-                setAlertData(data);
-                setSOSDialogOpen(true);
-              }}
-            />
+            {user && user.id ? (
+              <EmergencyButton
+                userId={user.id}  
+                onAlertTriggered={(data) => {
+                  setAlertData(data);
+                  setSOSDialogOpen(true);
+                }}
+              />
+            ) : (
+              <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg">
+                Error: User ID not available. Please try logging in again.
+              </div>
+            )}
           </div>
 
           {/* Quick Action Buttons */}
@@ -146,7 +162,7 @@ function Emergency() {
           <div className="mt-8 transition-all duration-300">
             {showContacts && (
               <div className="bg-white rounded-2xl shadow-xl p-6 transform transition-all duration-300">
-                <EmergencyContacts userId={user._id} />
+                <EmergencyContacts userId={user.id} />
               </div>
             )}
             {showHospitals && (

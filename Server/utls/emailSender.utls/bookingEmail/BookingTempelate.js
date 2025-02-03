@@ -1,14 +1,15 @@
 // utils/emailTemplates.js
 exports.getBookingConfirmationTemplate = (booking, schedule) => {
   // Debug logging
-  console.log('Generating email template with data:', {
+  console.log("Generating email template with data:", schedule.busId.busNumber);
+  console.log("Generating email template with data:", {
     bookingId: booking._id,
     scheduleData: {
       routeId: schedule.routeId,
       busId: schedule.busId,
       departureTime: schedule.departureTime,
-      arrivalTime: schedule.arrivalTime
-    }
+      arrivalTime: schedule.arrivalTime,
+    },
   });
 
   return `
@@ -32,8 +33,13 @@ exports.getBookingConfirmationTemplate = (booking, schedule) => {
 
             <div class="details">
                 <h2>Journey Details</h2>
-                <p><strong>From:</strong> ${schedule.routeId.source.name || schedule.routeId.source}</p>
-                <p><strong>To:</strong> ${schedule.routeId.destination.name || schedule.routeId.destination}</p>
+                <p><strong>From:</strong> ${
+                  schedule.routeId.source.name || schedule.routeId.source
+                }</p>
+                <p><strong>To:</strong> ${
+                  schedule.routeId.destination.name ||
+                  schedule.routeId.destination
+                }</p>
                 <p><strong>Bus Number:</strong> ${schedule.busId.busNumber}</p>
                 <p><strong>Departure:</strong> ${new Date(
                   schedule.departureTime

@@ -13,6 +13,7 @@ const searchBusesRoute = require("./routes/SearchBuses.Routes/searchBuses.routes
 const contactRoute = require("./routes/contact.routes/contact.Routes");
 const emergencyRoute = require("./routes/EmergencyServices.routes/emergencyServices.Routes");
 const bookingRoute = require("./routes/Booking.Routes/booking.routes");
+const enhancePassanger = require("./routes/enhance.Routes/enhancedPassenger.Routes");
 const cors = require("cors");
 // connect to MongoDB
 connnectDb();
@@ -33,6 +34,7 @@ app.use("/api/searchBuses", searchBusesRoute);
 app.use("/api/contact", contactRoute);
 app.use("/api/emergency", emergencyRoute);
 app.use("/api/booking", bookingRoute);
+app.use("/api/enhanced-passenger", enhancePassanger);
 
 //testing the google PI
 

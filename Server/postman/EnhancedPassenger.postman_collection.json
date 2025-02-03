@@ -1,0 +1,406 @@
+{
+	"info": {
+		"_postman_id": "e5a3b4d2-1234-5678-abcd-ef1234567890",
+		"name": "BookMyBus - Enhanced Passenger",
+		"description": "API collection for Enhanced Passenger Management System",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Profile Management",
+			"item": [
+				{
+					"name": "Create Profile",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"{{userId}}\",\n    \"preferences\": {\n        \"seatPreference\": \"Window\",\n        \"mealPreference\": \"Veg\",\n        \"specialAssistance\": false,\n        \"notificationPreferences\": {\n            \"sms\": true,\n            \"email\": true,\n            \"push\": true,\n            \"whatsapp\": false\n        },\n        \"languagePreference\": \"English\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/enhanced-passenger/profile",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "enhanced-passenger", "profile"]
+						},
+						"description": "Create a new enhanced passenger profile"
+					}
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}"]
+						},
+						"description": "Get passenger profile details"
+					}
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"preferences\": {\n        \"seatPreference\": \"Aisle\",\n        \"mealPreference\": \"Non-Veg\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}"]
+						},
+						"description": "Update passenger profile"
+					}
+				}
+			]
+		},
+		{
+			"name": "Saved Travelers",
+			"item": [
+				{
+					"name": "Add Saved Traveler",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe\",\n    \"age\": 30,\n    \"gender\": \"Male\",\n    \"idType\": \"Aadhar\",\n    \"idNumber\": \"1234-5678-9012\",\n    \"relationship\": \"Friend\",\n    \"dateOfBirth\": \"1993-01-15\",\n    \"contactNumber\": \"+91-9876543210\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/travelers",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "travelers"]
+						},
+						"description": "Add a new saved traveler"
+					}
+				},
+				{
+					"name": "Update Saved Traveler",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"contactNumber\": \"+91-9876543211\",\n    \"idNumber\": \"1234-5678-9013\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/travelers/{{travelerId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "travelers", "{{travelerId}}"]
+						},
+						"description": "Update saved traveler details"
+					}
+				},
+				{
+					"name": "Delete Saved Traveler",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/travelers/{{travelerId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "travelers", "{{travelerId}}"]
+						},
+						"description": "Delete a saved traveler"
+					}
+				},
+				{
+					"name": "Bulk Verify Travelers",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"travelerIds\": [\"travelerId1\", \"travelerId2\"],\n    \"isVerified\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/travelers/bulk-verify",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "travelers", "bulk-verify"]
+						},
+						"description": "Bulk verify multiple travelers"
+					}
+				}
+			]
+		},
+		{
+			"name": "Loyalty Program",
+			"item": [
+				{
+					"name": "Update Loyalty Points",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"points\": 100,\n    \"action\": \"Journey Completed\",\n    \"routeId\": \"{{routeId}}\",\n    \"bookingId\": \"{{bookingId}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/loyalty/points",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "loyalty", "points"]
+						},
+						"description": "Update loyalty points for a passenger"
+					}
+				}
+			]
+		},
+		{
+			"name": "Preferences",
+			"item": [
+				{
+					"name": "Update Preferences",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"seatPreference\": \"Window\",\n    \"mealPreference\": \"Veg\",\n    \"specialAssistance\": true,\n    \"specialAssistanceDetails\": \"Wheelchair required\",\n    \"notificationPreferences\": {\n        \"whatsapp\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/preferences",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "preferences"]
+						},
+						"description": "Update passenger preferences"
+					}
+				},
+				{
+					"name": "Add Frequent Route",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"routeId\": \"{{routeId}}\",\n    \"preferredTiming\": \"Morning\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/frequent-routes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "frequent-routes"]
+						},
+						"description": "Add or update frequent route"
+					}
+				}
+			]
+		},
+		{
+			"name": "Emergency Contact",
+			"item": [
+				{
+					"name": "Update Emergency Contact",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Jane Doe\",\n    \"relationship\": \"Spouse\",\n    \"phoneNumber\": \"+91-9876543210\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/emergency-contact",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "emergency-contact"]
+						},
+						"description": "Update emergency contact details"
+					}
+				}
+			]
+		},
+		{
+			"name": "Analytics",
+			"item": [
+				{
+					"name": "Get Passenger Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/stats",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "stats"]
+						},
+						"description": "Get passenger statistics and analytics"
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": "your-auth-token",
+			"type": "string"
+		},
+		{
+			"key": "passengerId",
+			"value": "passenger-id",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "user-id",
+			"type": "string"
+		},
+		{
+			"key": "travelerId",
+			"value": "traveler-id",
+			"type": "string"
+		},
+		{
+			"key": "routeId",
+			"value": "route-id",
+			"type": "string"
+		},
+		{
+			"key": "bookingId",
+			"value": "booking-id",
+			"type": "string"
+		}
+	]
+}

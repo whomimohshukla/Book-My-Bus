@@ -41,7 +41,7 @@ exports.triggerSOS = async (req, res) => {
       location,
       description,
       emergencyType,
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
     });
 
     // Get user's emergency contacts
@@ -56,7 +56,9 @@ exports.triggerSOS = async (req, res) => {
             await sendEmail(contact.email, "Emergency Alert", {
               location,
               emergencyType,
-              timestamp: sosAlert.createdAt,
+              description,
+              timestamp: sosAlert.timestamp,
+              busId: req.body.busId || 'Not specified'
             });
           }
         }

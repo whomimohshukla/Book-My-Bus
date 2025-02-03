@@ -88,17 +88,31 @@ const SOSAlert = ({ open, onClose, alertData, loading, error }) => {
                         
                         {showDetails && (
                             <Box mt={2}>
+                                {alertData.location && (
+                                    <Typography variant="body2" gutterBottom>
+                                        Location: {alertData.location.latitude}, {alertData.location.longitude}
+                                    </Typography>
+                                )}
+                                {alertData.timestamp && (
+                                    <Typography variant="body2" gutterBottom>
+                                        Time: {new Date(alertData.timestamp).toLocaleString('en-US', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            second: '2-digit',
+                                            hour12: true
+                                        })}
+                                    </Typography>
+                                )}
+                                {alertData.emergencyType && (
+                                    <Typography variant="body2" gutterBottom>
+                                        Type: {alertData.emergencyType}
+                                    </Typography>
+                                )}
                                 <Typography variant="body2" gutterBottom>
-                                    Location: {alertData.location.latitude}, {alertData.location.longitude}
-                                </Typography>
-                                <Typography variant="body2" gutterBottom>
-                                    Time: {new Date(alertData.timestamp).toLocaleString()}
-                                </Typography>
-                                <Typography variant="body2" gutterBottom>
-                                    Type: {alertData.emergencyType}
-                                </Typography>
-                                <Typography variant="body2" gutterBottom>
-                                    Description: {alertData.description}
+                                    Description: {alertData.description || 'No description provided'}
                                 </Typography>
                             </Box>
                         )}

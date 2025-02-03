@@ -8,15 +8,22 @@ const HospitalList = ({ latitude, longitude }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchNearbyHospitals();
+    if (latitude && longitude) {
+      fetchNearbyHospitals();
+    }
   }, [latitude, longitude]);
 
   const fetchNearbyHospitals = async () => {
     try {
       const response = await emergencyService.getNearbyHospitals(latitude, longitude);
-      setHospitals(response.data || []);
+      // Ensure we're getting an array from the response
+      const hospitalData = response.data?.data || [];
+      console.log('Hospital data:', hospitalData); // Debug log
+      setHospitals(Array.isArray(hospitalData) ? hospitalData : []);
     } catch (error) {
+      console.error('Error fetching hospitals:', error);
       toast.error('Failed to fetch nearby hospitals');
+      setHospitals([]);
     } finally {
       setLoading(false);
     }
@@ -30,6 +37,11 @@ const HospitalList = ({ latitude, longitude }) => {
   };
 
   const openDirections = (hospital) => {
+    if (!latitude || !longitude) {
+      toast.error('Current location not available');
+      return;
+    }
+
     // Check if we have coordinates or address
     let destination;
     if (hospital.latitude && hospital.longitude) {
@@ -54,6 +66,15 @@ const HospitalList = ({ latitude, longitude }) => {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+      </div>
+    );
+  }
+
+  if (!hospitals.length) {
+    return (
+      <div className="text-center py-8">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">Nearby Hospitals</h2>
+        <p className="text-gray-600">No hospitals found in your area</p>
       </div>
     );
   }
@@ -102,33 +123,24 @@ const HospitalList = ({ latitude, longitude }) => {
                       <span>{hospital.phone}</span>
                     </a>
                   )}
-                  {hospital.openNow !== undefined && (
-                    <div className="flex items-center text-gray-600">
-                      <FaClock className="mr-2" />
-                      <span>{hospital.openNow ? 'Open Now' : 'Closed'}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-4 flex justify-end">
                   <button
                     onClick={() => openDirections(hospital)}
-                    className="flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors duration-200"
+                    className="flex items-center text-gray-600 hover:text-red-600 transition-colors duration-200"
                   >
                     <FaDirections className="mr-2" />
-                    Get Directions
+                    <span>Directions</span>
                   </button>
+                  {hospital.openingHours && (
+                    <div className="flex items-center text-gray-600">
+                      <FaClock className="mr-2" />
+                      <span>{hospital.openingHours}</span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           ))}
         </div>
-
-        {hospitals.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
-            No hospitals found in your area.
-          </div>
-        )}
       </div>
     </div>
   );

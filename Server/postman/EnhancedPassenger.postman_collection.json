@@ -34,7 +34,7 @@
 							"host": ["{{baseUrl}}"],
 							"path": ["api", "enhanced-passenger", "profile"]
 						},
-						"description": "Create a new enhanced passenger profile"
+						"description": "Create a new enhanced passenger profile. UserId is extracted from auth token."
 					}
 				},
 				{
@@ -49,11 +49,11 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}",
+							"raw": "{{baseUrl}}/api/enhanced-passenger/profile",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}"]
+							"path": ["api", "enhanced-passenger", "profile"]
 						},
-						"description": "Get passenger profile details"
+						"description": "Get passenger profile details. UserId is extracted from auth token."
 					}
 				},
 				{
@@ -77,11 +77,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}",
+							"raw": "{{baseUrl}}/api/enhanced-passenger/profile",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}"]
+							"path": ["api", "enhanced-passenger", "profile"]
 						},
-						"description": "Update passenger profile"
+						"description": "Update passenger profile. UserId is extracted from auth token."
 					}
 				}
 			]
@@ -110,11 +110,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/travelers",
+							"raw": "{{baseUrl}}/api/enhanced-passenger/travelers",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "travelers"]
+							"path": ["api", "enhanced-passenger", "travelers"]
 						},
-						"description": "Add a new saved traveler"
+						"description": "Add a new saved traveler. UserId is extracted from auth token."
 					}
 				},
 				{
@@ -138,11 +138,11 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/travelers/{{travelerId}}",
+							"raw": "{{baseUrl}}/api/enhanced-passenger/travelers/{{travelerId}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "travelers", "{{travelerId}}"]
+							"path": ["api", "enhanced-passenger", "travelers", "{{travelerId}}"]
 						},
-						"description": "Update saved traveler details"
+						"description": "Update saved traveler details. UserId is extracted from auth token."
 					}
 				},
 				{
@@ -157,11 +157,11 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/travelers/{{travelerId}}",
+							"raw": "{{baseUrl}}/api/enhanced-passenger/travelers/{{travelerId}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "travelers", "{{travelerId}}"]
+							"path": ["api", "enhanced-passenger", "travelers", "{{travelerId}}"]
 						},
-						"description": "Delete a saved traveler"
+						"description": "Delete a saved traveler. UserId is extracted from auth token."
 					}
 				},
 				{
@@ -185,9 +185,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/travelers/bulk-verify",
+							"raw": "{{baseUrl}}/api/enhanced-passenger/travelers/bulk-verify",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "travelers", "bulk-verify"]
+							"path": ["api", "enhanced-passenger", "travelers", "bulk-verify"]
 						},
 						"description": "Bulk verify multiple travelers"
 					}
@@ -218,9 +218,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/loyalty/points",
+							"raw": "{{baseUrl}}/api/enhanced-passenger/loyalty/points",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "loyalty", "points"]
+							"path": ["api", "enhanced-passenger", "loyalty", "points"]
 						},
 						"description": "Update loyalty points for a passenger"
 					}
@@ -251,9 +251,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/preferences",
+							"raw": "{{baseUrl}}/api/enhanced-passenger/preferences",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "preferences"]
+							"path": ["api", "enhanced-passenger", "preferences"]
 						},
 						"description": "Update passenger preferences"
 					}
@@ -279,9 +279,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/frequent-routes",
+							"raw": "{{baseUrl}}/api/enhanced-passenger/frequent-routes",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "frequent-routes"]
+							"path": ["api", "enhanced-passenger", "frequent-routes"]
 						},
 						"description": "Add or update frequent route"
 					}
@@ -312,9 +312,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/emergency-contact",
+							"raw": "{{baseUrl}}/api/enhanced-passenger/emergency-contact",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "emergency-contact"]
+							"path": ["api", "enhanced-passenger", "emergency-contact"]
 						},
 						"description": "Update emergency contact details"
 					}
@@ -336,9 +336,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/enhanced-passenger/profile/{{passengerId}}/stats",
+							"raw": "{{baseUrl}}/api/enhanced-passenger/stats",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "enhanced-passenger", "profile", "{{passengerId}}", "stats"]
+							"path": ["api", "enhanced-passenger", "stats"]
 						},
 						"description": "Get passenger statistics and analytics"
 					}
@@ -378,16 +378,6 @@
 			"type": "string"
 		},
 		{
-			"key": "passengerId",
-			"value": "passenger-id",
-			"type": "string"
-		},
-		{
-			"key": "userId",
-			"value": "user-id",
-			"type": "string"
-		},
-		{
 			"key": "travelerId",
 			"value": "traveler-id",
 			"type": "string"
@@ -400,6 +390,11 @@
 		{
 			"key": "bookingId",
 			"value": "booking-id",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "user-id",
 			"type": "string"
 		}
 	]

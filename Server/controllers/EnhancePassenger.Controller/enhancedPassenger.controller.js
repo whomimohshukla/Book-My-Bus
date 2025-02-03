@@ -1,10 +1,27 @@
-const EnhancedPassenger = require('../../models/EnhancePassanger.Model/enhance.Model');
-const mongoose = require('mongoose');
+const EnhancedPassenger = require("../../models/EnhancePassanger.Model/enhance.Model");
+const mongoose = require("mongoose");
 
 // Create new enhanced passenger profile
 exports.createProfile = async (req, res) => {
     try {
-        const newProfile = new EnhancedPassenger(req.body);
+        // Get userId from auth token
+        const userId = req.user._id; // This comes from the auth middleware
+
+        // Check if profile already exists
+        const existingProfile = await EnhancedPassenger.findOne({ userId });
+        if (existingProfile) {
+            return res.status(400).json({
+                success: false,
+                message: 'Profile already exists for this user'
+            });
+        }
+
+        // Create new profile with userId from auth token
+        const newProfile = new EnhancedPassenger({
+            userId,
+            ...req.body
+        });
+
         const savedProfile = await newProfile.save();
         res.status(201).json({
             success: true,
@@ -18,10 +35,11 @@ exports.createProfile = async (req, res) => {
     }
 };
 
-// Get passenger profile by ID
+// Get passenger profile
 exports.getProfile = async (req, res) => {
     try {
-        const profile = await EnhancedPassenger.findOne({ passengerId: req.params.id })
+        const userId = req.user._id;
+        const profile = await EnhancedPassenger.findOne({ userId })
             .populate('preferences.frequentRoutes.routeId')
             .populate('loyaltyProgram.history.routeId')
             .populate('loyaltyProgram.history.bookingId');
@@ -48,8 +66,9 @@ exports.getProfile = async (req, res) => {
 // Update passenger profile
 exports.updateProfile = async (req, res) => {
     try {
+        const userId = req.user._id;
         const updatedProfile = await EnhancedPassenger.findOneAndUpdate(
-            { passengerId: req.params.id },
+            { userId },
             req.body,
             { new: true, runValidators: true }
         );
@@ -73,10 +92,12 @@ exports.updateProfile = async (req, res) => {
     }
 };
 
-// Saved Travelers Management
+// Add saved traveler
 exports.addSavedTraveler = async (req, res) => {
     try {
-        const profile = await EnhancedPassenger.findOne({ passengerId: req.params.id });
+        const userId = req.user._id;
+        const profile = await EnhancedPassenger.findOne({ userId });
+        
         if (!profile) {
             return res.status(404).json({
                 success: false,
@@ -99,9 +120,12 @@ exports.addSavedTraveler = async (req, res) => {
     }
 };
 
+// Update saved traveler
 exports.updateSavedTraveler = async (req, res) => {
     try {
-        const profile = await EnhancedPassenger.findOne({ passengerId: req.params.id });
+        const userId = req.user._id;
+        const profile = await EnhancedPassenger.findOne({ userId });
+        
         if (!profile) {
             return res.status(404).json({
                 success: false,
@@ -139,9 +163,12 @@ exports.updateSavedTraveler = async (req, res) => {
     }
 };
 
+// Delete saved traveler
 exports.deleteSavedTraveler = async (req, res) => {
     try {
-        const profile = await EnhancedPassenger.findOne({ passengerId: req.params.id });
+        const userId = req.user._id;
+        const profile = await EnhancedPassenger.findOne({ userId });
+        
         if (!profile) {
             return res.status(404).json({
                 success: false,
@@ -167,11 +194,12 @@ exports.deleteSavedTraveler = async (req, res) => {
     }
 };
 
-// Loyalty Program Management
+// Update loyalty points
 exports.updateLoyaltyPoints = async (req, res) => {
     try {
+        const userId = req.user._id;
         const { points, action, routeId, bookingId } = req.body;
-        const profile = await EnhancedPassenger.findOne({ passengerId: req.params.id });
+        const profile = await EnhancedPassenger.findOne({ userId });
 
         if (!profile) {
             return res.status(404).json({
@@ -201,9 +229,6 @@ exports.updateLoyaltyPoints = async (req, res) => {
             profile.loyaltyProgram.tier = 'Silver';
         }
 
-        // Set tier expiry to 1 year from now
-        profile.loyaltyProgram.expiryDate = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
-
         const updatedProfile = await profile.save();
 
         res.json({
@@ -218,116 +243,12 @@ exports.updateLoyaltyPoints = async (req, res) => {
     }
 };
 
-// Preferences Management
-exports.updatePreferences = async (req, res) => {
-    try {
-        const profile = await EnhancedPassenger.findOne({ passengerId: req.params.id });
-        if (!profile) {
-            return res.status(404).json({
-                success: false,
-                message: 'Passenger profile not found'
-            });
-        }
-        
-        profile.preferences = {
-            ...profile.preferences,
-            ...req.body
-        };
-        
-        const updatedProfile = await profile.save();
-
-        res.json({
-            success: true,
-            data: updatedProfile.preferences
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
-    }
-};
-
-// Frequent Routes Management
-exports.addFrequentRoute = async (req, res) => {
-    try {
-        const profile = await EnhancedPassenger.findOne({ passengerId: req.params.id });
-        if (!profile) {
-            return res.status(404).json({
-                success: false,
-                message: 'Passenger profile not found'
-            });
-        }
-
-        const existingRouteIndex = profile.preferences.frequentRoutes.findIndex(
-            route => route.routeId.toString() === req.body.routeId
-        );
-
-        if (existingRouteIndex !== -1) {
-            // Update existing route
-            profile.preferences.frequentRoutes[existingRouteIndex].frequency += 1;
-            profile.preferences.frequentRoutes[existingRouteIndex].lastTraveled = new Date();
-            if (req.body.preferredTiming) {
-                profile.preferences.frequentRoutes[existingRouteIndex].preferredTiming = req.body.preferredTiming;
-            }
-        } else {
-            // Add new route
-            profile.preferences.frequentRoutes.push({
-                routeId: req.body.routeId,
-                frequency: 1,
-                lastTraveled: new Date(),
-                preferredTiming: req.body.preferredTiming
-            });
-        }
-
-        const updatedProfile = await profile.save();
-
-        res.json({
-            success: true,
-            data: updatedProfile.preferences.frequentRoutes
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
-    }
-};
-
-// Emergency Contact Management
-exports.updateEmergencyContact = async (req, res) => {
-    try {
-        const profile = await EnhancedPassenger.findOne({ passengerId: req.params.id });
-        if (!profile) {
-            return res.status(404).json({
-                success: false,
-                message: 'Passenger profile not found'
-            });
-        }
-
-        profile.emergencyContact = {
-            ...profile.emergencyContact,
-            ...req.body
-        };
-
-        const updatedProfile = await profile.save();
-
-        res.json({
-            success: true,
-            data: updatedProfile.emergencyContact
-        });
-    } catch (error) {
-        res.status(400).json({
-            success: false,
-            message: error.message
-        });
-    }
-};
-
-// Analytics and Statistics
+// Get passenger stats
 exports.getPassengerStats = async (req, res) => {
     try {
-        const profile = await EnhancedPassenger.findOne({ passengerId: req.params.id });
+        const userId = req.user._id;
+        const profile = await EnhancedPassenger.findOne({ userId });
+        
         if (!profile) {
             return res.status(404).json({
                 success: false,
@@ -354,39 +275,6 @@ exports.getPassengerStats = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({
-            success: false,
-            message: error.message
-        });
-    }
-};
-
-// Bulk operations
-exports.bulkUpdateTravelersVerification = async (req, res) => {
-    try {
-        const { travelerIds, isVerified } = req.body;
-        const profile = await EnhancedPassenger.findOne({ passengerId: req.params.id });
-        
-        if (!profile) {
-            return res.status(404).json({
-                success: false,
-                message: 'Passenger profile not found'
-            });
-        }
-
-        profile.savedTravelers.forEach(traveler => {
-            if (travelerIds.includes(traveler._id.toString())) {
-                traveler.isVerified = isVerified;
-            }
-        });
-
-        const updatedProfile = await profile.save();
-
-        res.json({
-            success: true,
-            data: updatedProfile.savedTravelers
-        });
-    } catch (error) {
-        res.status(400).json({
             success: false,
             message: error.message
         });

@@ -5,68 +5,24 @@ const enhancedPassengerController = require("../../controllers/EnhancePassenger.
 
 // Basic Profile Routes
 router.post("/profile", auth, enhancedPassengerController.createProfile);
-
-router.get("/profile/:id", auth, enhancedPassengerController.getProfile);
-
-router.put("/profile/:id", auth, enhancedPassengerController.updateProfile);
+router.get("/profile", auth, enhancedPassengerController.getProfile);
+router.put("/profile", auth, enhancedPassengerController.updateProfile);
 
 // Saved Travelers Routes
-router.post(
-  "/profile/:id/travelers",
-  auth,
-  enhancedPassengerController.addSavedTraveler
-);
+router.post("/travelers", auth, enhancedPassengerController.addSavedTraveler);
+router.put("/travelers/:travelerId", auth, enhancedPassengerController.updateSavedTraveler);
+router.delete("/travelers/:travelerId", auth, enhancedPassengerController.deleteSavedTraveler);
 
-router.put(
-  "/profile/:id/travelers/:travelerId",
-  auth,
-  enhancedPassengerController.updateSavedTraveler
-);
-
-router.delete(
-  "/profile/:id/travelers/:travelerId",
-  auth,
-  enhancedPassengerController.deleteSavedTraveler
-);
-
-router.post(
-  "/profile/:id/travelers/bulk-verify",
-  auth,
-  enhancedPassengerController.bulkUpdateTravelersVerification
-);
+// Frequent Routes
+router.post("/frequent-routes", auth, enhancedPassengerController.addFrequentRoute);
+router.get("/frequent-routes", auth, enhancedPassengerController.getFrequentRoutes);
+router.put("/frequent-routes/:routeId", auth, enhancedPassengerController.updateFrequentRoute);
+router.delete("/frequent-routes/:routeId", auth, enhancedPassengerController.deleteFrequentRoute);
 
 // Loyalty Program Routes
-router.post(
-  "/profile/:id/loyalty/points",
-  auth,
-  enhancedPassengerController.updateLoyaltyPoints
-);
+router.post("/loyalty/points", auth, enhancedPassengerController.updateLoyaltyPoints);
 
-// Preferences Routes
-router.put(
-  "/profile/:id/preferences",
-  auth,
-  enhancedPassengerController.updatePreferences
-);
-
-router.post(
-  "/profile/:id/frequent-routes",
-  auth,
-  enhancedPassengerController.addFrequentRoute
-);
-
-// Emergency Contact Routes
-router.put(
-  "/profile/:id/emergency-contact",
-  auth,
-  enhancedPassengerController.updateEmergencyContact
-);
-
-// Analytics Routes
-router.get(
-  "/profile/:id/stats",
-  auth,
-  enhancedPassengerController.getPassengerStats
-);
+// Stats Routes
+router.get("/stats", auth, enhancedPassengerController.getPassengerStats);
 
 module.exports = router;

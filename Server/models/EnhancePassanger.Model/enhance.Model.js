@@ -28,8 +28,7 @@ const loyaltyHistorySchema = new mongoose.Schema({
 });
 
 const enhancedPassengerSchema = new mongoose.Schema({
-    passengerId: { type: mongoose.Schema.Types.ObjectId, required: true, unique: true },
-    userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
+    userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User', unique: true }, // Making userId unique as one user = one passenger profile
     preferences: {
         seatPreference: { type: String, enum: ['Window', 'Aisle', 'Middle', 'No Preference'], default: 'No Preference' },
         mealPreference: { type: String, enum: ['Veg', 'Non-Veg', 'Jain', 'None'], default: 'None' },
@@ -64,8 +63,7 @@ const enhancedPassengerSchema = new mongoose.Schema({
 });
 
 // Indexes for better query performance
-enhancedPassengerSchema.index({ passengerId: 1 }, { unique: true });
-enhancedPassengerSchema.index({ userId: 1 });
+enhancedPassengerSchema.index({ userId: 1 }, { unique: true });
 enhancedPassengerSchema.index({ 'loyaltyProgram.tier': 1 });
 enhancedPassengerSchema.index({ 'savedTravelers.idNumber': 1 });
 enhancedPassengerSchema.index({ 'preferences.frequentRoutes.routeId': 1 });

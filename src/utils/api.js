@@ -12,7 +12,7 @@ const api = axios.create({
 // Request interceptor for adding auth token
 api.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('authToken');  
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -22,7 +22,7 @@ api.interceptors.request.use(
         return Promise.reject(error);
     }
 );
-// commit this 
+
 // Response interceptor for handling errors and logging
 api.interceptors.response.use(
     (response) => {
@@ -34,10 +34,6 @@ api.interceptors.response.use(
             data: response.data
         });
         
-        // If the response has a data property that contains the actual data, extract it
-        if (response.data && typeof response.data === 'object' && 'data' in response.data) {
-            return { ...response, data: response.data.data };
-        }
         return response;
     },
     (error) => {
@@ -49,23 +45,20 @@ api.interceptors.response.use(
             data: error.response?.data
         });
 
-        if (error.response) {
-            switch (error.response.status) {
-                case 400:
-                    console.error('Bad Request:', error.response.data);
-                    break;
-                case 401:
-                    localStorage.removeItem('token');
-                    window.location.href = '/login';
-                    break;
-                case 403:
-                    console.error('Forbidden:', error.response.data);
-                    break;
-                default:
-                    console.error('API Error:', error.response.data);
-                    break;
-            }
+        // If it's a Bad Request (400), log more details
+        if (error.response?.status === 400) {
+            console.log('Bad Request:', error.response.data);
         }
+
+        // If it's an Unauthorized error (401), redirect to login
+        if (error.response?.status === 401) {
+            // Clear auth data
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('userData');
+            // Redirect to login page
+            window.location.href = '/login';
+        }
+
         return Promise.reject(error);
     }
 );

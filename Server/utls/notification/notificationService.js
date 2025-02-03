@@ -53,7 +53,17 @@ exports.sendEmail = async (
   };
 
   const googleMapsLink = `https://www.google.com/maps?q=${location.latitude},${location.longitude}`;
-  const formattedTime = new Date(timestamp || Date.now()).toLocaleString();
+  const formattedTime = timestamp ? new Date(timestamp).toLocaleString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: true,
+    timeZoneName: 'short'
+  }) : 'Time not specified';
 
   const htmlContent = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa; border-radius: 10px;">

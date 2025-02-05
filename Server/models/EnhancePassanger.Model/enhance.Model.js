@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+//this is enhance model
 const frequentRouteSchema = new mongoose.Schema({
     routeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Route', required: true },
     frequency: { type: Number, default: 1 },

@@ -1,4 +1,4 @@
-# BookMyBus - Bus Ticket Booking System Documentation
+# BookMyBus - Bus Ticket Booking System
 
 ## Table of Contents
 1. [System Overview](#system-overview)

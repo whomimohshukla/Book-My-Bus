@@ -8,6 +8,7 @@ const {
 } = require("../../utls/payment.utils");
 
 // Initialize booking and create Razorpay order
+
 exports.initializeBooking = async (req, res) => {
   try {
     const { scheduleId, seats, passengers, contactDetails } = req.body;
@@ -51,14 +52,14 @@ exports.initializeBooking = async (req, res) => {
     try {
       razorpayOrder = await createPaymentOrder(totalAmount);
       if (!razorpayOrder || !razorpayOrder.id) {
-        throw new Error('Failed to create Razorpay order');
+        throw new Error("Failed to create Razorpay order");
       }
     } catch (error) {
-      console.error('Razorpay order creation failed:', error);
+      console.error("Razorpay order creation failed:", error);
       return res.status(500).json({
         success: false,
-        message: 'Payment initialization failed',
-        error: error.message
+        message: "Payment initialization failed",
+        error: error.message,
       });
     }
 
@@ -86,7 +87,7 @@ exports.initializeBooking = async (req, res) => {
         booking: {
           email: contactDetails.email,
           phone: contactDetails.phone,
-        }
+        },
       },
       message: "Booking initialized successfully",
     });
@@ -102,7 +103,8 @@ exports.initializeBooking = async (req, res) => {
 // Verify payment and confirm booking
 exports.confirmBooking = async (req, res) => {
   try {
-    const { bookingId, razorpayOrderId, razorpayPaymentId, razorpaySignature } = req.body;
+    const { bookingId, razorpayOrderId, razorpayPaymentId, razorpaySignature } =
+      req.body;
 
     // Find the pending booking
     const booking = await Booking.findOne({
@@ -171,7 +173,10 @@ exports.confirmBooking = async (req, res) => {
 
     // Send booking confirmation email
     try {
-      await mailSender.sendBookingConfirmation(updatedBooking, updatedBooking.scheduleId);
+      await mailSender.sendBookingConfirmation(
+        updatedBooking,
+        updatedBooking.scheduleId
+      );
     } catch (error) {
       console.error("Error sending confirmation email:", error);
       // Don't return error to client as booking is successful

@@ -7,7 +7,7 @@ const {
   verifyPaymentSignature,
 } = require("../../utls/payment.utils");
 
-// Initialize booking and create Razorpay order
+
 
 exports.initializeBooking = async (req, res) => {
   try {
@@ -21,7 +21,6 @@ exports.initializeBooking = async (req, res) => {
       });
     }
 
-    // Validate schedule exists and seats are available
     const schedule = await Schedule.findById(scheduleId);
     if (!schedule) {
       return res.status(404).json({
@@ -30,7 +29,6 @@ exports.initializeBooking = async (req, res) => {
       });
     }
 
-    // Check if seats are available
     const existingBookings = await Booking.find({
       scheduleId,
       status: "confirmed",
@@ -44,7 +42,6 @@ exports.initializeBooking = async (req, res) => {
       });
     }
 
-    // Calculate total amount
     const totalAmount = seats.reduce((sum, seat) => sum + seat.price, 0);
 
     // Create Razorpay order

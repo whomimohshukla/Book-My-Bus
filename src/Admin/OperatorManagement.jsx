@@ -6,6 +6,7 @@ const OperatorManagement = () => {
   const [operators, setOperators] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({
     name: '',
@@ -31,30 +32,44 @@ const OperatorManagement = () => {
   }, [operators]);
 
   const updateStats = () => {
-    setStats(prevStats => ({
-      ...prevStats,
+    const totalBuses = operators.reduce((sum, op) => sum + (op.totalBuses || 0), 0);
+    const totalRoutes = operators.reduce((sum, op) => sum + (op.activeRoutes || 0), 0);
+    
+    setStats({
       totalOperators: operators.length,
-      // You might want to fetch these from their respective endpoints
-      activeBuses: prevStats.activeBuses,
-      totalRoutes: prevStats.totalRoutes
-    }));
+      activeBuses: totalBuses,
+      totalRoutes: totalRoutes
+    });
   };
 
   const fetchOperators = async () => {
     try {
       setLoading(true);
       setError(null);
+      setSuccessMessage(null);
       const response = await api.get('/operatorRoute/operator');
       const operatorData = response.data;
-      if (Array.isArray(operatorData)) {
-        setOperators(operatorData);
-      } else if (operatorData && typeof operatorData === 'object') {
-        setOperators(operatorData.operators || []);
+      console.log('Operator API Response:', operatorData);
+
+      if (operatorData && operatorData.data && Array.isArray(operatorData.data)) {
+        const transformedOperators = operatorData.data.map(operator => ({
+          _id: operator._id,
+          name: operator.name || '',
+          email: operator.email || '',
+          contact: operator.contact || '',
+          address: operator.address || '',
+          totalBuses: operator.totalBuses || 0,
+          activeRoutes: operator.activeRoutes || 0
+        }));
+        console.log('Transformed operators:', transformedOperators);
+        setOperators(transformedOperators);
       } else {
+        console.error('Unexpected API response structure:', operatorData);
         setOperators([]);
       }
     } catch (err) {
-      setError('Failed to fetch operators: ' + (err.response?.data?.message || err.message));
+      const errorMessage = err.response?.data?.message || err.message;
+      setError('Failed to fetch operators: ' + errorMessage);
       console.error('Fetch operators error:', err);
       setOperators([]);
     } finally {
@@ -67,29 +82,56 @@ const OperatorManagement = () => {
     try {
       setLoading(true);
       setError(null);
+      setSuccessMessage(null);
 
-      // Validate form data
-      if (!formData.name || !formData.email || !formData.contact || !formData.address) {
-        throw new Error('Please fill in all required fields');
-      }
+      // Form validation
+      const validationErrors = [];
+      
+      if (!formData.name?.trim()) validationErrors.push('Name is required');
+      if (!formData.email?.trim()) validationErrors.push('Email is required');
+      if (!formData.contact?.trim()) validationErrors.push('Contact number is required');
+      if (!formData.address?.trim()) validationErrors.push('Address is required');
 
-      // Validate email format
+      // Email validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.email)) {
-        throw new Error('Please enter a valid email address');
+      if (formData.email && !emailRegex.test(formData.email.trim())) {
+        validationErrors.push('Please enter a valid email address');
       }
 
-      // Validate phone number (basic validation)
-      const phoneRegex = /^\d{10}$/;
-      if (!phoneRegex.test(formData.contact)) {
-        throw new Error('Please enter a valid 10-digit phone number');
+      // Phone validation - allow numbers with optional +, -, or spaces
+      const phoneRegex = /^[+]?[\s0-9-]{10,}$/;
+      const cleanedPhone = formData.contact?.replace(/[\s-]/g, '');
+      if (formData.contact && (!phoneRegex.test(formData.contact.trim()) || cleanedPhone.length < 10)) {
+        validationErrors.push('Please enter a valid phone number (minimum 10 digits)');
       }
 
+      if (validationErrors.length > 0) {
+        throw new Error(validationErrors.join('\n'));
+      }
+
+      // Clean and format the data
+      const payload = {
+        name: formData.name.trim(),
+        email: formData.email.toLowerCase().trim(),
+        contact: cleanedPhone,
+        address: formData.address.trim(),
+        status: 'Active',
+        totalBuses: 0,
+        activeRoutes: 0
+      };
+
+      // Log the payload for debugging
+      console.log('Submitting operator payload:', payload);
+
+      let response;
       if (editingId) {
-        await api.put(`/operatorRoute/operator/${editingId}`, formData);
+        response = await api.put(`/operatorRoute/operator/${editingId}`, payload);
       } else {
-        await api.post('/operatorRoute/operator', formData);
+        response = await api.post('/operatorRoute/operator', payload);
       }
+
+      // Log the response
+      console.log('API Response:', response.data);
       
       await fetchOperators();
       setShowForm(false);
@@ -100,6 +142,10 @@ const OperatorManagement = () => {
         address: ''
       });
       setEditingId(null);
+      setSuccessMessage(`Operator successfully ${editingId ? 'updated' : 'created'}`);
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
       const errorMessage = err.response?.data?.message || err.message;
       setError(`Failed to ${editingId ? 'update' : 'create'} operator: ${errorMessage}`);
@@ -110,17 +156,35 @@ const OperatorManagement = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!id || !window.confirm('Are you sure you want to delete this operator?')) {
+    // Find the operator name for better user feedback
+    const operator = operators.find(op => op._id === id);
+    if (!id || !operator) {
+      setError('Invalid operator selected for deletion');
+      return;
+    }
+
+    if (!window.confirm(`Are you sure you want to delete the operator "${operator.name}"? This action cannot be undone.`)) {
       return;
     }
 
     try {
       setLoading(true);
       setError(null);
+      setSuccessMessage(null);
+      
+      // Check if operator has any buses assigned
+      if (operator.totalBuses > 0) {
+        throw new Error(`Cannot delete operator "${operator.name}" because they have ${operator.totalBuses} buses assigned. Please reassign or delete the buses first.`);
+      }
+
       await api.delete(`/operatorRoute/operator/${id}`);
       await fetchOperators();
+      
+      setSuccessMessage(`Operator "${operator.name}" was successfully deleted`);
+      setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
-      setError('Failed to delete operator: ' + (err.response?.data?.message || err.message));
+      const errorMessage = err.response?.data?.message || err.message;
+      setError(`Failed to delete operator "${operator.name}": ${errorMessage}`);
       console.error('Delete error:', err);
     } finally {
       setLoading(false);
@@ -186,9 +250,27 @@ const OperatorManagement = () => {
         </div>
       </div>
 
+      {/* Error Alert */}
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-          <span className="block sm:inline">{error}</span>
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4 animate-fade-in" role="alert">
+          <div className="flex items-center">
+            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+            <span className="block sm:inline font-roboto">{error}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Success Alert */}
+      {successMessage && (
+        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg relative mb-4 animate-fade-in" role="alert">
+          <div className="flex items-center">
+            <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            <span className="block sm:inline font-roboto">{successMessage}</span>
+          </div>
         </div>
       )}
 
@@ -318,24 +400,44 @@ const OperatorManagement = () => {
                 </tr>
               ) : filteredOperators.length > 0 ? (
                 filteredOperators.map((operator) => (
-                  <tr key={operator._id} className="hover:bg-primary-50 transition-colors">
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap font-roboto">{operator.name}</td>
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell font-roboto">{operator.email}</td>
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap font-roboto">{operator.contact}</td>
-                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden md:table-cell font-roboto">{operator.address}</td>
+                  <tr key={operator._id} className="hover:bg-primary-50 transition-colors duration-150 ease-in-out">
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-10 w-10 bg-primary-100 rounded-full flex items-center justify-center">
+                          <FaUserTie className="h-5 w-5 text-primary-600" />
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-medium text-gray-900 font-roboto">{operator.name}</div>
+                          <div className="text-sm text-gray-500 font-roboto sm:hidden">{operator.email}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                      <div className="text-sm text-gray-900 font-roboto">{operator.email}</div>
+                    </td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm text-gray-900 font-roboto">{operator.contact}</div>
+                    </td>
+                    <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                      <div className="text-sm text-gray-900 font-roboto">{operator.address}</div>
+                    </td>
                     <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm">
-                      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
+                      <div className="flex items-center space-x-4">
                         <button
                           onClick={() => handleEdit(operator)}
-                          className="text-secondary-600 hover:text-secondary-800 transition-colors flex items-center gap-1 font-roboto"
+                          className="text-blue-600 hover:text-blue-900 transition-colors duration-150 flex items-center gap-1 font-roboto"
+                          title="Edit operator"
                         >
-                          <FaEdit /> <span className="hidden sm:inline">Edit</span>
+                          <FaEdit className="h-4 w-4" />
+                          <span className="hidden sm:inline">Edit</span>
                         </button>
                         <button
                           onClick={() => handleDelete(operator._id)}
-                          className="text-red-600 hover:text-red-800 transition-colors flex items-center gap-1 font-roboto"
+                          className="text-red-600 hover:text-red-900 transition-colors duration-150 flex items-center gap-1 font-roboto"
+                          title="Delete operator"
                         >
-                          <FaTrash /> <span className="hidden sm:inline">Delete</span>
+                          <FaTrash className="h-4 w-4" />
+                          <span className="hidden sm:inline">Delete</span>
                         </button>
                       </div>
                     </td>
@@ -343,8 +445,16 @@ const OperatorManagement = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="px-4 sm:px-6 py-4 text-center text-gray-500 font-roboto">
-                    No operators found
+                  <td colSpan="5" className="px-4 sm:px-6 py-8 text-center">
+                    <div className="flex flex-col items-center justify-center text-gray-500">
+                      <FaUserTie className="h-12 w-12 mb-4 text-gray-400" />
+                      <p className="text-lg font-medium font-roboto mb-1">
+                        {searchTerm ? 'No matching operators found' : 'No operators added yet'}
+                      </p>
+                      <p className="text-sm text-gray-400 font-roboto">
+                        {searchTerm ? 'Try adjusting your search' : 'Click the "Add Operator" button to add one'}
+                      </p>
+                    </div>
                   </td>
                 </tr>
               )}

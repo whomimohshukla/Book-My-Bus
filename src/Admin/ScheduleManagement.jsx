@@ -85,25 +85,40 @@ const ScheduleManagement = () => {
 
   const fetchBuses = async () => {
     try {
-      const response = await api.get("/busRoute/buses");
+      console.log('Fetching buses...');
+      const response = await api.get('/busRoute/buses');
       const busData = response.data;
+      console.log('Raw bus response:', busData);
 
-      if (Array.isArray(busData) && busData.length > 0) {
-        const processedBuses = busData.map(bus => ({
+      if (busData && busData.data && Array.isArray(busData.data)) {
+        const processedBuses = busData.data.map(bus => ({
           _id: bus._id,
-          busNumber: bus.busNumber,
-          busName: bus.busName,
-          type: bus.type,
+          busNumber: bus.busNumber || '',
+          busName: bus.busName || '',
+          type: bus.type || bus.busType || '',
           totalSeats: bus.totalSeats || 40,
-          operatorName: bus.operatorId?.name || 'Unknown Operator',
-          amenities: bus.amenities || []
+          operatorName: bus.operatorId?.name || bus.operatorDetails?.name || 'Unknown Operator',
+          operatorId: bus.operatorId?._id || bus.operatorId || null,
+          amenities: Array.isArray(bus.amenities) ? bus.amenities : [],
+          status: bus.status || 'Active'
         }));
+        console.log('Processed buses:', processedBuses);
         setBuses(processedBuses);
       } else {
+        console.warn('Unexpected bus data structure:', {
+          hasData: Boolean(busData?.data),
+          dataType: typeof busData?.data,
+          rawData: busData
+        });
         setBuses([]);
       }
     } catch (err) {
-      console.error("Failed to fetch buses:", err.message);
+      const errorMessage = err.response?.data?.message || err.message;
+      console.error('Bus fetch error:', {
+        message: errorMessage,
+        status: err.response?.status,
+        data: err.response?.data
+      });
       setBuses([]);
     }
   };
@@ -193,6 +208,16 @@ const ScheduleManagement = () => {
         throw new Error("Fare must be a positive number");
       }
 
+      // Find the selected bus
+      const selectedBus = buses.find(bus => bus._id === formData.busId);
+      if (!selectedBus) {
+        throw new Error('Selected bus not found');
+      }
+
+      if (selectedBus.status !== 'Active') {
+        throw new Error('Selected bus is not active');
+      }
+
       const processedData = {
         busId: formData.busId,
         routeId: formData.routeId,
@@ -209,8 +234,14 @@ const ScheduleManagement = () => {
           license: "Not Assigned",
         },
         status: "Active",
-        availableSeats:
-          buses.find((bus) => bus._id === formData.busId)?.totalSeats || 40,
+        availableSeats: selectedBus.totalSeats || 40,
+        busDetails: {
+          busNumber: selectedBus.busNumber,
+          busName: selectedBus.busName,
+          type: selectedBus.type,
+          operatorName: selectedBus.operatorName,
+          amenities: selectedBus.amenities
+        }
       };
 
       if (editingId) {
@@ -295,7 +326,8 @@ const ScheduleManagement = () => {
     // If busId is an object with _id property
     const id = typeof busId === "object" ? busId._id : busId;
     const bus = buses.find((bus) => bus._id === id);
-    return bus?.busNumber || "No Bus Assigned";
+    if (!bus) return "No Bus Assigned";
+    return `${bus.busNumber} - ${bus.busName} (${bus.type})`;
   };
 
   const getRouteString = (routeId) => {
@@ -380,11 +412,13 @@ const ScheduleManagement = () => {
                 >
                   <option value="">Select Bus</option>
                   {Array.isArray(buses) &&
-                    buses.map((bus) => (
-                      <option key={bus._id} value={bus._id}>
-                        {bus.busNumber} - {bus.busName}
-                      </option>
-                    ))}
+                    buses
+                      .filter(bus => bus.status === 'Active')
+                      .map((bus) => (
+                        <option key={bus._id} value={bus._id}>
+                          {bus.busNumber} - {bus.busName} ({bus.type}) - {bus.operatorName}
+                        </option>
+                      ))}
                 </select>
               </div>
 
@@ -498,49 +532,79 @@ const ScheduleManagement = () => {
               className="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300 group"
             >
               <div className="bg-gradient-to-r from-[#349E4D] to-[#2C8440] p-4 group-hover:from-[#2C8440] group-hover:to-[#349E4D] transition-all duration-300">
-                <h3 className="text-lg font-semibold text-white">
-                  {getBusNumber(schedule.busId)}
+                <h3 className="text-lg font-semibold text-white flex items-center justify-between">
+                  <span>{getBusNumber(schedule.busId)}</span>
+                  <span className="text-sm bg-white/20 px-2 py-1 rounded">
+                    {schedule.availableSeats} seats
+                  </span>
                 </h3>
-                <p className="text-white/80 text-sm">
+                <p className="text-white/80 text-sm mt-1">
                   {getRouteString(schedule.routeId)}
                 </p>
               </div>
 
               <div className="p-4 space-y-3">
-                <div className="flex items-center gap-2 text-gray-600">
-                  <FaClock className="text-[#349E4D]" />
-                  <div>
-                    <p className="text-sm font-medium">Departure</p>
-                    <p className="text-sm">
-                      {new Date(schedule.departureTime).toLocaleString()}
-                    </p>
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <FaClock className="text-[#349E4D]" />
+                    <div>
+                      <p className="text-sm font-medium">Departure</p>
+                      <p className="text-sm">
+                        {new Date(schedule.departureTime).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <FaClock className="text-[#349E4D]" />
+                    <div>
+                      <p className="text-sm font-medium">Arrival</p>
+                      <p className="text-sm">
+                        {new Date(schedule.arrivalTime).toLocaleString()}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-gray-600">
-                  <FaClock className="text-[#349E4D]" />
-                  <div>
-                    <p className="text-sm font-medium">Arrival</p>
-                    <p className="text-sm">
-                      {new Date(schedule.arrivalTime).toLocaleString()}
-                    </p>
+                <div className="flex items-center justify-between border-t pt-3">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <FaBus className="text-[#349E4D]" />
+                    <div>
+                      <p className="text-sm font-medium">Bus Details</p>
+                      <p className="text-sm">
+                        {schedule.busDetails?.type || 'Standard'} · {schedule.busDetails?.operatorName || 'Unknown Operator'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <FaRupeeSign className="text-[#349E4D]" />
+                    <div>
+                      <p className="text-sm font-medium">Total Fare</p>
+                      <p className="text-sm font-semibold text-[#349E4D]">
+                        ₹
+                        {(
+                          (schedule.fareDetails?.baseFare || 0) +
+                          (schedule.fareDetails?.tax || 0) +
+                          (schedule.fareDetails?.serviceFee || 0)
+                        ).toFixed(2)}
+                      </p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-gray-600">
-                  <FaRupeeSign className="text-[#349E4D]" />
-                  <div>
-                    <p className="text-sm font-medium">Fare</p>
-                    <p className="text-sm">
-                      ₹
-                      {(
-                        (schedule.fareDetails?.baseFare || 0) +
-                        (schedule.fareDetails?.tax || 0) +
-                        (schedule.fareDetails?.serviceFee || 0)
-                      ).toFixed(2)}
-                    </p>
+                {schedule.busDetails?.amenities && schedule.busDetails.amenities.length > 0 && (
+                  <div className="border-t pt-3">
+                    <p className="text-sm font-medium text-gray-600 mb-2">Amenities</p>
+                    <div className="flex flex-wrap gap-2">
+                      {schedule.busDetails.amenities.map((amenity, i) => (
+                        <span key={i} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                          {amenity}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               <div className="border-t border-gray-200 p-4 flex justify-end gap-2">

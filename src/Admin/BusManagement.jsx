@@ -79,52 +79,27 @@ const BusManagement = () => {
       setError(null);
       const response = await api.get('/busRoute/buses');
       
-      // Handle both array and object responses
       const busData = response.data;
-      if (Array.isArray(busData)) {
-        // Transform the data to ensure operatorId is properly extracted
-        const transformedBuses = busData.map(bus => {
-          let operatorId = null;
-          
-          if (bus.operatorId) {
-            if (typeof bus.operatorId === 'object') {
-              operatorId = bus.operatorId._id;
-            } else if (typeof bus.operatorId === 'string') {
-              operatorId = bus.operatorId;
-            }
-          }
-          
-          const transformed = {
-            ...bus,
-            operatorId
-          };
-          return transformed;
-        });
-        setBuses(transformedBuses);
-      } else if (busData && typeof busData === 'object') {
-        const buses = busData.buses || [];
-        const transformedBuses = buses.map(bus => {
-          let operatorId = null;
-          
-          if (bus.operatorId) {
-            if (typeof bus.operatorId === 'object' && bus.operatorId._id) {
-              operatorId = bus.operatorId._id;
-            } else if (typeof bus.operatorId === 'string') {
-              operatorId = bus.operatorId;
-            }
-          }
-          
-          const transformed = {
-            ...bus,
-            operatorId
-          };
-          return transformed;
-        });
+      console.log('Bus API Response:', busData);
+
+      // Extract buses from the response data structure
+      if (busData && busData.data && Array.isArray(busData.data)) {
+        const transformedBuses = busData.data.map(bus => ({
+          ...bus,
+          operatorId: bus.operatorId?._id || bus.operatorId || null,
+          type: bus.type || bus.busType || '',
+          busType: bus.type || bus.busType || '',
+          totalSeats: bus.totalSeats || 0,
+          amenities: Array.isArray(bus.amenities) ? bus.amenities : []
+        }));
+        console.log('Transformed buses:', transformedBuses);
         setBuses(transformedBuses);
       } else {
+        console.error('Unexpected API response structure:', busData);
         setBuses([]);
       }
     } catch (err) {
+      console.error('Error fetching buses:', err);
       setError('Failed to fetch buses: ' + (err.response?.data?.message || err.message));
       setBuses([]);
     } finally {
@@ -135,29 +110,22 @@ const BusManagement = () => {
   const fetchOperators = async () => {
     try {
       const response = await api.get('/operatorRoute/operator');
-      
       const operatorData = response.data;
-      if (Array.isArray(operatorData)) {
-        const processedOperators = operatorData.map(op => {
-          return {
-            _id: op._id,
-            name: op.name
-          };
-        });
-        setOperators(processedOperators);
-      } else if (operatorData && typeof operatorData === 'object') {
-        const operatorArray = operatorData.operators || operatorData.data || [];
-        const processedOperators = operatorArray.map(op => {
-          return {
-            _id: op._id,
-            name: op.name
-          };
-        });
+      console.log('Operator API Response:', operatorData);
+
+      if (operatorData && operatorData.data && Array.isArray(operatorData.data)) {
+        const processedOperators = operatorData.data.map(op => ({
+          _id: op._id,
+          name: op.name
+        }));
+        console.log('Processed operators:', processedOperators);
         setOperators(processedOperators);
       } else {
+        console.error('Unexpected operator API response structure:', operatorData);
         setOperators([]);
       }
     } catch (err) {
+      console.error('Error fetching operators:', err);
       setOperators([]);
     }
   };
@@ -261,9 +229,13 @@ const BusManagement = () => {
       busNumber: bus.busNumber || '',
       busName: bus.busName || '',
       operatorId: bus.operatorId || '',
-      busType: bus.busType || '',
+      busType: bus.type || bus.busType || '',  // Handle both type fields
       totalSeats: bus.totalSeats?.toString() || '',
-      amenities: Array.isArray(bus.amenities) ? bus.amenities : []
+      amenities: Array.isArray(bus.amenities) ? bus.amenities.map(amenity => ({
+        name: amenity.name,
+        description: amenity.description,
+        icon: availableAmenities.find(a => a.name === amenity.name)?.icon
+      })) : []
     });
     setSelectedBus(bus);
     setShowForm(true);
@@ -568,54 +540,69 @@ const BusManagement = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {Array.isArray(buses) && buses.length > 0 ? (
-                  buses.map((bus) => (
-                    <tr key={bus._id}>
-                      <td className="px-6 py-4 whitespace-nowrap">{bus.busNumber}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{bus.busName}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {(() => {
-                          let operatorId = null;
-                          if (bus.operatorId) {
-                            if (typeof bus.operatorId === 'object') {
-                              operatorId = bus.operatorId._id;
-                            } else if (typeof bus.operatorId === 'string') {
-                              operatorId = bus.operatorId;
-                            }
-                          }
-
-                          const operator = operators.find(op => op._id === operatorId);
-                          return operator ? operator.name : 'Unknown Operator';
-                        })()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">{getBusTypeLabel(bus.type)}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">{bus.totalSeats}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-wrap gap-1">
-                          {Array.isArray(bus.amenities) && bus.amenities.map((amenity) => (
-                            <span
-                              key={amenity._id}
-                              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
-                              title={amenity.description}
+                  buses
+                    .filter(bus => {
+                      if (!searchTerm) return true;
+                      const search = searchTerm.toLowerCase();
+                      return (
+                        bus.busNumber?.toLowerCase().includes(search) ||
+                        bus.busName?.toLowerCase().includes(search) ||
+                        bus.type?.toLowerCase().includes(search) ||
+                        operators.find(op => op._id === bus.operatorId)?.name.toLowerCase().includes(search)
+                      );
+                    })
+                    .map((bus) => (
+                      <tr key={bus._id} className="hover:bg-gray-50 transition-colors duration-150">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">{bus.busNumber}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">{bus.busName}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-900">
+                            {operators.find(op => op._id === bus.operatorId)?.name || 'Unknown Operator'}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            {getBusTypeLabel(bus.type)}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {bus.totalSeats}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-wrap gap-1">
+                            {Array.isArray(bus.amenities) && bus.amenities.map((amenity, index) => (
+                              <span
+                                key={index}
+                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                title={amenity.description}
+                              >
+                                {amenity.name}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          <div className="flex items-center space-x-4">
+                            <button
+                              onClick={() => handleEdit(bus)}
+                              className="text-blue-600 hover:text-blue-900 flex items-center"
                             >
-                              {amenity.name}
-                            </span>
-                          ))}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <button
-                          onClick={() => handleEdit(bus)}
-                          className="text-blue-600 hover:text-blue-900 mr-4"
-                        >
-                          <FaEdit className="inline" /> Edit
-                        </button>
-                        <button
-                          onClick={() => handleDelete(bus._id)}
-                          className="text-red-600 hover:text-red-900"
-                        >
-                          <FaTrash className="inline" /> Delete
-                        </button>
-                      </td>
+                              <FaEdit className="w-4 h-4 mr-1" />
+                              <span>Edit</span>
+                            </button>
+                            <button
+                              onClick={() => handleDelete(bus._id)}
+                              className="text-red-600 hover:text-red-900 flex items-center"
+                            >
+                              <FaTrash className="w-4 h-4 mr-1" />
+                              <span>Delete</span>
+                            </button>
+                          </div>
+                        </td>
                     </tr>
                   ))
                 ) : (

@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "././emergency.css";
+import "./emergency.css";
 import { FaPhone, FaHospital, FaShieldAlt } from "react-icons/fa";
 import { useAuth } from "../../contexts/AuthProvider";
 

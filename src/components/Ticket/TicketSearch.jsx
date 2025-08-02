@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { notificationService } from '../../services/notificationService';
 import {
   FaFilter, FaBus, FaCalendarAlt, FaMapSigns,
   FaRupeeSign, FaRegClock, FaMapMarkerAlt, FaWifi, FaSnowflake,
@@ -18,6 +19,7 @@ const TicketSearch = () => {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sortBy, setSortBy] = useState("price");
+  const [notifications, setNotifications] = useState([]);
   
   // New states for search
   const [fromLocation, setFromLocation] = useState("");
@@ -55,8 +57,43 @@ const TicketSearch = () => {
   ];
   const routeOptions = ["Route A", "Route B", "Route C"];
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     setLoading(true);
+    
+    // Get notifications for the search route
+    if (fromLocation && toLocation && date) {
+      try {
+        const [trafficDelay, weatherAlerts] = await Promise.all([
+          notificationService.predictTrafficDelayForRoute(fromLocation, toLocation),
+          notificationService.getWeatherAlertsForRoute(fromLocation, toLocation)
+        ]);
+
+        const processedNotifications = [];
+        
+        if (trafficDelay?.delay > 0) {
+          processedNotifications.push({
+            type: 'traffic',
+            message: `Expected delay of ${trafficDelay.delay} minutes on ${fromLocation} to ${toLocation} route`,
+            severity: 'warning'
+          });
+        }
+
+        if (weatherAlerts?.alerts.length > 0) {
+          weatherAlerts.alerts.forEach(alert => {
+            processedNotifications.push({
+              type: 'weather',
+              message: alert.message,
+              severity: alert.severity
+            });
+          });
+        }
+
+        setNotifications(processedNotifications);
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    }
+
     setTimeout(() => {
       const simulatedResults = [
         {
@@ -826,6 +863,41 @@ const TicketSearch = () => {
         <div className="col-span-3">
           {/* Sort Options */}
           <div className="bg-white2 rounded-lg shadow-md p-4 mb-4">
+            <div className="flex flex-col items-center justify-center p-6 space-y-4">
+            <h2 className="text-2xl font-bold text-gray-800">Book Your Ticket</h2>
+            <p className="text-gray-600">
+              Find the best bus tickets for your journey
+            </p>
+            
+            {notifications.length > 0 && (
+              <div className="mt-4 w-full">
+                <h3 className="text-lg font-semibold mb-2 flex items-center">
+                  <FaBell className="mr-2 text-Darkgreen" />
+                  Real-time Updates
+                </h3>
+                <div className="space-y-3">
+                  {notifications.map((notification, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center p-3 rounded-lg"
+                      style={{
+                        backgroundColor: getNotificationColor(notification.severity),
+                        color: 'white'
+                      }}
+                    >
+                      {getNotificationIcon(notification.type)}
+                      <div className="ml-3">
+                        <p className="font-medium">{notification.message}</p>
+                        <small className="text-sm opacity-80">
+                          {new Date().toLocaleTimeString()}
+                        </small>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
             <div className="flex items-center justify-between">
               <h1 className="text-xl font-semibold text-Darkgreen">Available Buses</h1>
               <div className="flex items-center space-x-4">

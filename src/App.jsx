@@ -25,6 +25,7 @@ import Blogs from "./components/Blogs/Blogs";
 import BlogPost from "./components/Blogs/BlogPost";
 import Support from "./components/Support/Support";
 import SearchPage from "./SearchPage/SearchPage";
+import BookingPage from "./Booking/BookingPage";
 import AdminLayout from "./Admin/AdminLayout";
 import BusManagement from "./Admin/BusManagement";
 import OperatorManagement from "./Admin/OperatorManagement";
@@ -73,6 +74,7 @@ function App() {
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blogs/:id" element={<BlogPost />} />
           <Route path="/support" element={<Support />} />
+          <Route path="/booking" element={<BookingPage />} />
           <Route path="/about" element={<About />} />
           <Route path="/FAQs" element={<FaqS />} />
           <Route path="/contact" element={<Contact />} />

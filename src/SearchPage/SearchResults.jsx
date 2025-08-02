@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import SeatDrawer from './SeatDrawer';
 import { 
   FaFilter, FaBus, FaCalendarAlt, FaMapSigns, FaArrowRight, FaClock,
   FaRupeeSign, FaRegClock, FaMapMarkerAlt, FaWifi, FaSnowflake,
@@ -12,6 +13,7 @@ import { BiDrink } from 'react-icons/bi';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SearchResults = ({ results }) => {
+  const [openBus, setOpenBus] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
   const [filters, setFilters] = useState({
     busType: 'all',
@@ -223,6 +225,7 @@ const SearchResults = ({ results }) => {
                     )}
                   </div>
                   <button
+                    onClick={() => setOpenBus(bus)}
                     className="w-full lg:w-auto px-6 py-3 bg-Darkgreen text-white font-semibold rounded-lg
                            hover:bg-green-700 transition-colors duration-300 flex items-center justify-center gap-2"
                   >
@@ -417,6 +420,8 @@ const SearchResults = ({ results }) => {
           </motion.div>
         ))}
       </div>
+    {/* Seat Drawer */}
+      <SeatDrawer open={!!openBus} bus={openBus} onClose={() => setOpenBus(null)} />
     </div>
   );
 };

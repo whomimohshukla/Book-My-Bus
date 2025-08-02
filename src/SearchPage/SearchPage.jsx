@@ -379,7 +379,7 @@ const SearchPage = () => {
             </div>
 
             {/* Results Section */}
-            <div className="lg:col-span-3">
+            <div id="searchResults" className="lg:col-span-3">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">
                   Available Buses ({filteredResults.length})

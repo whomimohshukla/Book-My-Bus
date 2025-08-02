@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+
 import { 
   FaExchangeAlt, FaSearch, FaMapMarkerAlt, FaCalendarAlt,
   
 } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import axios from "axios";
 
 const SearchForm = ({ onSearch, disabled }) => {
   const [formData, setFormData] = useState({
@@ -15,15 +17,52 @@ const SearchForm = ({ onSearch, disabled }) => {
 
   const [formError, setFormError] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const API_BASE_URL = "http://localhost:8000/api";
+
   const [popularCities] = useState([
     "Mumbai", "Delhi", "Bangalore", "Chennai", "Hyderabad",
     "Kolkata", "Pune", "Ahmedabad", "Jaipur", "Goa"
   ]);
 
+  const [sourceOptions, setSourceOptions] = useState([]);
+  const [showSourceList, setShowSourceList] = useState(false);
+  const [destOptions, setDestOptions] = useState([]);
+  const [showDestList, setShowDestList] = useState(false);
+
+  // debounced fetch ref
+  const debounceRef = useRef({});
+
+  const fetchSuggestions = (value, setter) => {
+    if (!value.trim()) {
+      setter([]);
+      return;
+    }
+    axios
+      .get(`${API_BASE_URL}/city/suggest`, { params: { q: value } })
+      .then((res) => setter(res.data))
+      .catch(() => setter([]));
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     setFormError("");
+
+    // fetch suggestions with 300ms debounce per field
+    if (name === "source") setShowSourceList(true);
+    if (name === "destination") setShowDestList(true);
+    if (!debounceRef.current[name]) {
+      debounceRef.current[name] = setTimeout(() => {}, 0);
+    }
+    clearTimeout(debounceRef.current[name]);
+    debounceRef.current[name] = setTimeout(() => {
+      if (name === "source") {
+        fetchSuggestions(value, setSourceOptions);
+      }
+      if (name === "destination") {
+        fetchSuggestions(value, setDestOptions);
+      }
+    }, 300);
   };
 
   const handleExchange = () => {
@@ -112,17 +151,35 @@ const SearchForm = ({ onSearch, disabled }) => {
                     name="source"
                     value={formData.source}
                     onChange={handleChange}
+                    onFocus={() => setShowSourceList(true)}
                     placeholder="Enter source city"
                     className="w-full px-5 py-4 rounded-lg border-2 border-gray-100 focus:border-Darkgreen focus:outline-none font-poppins text-lg transition-all"
-                    list="sourceCities"
+                    autoComplete="off"
                     disabled={disabled}
                   />
+                  {/* Suggestions list */}
+                  {showSourceList && (sourceOptions.length || formData.source) && (
+                    <ul className="absolute z-20 mt-2 w-full bg-white rounded-lg shadow-lg max-h-60 overflow-auto border border-gray-200">
+                      {(sourceOptions.length ? sourceOptions : popularCities.filter(c=>c.toLowerCase().includes(formData.source.toLowerCase()))).map((opt) => {
+                        const label = opt.label || opt;
+                        return (
+                          <li
+                            key={label}
+                            className="px-4 py-2 cursor-pointer hover:bg-LightGreen hover:text-white text-gray-700"
+                            onClick={() => {
+                              setFormData({...formData, source: label});
+                              setShowSourceList(false);
+                            }}
+                          >
+                            {label}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
                   <FaMapMarkerAlt className="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-Darkgreen" />
-                  <datalist id="sourceCities">
-                    {popularCities.map(city => (
-                      <option key={city} value={city} />
-                    ))}
-                  </datalist>
+                  
+                    
                 </div>
               </div>
 
@@ -149,17 +206,34 @@ const SearchForm = ({ onSearch, disabled }) => {
                     name="destination"
                     value={formData.destination}
                     onChange={handleChange}
+                    onFocus={() => setShowDestList(true)}
                     placeholder="Enter destination city"
                     className="w-full px-5 py-4 rounded-lg border-2 border-gray-100 focus:border-Darkgreen focus:outline-none font-poppins text-lg transition-all"
-                    list="destinationCities"
+                    autoComplete="off"
                     disabled={disabled}
                   />
+                  {/* Suggestions list */}
+                  {showDestList && (destOptions.length || formData.destination) && (
+                    <ul className="absolute z-20 mt-2 w-full bg-white rounded-lg shadow-lg max-h-60 overflow-auto border border-gray-200">
+                      {(destOptions.length ? destOptions : popularCities.filter(c=>c.toLowerCase().includes(formData.destination.toLowerCase()))).map((opt) => {
+                        const label = opt.label || opt;
+                        return (
+                          <li
+                            key={label}
+                            className="px-4 py-2 cursor-pointer hover:bg-LightGreen hover:text-white text-gray-700"
+                            onClick={() => {
+                              setFormData({...formData, destination: label});
+                              setShowDestList(false);
+                            }}
+                          >
+                            {label}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
                   <FaMapMarkerAlt className="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-Darkgreen" />
-                  <datalist id="destinationCities">
-                    {popularCities.map(city => (
-                      <option key={city} value={city} />
-                    ))}
-                  </datalist>
+                  
                 </div>
               </div>
 

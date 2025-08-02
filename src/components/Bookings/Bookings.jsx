@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosConfig';
 import { FaBus, FaMapMarkerAlt, FaClock, FaRupeeSign, FaTicketAlt, FaUser, FaCalendarAlt } from 'react-icons/fa';
 import { MdAirlineSeatReclineNormal } from 'react-icons/md';
-import { notificationService } from '../../services/notificationService';
 
 function Bookings() {
   const { user, isAuthenticated } = useAuth();
@@ -17,7 +16,6 @@ function Bookings() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -69,64 +67,6 @@ function Bookings() {
       });
 
       setBookings(sorted);
-
-      // Fetch notifications for upcoming bookings
-      const upcomingBookings = sorted.upcoming;
-      if (upcomingBookings.length > 0) {
-        const fetchBookingNotifications = async (booking) => {
-          try {
-            const [trafficDelay, busArrival, weatherAlerts] = await Promise.all([
-              notificationService.predictTrafficDelay(booking.scheduleId.routeId, booking.busId),
-              notificationService.predictBusArrival(booking.scheduleId._id),
-              notificationService.getWeatherAlerts(booking.scheduleId.routeId)
-            ]);
-
-            const bookingNotifications = [];
-            
-            if (trafficDelay?.delay > 0) {
-              bookingNotifications.push({
-                type: 'traffic',
-                message: `Expected delay of ${trafficDelay.delay} minutes for your trip to ${booking.scheduleId.destination}`,
-                severity: 'warning',
-                bookingId: booking._id
-              });
-            }
-
-            if (busArrival?.estimatedTime) {
-              bookingNotifications.push({
-                type: 'arrival',
-                message: `Your bus to ${booking.scheduleId.destination} is estimated to arrive in ${busArrival.estimatedTime} minutes`,
-                severity: 'info',
-                bookingId: booking._id
-              });
-            }
-
-            if (weatherAlerts?.alerts.length > 0) {
-              weatherAlerts.alerts.forEach(alert => {
-                bookingNotifications.push({
-                  type: 'weather',
-                  message: `Weather alert for your trip to ${booking.scheduleId.destination}: ${alert.message}`,
-                  severity: alert.severity,
-                  bookingId: booking._id
-                });
-              });
-            }
-
-            return bookingNotifications;
-          } catch (error) {
-            console.error('Error fetching booking notifications:', error);
-            return [];
-          }
-        };
-
-        const allNotifications = await Promise.all(
-          upcomingBookings.map(fetchBookingNotifications)
-        );
-
-        // Flatten array of arrays
-        const flattenedNotifications = allNotifications.flat();
-        setNotifications(flattenedNotifications);
-      }
     } catch (error) {
       setError(error.response?.data?.message || 'Failed to fetch bookings');
       
@@ -240,59 +180,24 @@ function Bookings() {
 
         {/* Time and Date Details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-6 bg-gray-50 p-4 rounded-lg">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <FaCalendarAlt className="text-gray-600" />
             <div>
-              <h3 className="text-lg font-semibold text-neutral-800">
-                {booking.scheduleId.busName}
-              </h3>
-              <p className="text-sm text-neutral-600">
+              <p className="text-sm text-gray-600">Departure</p>
+              <p className="font-medium text-gray-800">
                 {formatDateTime(booking.scheduleId.departureTime)}
               </p>
             </div>
-            <div className="flex items-center">
-              <span className="text-sm text-neutral-600 mr-2">
-                {booking.status}
-              </span>
-              <span
-                className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  booking.status === "cancelled"
-                    ? "bg-red-100 text-red-700"
-                    : "bg-green-100 text-green-700"
-                }`}
-              >
-                {booking.status === "cancelled" ? "Cancelled" : "Active"}
-              </span>
+          </div>
+          <div className="flex items-center space-x-3">
+            <FaClock className="text-gray-600" />
+            <div>
+              <p className="text-sm text-gray-600">Arrival</p>
+              <p className="font-medium text-gray-800">
+                {formatDateTime(booking.scheduleId.arrivalTime)}
+              </p>
             </div>
           </div>
-          
-          {/* Booking-specific notifications */}
-          {notifications.length > 0 && (
-            <div className="mt-4">
-              <h4 className="text-sm font-semibold mb-2">Trip Updates</h4>
-              <div className="space-y-2">
-                {notifications
-                  .filter(n => n.bookingId === booking._id)
-                  .map((notification, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center p-2 rounded-lg"
-                      style={{
-                        backgroundColor: getNotificationColor(notification.severity),
-                        color: 'white'
-                      }}
-                    >
-                      {getNotificationIcon(notification.type)}
-                      <div className="ml-3">
-                        <p className="text-sm font-medium">{notification.message}</p>
-                        <small className="text-xs opacity-80">
-                          {new Date().toLocaleTimeString()}
-                        </small>
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Passenger Details */}

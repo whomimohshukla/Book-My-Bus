@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { format } from "date-fns";
-import { notificationService } from '../../services/notificationService';
 
 function BusSchedule({ schedule }) {
   return (
@@ -68,7 +67,6 @@ function BusSearch2() {
   const [searchResults, setSearchResults] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     // Fetch cities for autocomplete
@@ -82,58 +80,6 @@ function BusSearch2() {
     };
     fetchCities();
   }, []);
-
-  // Fetch notifications when search results are available
-  useEffect(() => {
-    if (searchResults && searchResults.length > 0) {
-      const routeId = searchResults[0].routeId;
-      const busId = searchResults[0].buses[0]?._id;
-      
-      const fetchNotifications = async () => {
-        try {
-          const [trafficDelay, busArrival, weatherAlerts] = await Promise.all([
-            notificationService.predictTrafficDelay(routeId, busId),
-            notificationService.predictBusArrival(searchResults[0].buses[0].scheduleId),
-            notificationService.getWeatherAlerts(routeId)
-          ]);
-
-          const processedNotifications = [];
-          
-          if (trafficDelay?.delay > 0) {
-            processedNotifications.push({
-              type: 'traffic',
-              message: `Expected delay of ${trafficDelay.delay} minutes due to ${trafficDelay.reason}`,
-              severity: 'warning'
-            });
-          }
-
-          if (busArrival?.estimatedTime) {
-            processedNotifications.push({
-              type: 'arrival',
-              message: `Bus estimated to arrive in ${busArrival.estimatedTime} minutes`,
-              severity: 'info'
-            });
-          }
-
-          if (weatherAlerts?.alerts.length > 0) {
-            weatherAlerts.alerts.forEach(alert => {
-              processedNotifications.push({
-                type: 'weather',
-                message: alert.message,
-                severity: alert.severity
-              });
-            });
-          }
-
-          setNotifications(processedNotifications);
-        } catch (error) {
-          console.error('Error fetching notifications:', error);
-        }
-      };
-
-      fetchNotifications();
-    }
-  }, [searchResults]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -151,8 +97,6 @@ function BusSearch2() {
       });
 
       setSearchResults(response.data);
-      // Clear notifications when new search is performed
-      setNotifications([]);
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -247,34 +191,6 @@ function BusSearch2() {
 
       {searchResults && (
         <div className="mt-8">
-          {notifications.length > 0 && (
-            <div className="bg-white rounded-lg shadow-md p-4 mb-6">
-              <h3 className="text-xl font-semibold mb-4 flex items-center">
-                <FaBell className="mr-2 text-Darkgreen" />
-                Real-time Updates
-              </h3>
-              <div className="space-y-3">
-                {notifications.map((notification, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center p-3 rounded-lg"
-                    style={{
-                      backgroundColor: getNotificationColor(notification.severity),
-                      color: 'white'
-                    }}
-                  >
-                    {getNotificationIcon(notification.type)}
-                    <div className="ml-3">
-                      <p className="font-medium">{notification.message}</p>
-                      <small className="text-sm opacity-80">
-                        {new Date().toLocaleTimeString()}
-                      </small>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
           <h3 className="text-2xl font-bold mb-6 text-center text-neutral-800">
             {searchResults.length > 0
               ? "Available Buses"

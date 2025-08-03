@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../utils/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
-import { FaTimes, FaCouch, FaCheck } from "react-icons/fa";
+import { FaTimes, FaCouch, FaCheck, FaMale, FaFemale } from "react-icons/fa";
 
 // Quick seat grid generator based on capacity (defaults to 32)
 const defaultSeatLayout = () => {
@@ -33,9 +33,11 @@ const SeatDrawer = ({ open, onClose, bus }) => {
 				res.data.forEach(({ seat, status }) => {
 					const seatObj = layout.find((s) => s.id === parseInt(seat));
 					if (seatObj) {
-						seatObj.status = status.startsWith("booked")
-							? "booked"
-							: "available";
+						if (status === "bookedMale" || status === "bookedFemale") {
+                            seatObj.status = status; // preserve gender
+                        } else {
+                            seatObj.status = "available";
+                        }
 					}
 				});
 				setSeats(layout);
@@ -65,24 +67,45 @@ const SeatDrawer = ({ open, onClose, bus }) => {
 		);
 	};
 
-	const mappedSeats = seats.map((seat) => {
+	// Build seats with aisle spacer after every 2nd seat to mimic RedBus layout
+    const seatsWithAisle = [];
+    seats.forEach((s, idx) => {
+        // push seat
+        seatsWithAisle.push(s);
+        // insert spacer after 2 seats
+        if ((idx + 1) % 4 === 2) {
+            seatsWithAisle.push({ spacer: true, id: `spacer-${idx}` });
+        }
+    });
+
+    const mappedSeats = seatsWithAisle.map((seat) => {
+        if (seat.spacer) {
+            return <div key={seat.id} className="w-4 h-8" />; // aisle gap
+        }
 		const isSelected = selected.includes(seat.id);
 		const baseCls =
 			"w-8 h-8 flex items-center justify-center text-xs font-medium rounded m-1";
-		const statusCls =
-			seat.status === "booked"
-				? "bg-red-300 cursor-not-allowed text-white"
-				: isSelected
-				? "bg-Darkgreen text-white"
-				: "bg-gray-200 hover:bg-LightGreen";
+		let statusCls = "";
+        switch (seat.status) {
+            case "bookedMale":
+                statusCls = "bg-[#4B4B4B] cursor-not-allowed text-white";
+                break;
+            case "bookedFemale":
+                statusCls = "bg-[#F0608F] cursor-not-allowed text-white";
+                break;
+            default:
+                statusCls = isSelected
+                    ? "bg-Darkgreen text-white"
+                    : "bg-gray-200 hover:bg-LightGreen";
+        }
 		return (
-			<button
+            <button
 				key={seat.id}
 				disabled={seat.status === "booked"}
 				onClick={() => toggleSeat(seat.id)}
 				className={`${baseCls} ${statusCls}`}
 			>
-				{seat.id}
+                {seat.status === "bookedMale" ? <FaMale className="text-white" /> : seat.status === "bookedFemale" ? <FaFemale className="text-white" /> : seat.id}
 			</button>
 		);
 	});
@@ -118,24 +141,29 @@ const SeatDrawer = ({ open, onClose, bus }) => {
 
 				{/* seat grid */}
 				<div className='p-4 flex-1 overflow-y-auto'>
-					<div className='grid grid-cols-4 justify-items-center'>
+					{/* Driver */}
+                    <div className='mb-4 flex justify-center'>
+                        <FaCouch className='text-4xl text-gray-400 rotate-90' />
+                    </div>
+                    <div className='grid grid-cols-5 justify-items-center'>
 						{mappedSeats}
 					</div>
 
 					{/* legend */}
-					<div className='mt-6 space-x-4 flex text-sm'>
-						<div className='flex items-center'>
-							<span className='w-4 h-4 bg-gray-200 rounded mr-1' />{" "}
-							Available
-						</div>
-						<div className='flex items-center'>
-							<span className='w-4 h-4 bg-red-300 rounded mr-1' /> Booked
-						</div>
-						<div className='flex items-center'>
-							<span className='w-4 h-4 bg-Darkgreen rounded mr-1' />{" "}
-							Selected
-						</div>
-					</div>
+                    <div className='mt-6 grid grid-cols-2 gap-4 text-sm'>
+                        <div className='flex items-center'>
+                            <span className='w-4 h-4 bg-gray-200 rounded mr-1' /> Available
+                        </div>
+                        <div className='flex items-center'>
+                            <FaMale className='text-[#4B4B4B] mr-1' /> Booked (Male)
+                        </div>
+                        <div className='flex items-center'>
+                            <FaFemale className='text-[#F0608F] mr-1' /> Booked (Female)
+                        </div>
+                        <div className='flex items-center'>
+                            <span className='w-4 h-4 bg-Darkgreen rounded mr-1' /> Selected
+                        </div>
+                    </div>
 				</div>
 
 				{/* footer */}

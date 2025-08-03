@@ -286,7 +286,7 @@ const SearchPage = () => {
 	return (
 		<div className='min-h-screen bg-white'>
 			{/* Hero Section */}
-			<div className='relative bg-Darkgreen overflow-hidden mt-24 sm:mt-28 md:mt-32 lg:mt-36'>
+			<div className='relative bg-Darkgreen overflow-hidden mt-16 sm:mt-20 md:mt-24 lg:mt-28'>
 				<Container
 					maxWidth='xl'
 					className='relative py-12 sm:py-16 md:py-20 lg:py-24 px-4'

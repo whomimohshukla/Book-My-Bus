@@ -141,7 +141,7 @@ const SearchForm = ({ onSearch, disabled }) => {
             transition={{ duration: 0.3 }}
             className="bg-white2 rounded-xl shadow-2xl p-6 backdrop-blur-lg border border-white/10"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-6 items-end">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-8 gap-6 items-end">
               {/* Source City */}
               <div className="sm:col-span-2">
                 <label className="block text-gray-700 text-sm font-semibold mb-2">From</label>
@@ -184,7 +184,7 @@ const SearchForm = ({ onSearch, disabled }) => {
               </div>
 
               {/* Exchange Button */}
-              <div className="hidden lg:flex justify-center">
+              <div className="flex justify-center">
                 <motion.button
                   type="button"
                   onClick={handleExchange}
@@ -261,7 +261,7 @@ const SearchForm = ({ onSearch, disabled }) => {
                   disabled={disabled || isSearching}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full bg-Darkgreen text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 hover:bg-LightGreen shadow-lg hover:shadow-xl text-lg h-[58px] flex items-center justify-center gap-2"
+                  className="w-full bg-gradient-to-r from-Darkgreen to-LightGreen text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 hover:opacity-90 shadow-lg hover:shadow-xl text-lg h-[58px] flex items-center justify-center gap-2"
                 >
                   {isSearching ? (
                     <>

@@ -67,7 +67,9 @@ const SeatDrawer = ({ open, onClose, bus }) => {
 		);
 	};
 
-	// Build seats with aisle spacer after every 2nd seat to mimic RedBus layout
+	// Fare per seat for tooltip
+    const seatFare = (bus.fareDetails?.baseFare || 0) + (bus.fareDetails?.tax || 0) + (bus.fareDetails?.serviceFee || 0);
+    // Build seats with aisle spacer after every 2nd seat to mimic RedBus layout
     const seatsWithAisle = [];
     seats.forEach((s, idx) => {
         // push seat
@@ -78,13 +80,13 @@ const SeatDrawer = ({ open, onClose, bus }) => {
         }
     });
 
-    const mappedSeats = seatsWithAisle.map((seat) => {
+    const mappedSeats = seatsWithAisle.map((seat, idx) => {
         if (seat.spacer) {
             return <div key={seat.id} className="w-4 h-8" />; // aisle gap
         }
 		const isSelected = selected.includes(seat.id);
 		const baseCls =
-			"w-8 h-8 flex items-center justify-center text-xs font-medium rounded m-1";
+            "relative w-9 h-9 flex items-center justify-center text-xs rounded m-1 group";
 		let statusCls = "";
         switch (seat.status) {
             case "bookedMale":
@@ -105,7 +107,13 @@ const SeatDrawer = ({ open, onClose, bus }) => {
 				onClick={() => toggleSeat(seat.id)}
 				className={`${baseCls} ${statusCls}`}
 			>
-                {seat.status === "bookedMale" ? <FaMale className="text-white" /> : seat.status === "bookedFemale" ? <FaFemale className="text-white" /> : seat.id}
+                {seat.status === "bookedMale" ? <FaMale /> : seat.status === "bookedFemale" ? <FaFemale /> : <FaCouch className="text-sm" />} 
+                {/* seat label */}
+                <span className="absolute bottom-0 right-0 text-[9px] text-white/90">{seat.id}</span>
+                {/* tooltip */}
+                <div className="absolute hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap z-10">
+                    Seat {seat.id} - ₹{seatFare}
+                </div>
 			</button>
 		);
 	});

@@ -36,39 +36,59 @@ function Bookings() {
       setLoading(true);
       setError(null);
       
-      const response = await axiosInstance.get(`/api/booking/user/${user._id}?status=confirmed&status=completed`);
+      const response = await axiosInstance.get(`/api/booking/user-bookings`);
       
-      // Sort bookings based on status and date
-      const allBookings = response.data.data;
-      const sorted = {
-        upcoming: [],
-        past: [],
-        cancelled: []
-      };
+      const serverData = response.data.data;
+      let sorted;
 
-      allBookings.forEach(booking => {
-        const departureTime = new Date(booking.scheduleId.departureTime);
-        const now = new Date();
+      // If backend already returns categorized bookings (upcoming/past/cancelled)
+      if (serverData && serverData.upcoming && serverData.past && serverData.cancelled) {
+        sorted = serverData;
+      } else {
+        // Backend returned a flat array – categorize on frontend
+        const allBookings = Array.isArray(serverData) ? serverData : [];
+        sorted = {
+          upcoming: [],
+          past: [],
+          cancelled: []
+        };
+        allBookings.forEach((booking) => {
+          const departureTime = new Date(booking.scheduleId.departureTime);
+          const now = new Date();
+          if (booking.status === 'cancelled') {
+            sorted.cancelled.push(booking);
+          } else if (departureTime < now) {
+            sorted.past.push(booking);
+          } else {
+            sorted.upcoming.push(booking);
+          }
+        });
 
-        if (booking.status === 'cancelled') {
-          sorted.cancelled.push(booking);
-        } else if (departureTime < now) {
-          sorted.past.push(booking);
-        } else {
-          sorted.upcoming.push(booking);
-        }
+        // Sort each category by departure time
+        Object.keys(sorted).forEach((key) => {
+          sorted[key].sort(
+            (a, b) => new Date(b.scheduleId.departureTime) - new Date(a.scheduleId.departureTime)
+          );
+        });
+      }
+
+      // Ensure arrays exist even if empty
+      ['upcoming', 'past', 'cancelled'].forEach((k) => {
+        sorted[k] = sorted[k] || [];
       });
 
-      // Sort each category by departure time
-      Object.keys(sorted).forEach(key => {
-        sorted[key].sort((a, b) => 
-          new Date(b.scheduleId.departureTime) - new Date(a.scheduleId.departureTime)
-        );
-      });
-
+      // Decide which tab should be active
+      let desiredTab = activeTab;
+      if (sorted[desiredTab].length === 0) {
+        desiredTab = ['upcoming', 'past', 'cancelled'].find((k) => sorted[k].length > 0) || desiredTab;
+      }
+      setActiveTab(desiredTab);
+      console.log('Bookings sorted:', sorted);
+      window.__bookingsDebug__ = sorted;
       setBookings(sorted);
     } catch (error) {
-      setError(error.response?.data?.message || 'Failed to fetch bookings');
+      console.error('Fetch bookings error:', error);
+      setError(error.response?.data?.message || error.message || 'Failed to fetch bookings');
       
       if (error.response?.status === 401) {
         navigate('/login', { state: { from: '/bookings' } });
@@ -138,7 +158,7 @@ function Bookings() {
           <div className="flex items-center space-x-2">
             <FaBus className="text-Darkgreen text-xl" />
             <h3 className="text-lg md:text-xl font-semibold text-gray-800">
-              {booking.scheduleId.busId.busNumber} - {booking.scheduleId.busId.busType}
+              {booking.scheduleId?.busId?.busNumber || 'Bus'}{booking.scheduleId?.busId?.busType ? ` - ${booking.scheduleId.busId.busType}` : ''}
             </h3>
           </div>
           <span className={`px-4 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.status)} w-fit`}>
@@ -157,7 +177,7 @@ function Bookings() {
             <div className="relative pl-8">
               <FaMapMarkerAlt className="absolute left-0 top-0 text-green-600" />
               <p className="text-sm text-gray-600">From</p>
-              <p className="font-semibold text-gray-800">{booking.scheduleId.routeId.source.name}</p>
+              <p className="font-semibold text-gray-800">{booking.scheduleId?.routeId?.source?.name || 'Source'}</p>
             </div>
           </div>
           
@@ -173,7 +193,7 @@ function Bookings() {
             <div className="relative pl-8">
               <FaMapMarkerAlt className="absolute left-0 top-0 text-red-600" />
               <p className="text-sm text-gray-600">To</p>
-              <p className="font-semibold text-gray-800">{booking.scheduleId.routeId.destination.name}</p>
+              <p className="font-semibold text-gray-800">{booking.scheduleId?.routeId?.destination?.name || 'Destination'}</p>
             </div>
           </div>
         </div>
@@ -185,7 +205,7 @@ function Bookings() {
             <div>
               <p className="text-sm text-gray-600">Departure</p>
               <p className="font-medium text-gray-800">
-                {formatDateTime(booking.scheduleId.departureTime)}
+                {formatDateTime(booking.scheduleId?.departureTime)}
               </p>
             </div>
           </div>
@@ -194,7 +214,7 @@ function Bookings() {
             <div>
               <p className="text-sm text-gray-600">Arrival</p>
               <p className="font-medium text-gray-800">
-                {formatDateTime(booking.scheduleId.arrivalTime)}
+                {formatDateTime(booking.scheduleId?.arrivalTime)}
               </p>
             </div>
           </div>

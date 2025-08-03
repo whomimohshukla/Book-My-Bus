@@ -400,7 +400,7 @@ function Home() {
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
                 <CTAButton
                   active={true}
-                  linkto="/ticket-search"
+                  linkto="/searchBuses"
                   className="bg-LightGreen text-white hover:bg-Darkgreen px-12 py-5 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Book Now

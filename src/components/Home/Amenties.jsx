@@ -1,4 +1,5 @@
 import React from "react";
+import CTAButton from "../../Utls/Home/Button";
 import {
   FaWifi,
   FaSnowflake,
@@ -124,9 +125,9 @@ function Amenities() {
           <p className="text-gray-600 text-lg mb-8">
             All amenities are subject to availability and may vary by bus type
           </p>
-          <button className="bg-gradient-to-r from-Darkgreen to-LightGreen text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transform hover:scale-[0.98] transition-all duration-300 shadow-lg">
-            View All Features
-          </button>
+          <CTAButton active={true} linkto="/features" className="px-8 py-3">
+             View All Features
+           </CTAButton>
         </div>
       </div>
     </div>

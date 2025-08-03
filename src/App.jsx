@@ -16,10 +16,10 @@ import TermsAndConditions from "./components/TermsAndConditions/TermsAndConditio
 import PrivacyPolicy from "./components/TermsAndConditions/PrivacyPolicy";
 import TicketPolicies from "./components/TermsAndConditions/TicketPolicies";
 import RefundPolicies from "./components/TermsAndConditions/RefundPolicies";
-import TicketSearch from "./components/Ticket/TicketSearch";
+// import TicketSearch from "./components/Ticket/TicketSearch";
 import TicketPage from "./components/Ticket/TicketPage";
 import BusSeatSelection from "./components/Ticket/BusSeatSelection";
-import BusSearch2 from "./components/BusSearch2";
+import FeaturesPage from "./components/Home/FeaturesPage";
 import Profile from "./components/Profile/Profile";
 import Bookings from "./components/Bookings/Bookings";
 import Blogs from "./components/Blogs/Blogs";
@@ -62,10 +62,13 @@ function App() {
 				<Routes>
 					{/* Public Routes */}
 					<Route path='/' element={<Home />} />
-					<Route path='/search' element={<BusSearch2 />} />
+
 					<Route path='/signup' element={<Signup />} />
 					<Route path='/login' element={<Login />} />
 					<Route path='/searchBuses' element={<SearchPage />} />
+					<Route path='/routes' element={<SearchPage />} />
+					<Route path='/features' element={<FeaturesPage />} />
+
 					<Route
 						path='/termsAndConditions'
 						element={<TermsAndConditions />}
@@ -91,7 +94,7 @@ function App() {
 						<Route path='/profile' element={<Profile />} />
 						<Route path='/bookings' element={<Bookings />} />
 						<Route path='/ticket/:bookingId' element={<TicketPage />} />
-						<Route path='/ticket-Search' element={<TicketSearch />} />
+
 						<Route path='/seatSelection' element={<BusSeatSelection />} />
 					</Route>
 

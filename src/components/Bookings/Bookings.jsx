@@ -36,7 +36,7 @@ function Bookings() {
       setLoading(true);
       setError(null);
       
-      const response = await axiosInstance.get(`/api/booking/user/${user._id}`);
+      const response = await axiosInstance.get(`/api/booking/user/${user._id}?status=confirmed&status=completed`);
       
       // Sort bookings based on status and date
       const allBookings = response.data.data;
@@ -310,7 +310,7 @@ function Bookings() {
                 <p className="text-xl font-medium text-gray-600 mb-2">No {activeTab} bookings found</p>
                 <p className="text-gray-500">When you book a trip, it will appear here.</p>
                 <button
-                  onClick={() => navigate('/search')}
+                  onClick={() => navigate('/searchBuses')}
                   className="mt-4 px-6 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700 transition-colors"
                 >
                   Book a Bus

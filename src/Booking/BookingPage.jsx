@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../utils/api";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FaArrowLeft, FaCheckCircle } from "react-icons/fa";
@@ -18,18 +18,115 @@ const BookingPage = () => {
     });
   };
 
+  // Utility to dynamically load Razorpay script
+  const loadRazorpay = () =>
+    new Promise((resolve) => {
+      if (window.Razorpay) return resolve(true);
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+
   const handleConfirm = async () => {
     try {
       const seatsPayload = seats.map((seatNo) => ({ seatNumber: seatNo, price: totalFare }));
       const body = {
-        scheduleId: bus._id || bus.scheduleId?._id,
+        scheduleId: bus.scheduleId?._id || bus._id, // Ensure we always get the schedule ID
         seats: seatsPayload,
-        passengers,
-        contactDetails: contact,
-        totalAmount: grandTotal,
+        passengers: passengers.map(p => ({
+          name: p.name.trim(),
+          age: parseInt(p.age.trim()),
+          gender: p.gender.trim()
+        })),
+        contactDetails: {
+          email: contact.email.trim(),
+          phone: contact.phone.trim()
+        },
+        totalAmount: parseFloat(grandTotal),
       };
-      await api.post("/booking/initialize", body);
-      navigate("/bookings");
+
+      // Log the payload for debugging
+      console.log('Booking payload:', {
+        scheduleId: body.scheduleId,
+        seats: body.seats,
+        passengers: body.passengers,
+        contactDetails: body.contactDetails,
+        totalAmount: body.totalAmount
+      });
+
+      // Log the individual field validation
+      console.log('Field validation:', {
+        hasScheduleId: !!body.scheduleId,
+        hasSeats: Array.isArray(body.seats) && body.seats.length > 0,
+        hasPassengers: Array.isArray(body.passengers) && body.passengers.length > 0,
+        hasContact: !!body.contactDetails && !!body.contactDetails.email && !!body.contactDetails.phone,
+        hasTotalAmount: !!body.totalAmount
+      });
+
+      // Log the payload for debugging
+      console.log('Booking payload:', {
+        scheduleId: body.scheduleId,
+        seats: body.seats,
+        passengers: body.passengers,
+        contactDetails: body.contactDetails,
+        totalAmount: body.totalAmount
+      });
+
+      // Log the individual field validation
+      console.log('Field validation:', {
+        hasScheduleId: !!body.scheduleId,
+        hasSeats: Array.isArray(body.seats) && body.seats.length > 0,
+        hasPassengers: Array.isArray(body.passengers) && body.passengers.length > 0,
+        hasContact: !!body.contactDetails && !!body.contactDetails.email && !!body.contactDetails.phone,
+        hasTotalAmount: !!body.totalAmount
+      });
+      const initRes = await api.post("/booking/initialize", body);
+      const { bookingId, razorpayOrderId, amount, currency, key } = initRes.data.data;
+
+      const scriptLoaded = await loadRazorpay();
+      if (!scriptLoaded) {
+        alert("Razorpay SDK failed to load. Check your connection");
+        return;
+      }
+
+      const options = {
+        key,
+        amount: amount * 100, // in paise if not already
+        currency,
+        order_id: razorpayOrderId,
+        name: "Book My Bus",
+        description: `Booking #${bookingId}`,
+        handler: async function (response) {
+          try {
+            const confirmRes = await api.post("/booking/confirm", {
+              bookingId,
+              razorpayOrderId,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+            });
+            
+            // Log the booking confirmation response
+            console.log('Booking confirmation response:', confirmRes.data);
+            
+            // Navigate to bookings page with success message
+            navigate("/bookings", {
+              state: {
+                success: true,
+                message: "Booking confirmed successfully"
+              }
+            });
+          } catch (err) {
+            console.error(err);
+            alert("Payment verification failed");
+          }
+        },
+        prefill: { email: contact.email, contact: contact.phone },
+        theme: { color: "#16a34a" },
+      };
+      const rz = new window.Razorpay(options);
+      rz.open();
     } catch (err) {
       console.error(err);
       alert("Booking failed – please try again");
@@ -142,6 +239,7 @@ const BookingPage = () => {
           disabled={!allFilled}
           onClick={handleConfirm}
           className="w-full bg-Darkgreen disabled:bg-gray-400 text-white py-4 rounded-lg flex items-center justify-center gap-3 hover:bg-LightGreen transition"
+          type="button"
         >
           <FaCheckCircle className="mr-2" /> Confirm &amp; Pay ₹{grandTotal}
         </button>

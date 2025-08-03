@@ -17,6 +17,8 @@ const SearchForm = ({ onSearch, disabled }) => {
 
   const [formError, setFormError] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [flexible, setFlexible] = useState(false);
+  const [flexDates, setFlexDates] = useState([]);
   const API_BASE_URL = "http://localhost:8000/api";
 
   const [popularCities] = useState([
@@ -119,6 +121,30 @@ const SearchForm = ({ onSearch, disabled }) => {
       await new Promise(resolve => setTimeout(resolve, 300));
       scrollToResults();
       
+      // fetch flexible date fares if option selected
+      if (flexible) {
+        try {
+          const start = new Date(formData.date);
+          const end = new Date(formData.date);
+          start.setDate(start.getDate() - 3);
+          end.setDate(end.getDate() + 3);
+          const res = await axios.get(`${API_BASE_URL}/booking/flexible-dates`, {
+            params: {
+              source: formData.source.trim(),
+              destination: formData.destination.trim(),
+              start: start.toISOString().split('T')[0],
+              end: end.toISOString().split('T')[0],
+            },
+          });
+          setFlexDates(res.data);
+        } catch (err) {
+          console.error('flexible dates error', err);
+          setFlexDates([]);
+        }
+      } else {
+        setFlexDates([]);
+      }
+
       onSearch(formattedData);
       setIsSearching(false);
     }
@@ -254,6 +280,18 @@ const SearchForm = ({ onSearch, disabled }) => {
                 </div>
               </div>
 
+              {/* ±3 days checkbox */}
+              <div className="flex items-center gap-2 mt-4 sm:mt-0">
+                <input
+                  type="checkbox"
+                  id="flexible"
+                  checked={flexible}
+                  onChange={(e)=> setFlexible(e.target.checked)}
+                  className="w-4 h-4 text-Darkgreen focus:ring-Darkgreen border-gray-300 rounded"
+                />
+                <label htmlFor="flexible" className="text-sm text-gray-700 select-none">± 3 days</label>
+              </div>
+
               {/* Search Button */}
               <div className="sm:col-span-1">
                 <motion.button
@@ -309,6 +347,25 @@ const SearchForm = ({ onSearch, disabled }) => {
               </div>
             </div>
           </motion.div>
+
+          {/* flexible date bar */}
+          {flexDates.length > 0 && (
+            <div className="mt-6 overflow-x-auto whitespace-nowrap py-2 px-1 flex gap-3">
+              {flexDates.map(({date, minFare})=> (
+                <button
+                  key={date}
+                  onClick={()=>{
+                    setFormData(prev=>({...prev, date}));
+                    onSearch({...formData, date});
+                  }}
+                  className={`inline-flex flex-col items-center justify-center px-4 py-2 rounded-lg border border-gray-200 hover:bg-Darkgreen hover:text-white transition-all ${date===formData.date? 'bg-Darkgreen text-white':'bg-white text-gray-700'}`}
+                >
+                  <span className="text-sm font-medium">{new Date(date).toLocaleDateString(undefined,{weekday:'short', day:'numeric', month:'short'})}</span>
+                  <span className="text-xs">₹{minFare}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </form>
       </div>
     </motion.div>

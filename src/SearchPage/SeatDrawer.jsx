@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axiosInstance from "../utils/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
-import { FaTimes, FaCouch, FaCheck, FaMale, FaFemale } from "react-icons/fa";
+import { FaTimes, FaCouch, FaCheck, FaMale, FaFemale, FaStar } from "react-icons/fa";
 
 // Quick seat grid generator based on capacity (defaults to 32)
 const defaultSeatLayout = () => {
@@ -20,6 +20,7 @@ const SeatDrawer = ({ open, onClose, bus }) => {
 	const navigate = useNavigate();
 	const [seats, setSeats] = useState([]);
 	const [selected, setSelected] = useState([]);
+    const [recommended, setRecommended] = useState([]);
 
 	useEffect(() => {
 		const fetchSeatMap = async () => {
@@ -41,6 +42,17 @@ const SeatDrawer = ({ open, onClose, bus }) => {
 					}
 				});
 				setSeats(layout);
+
+                // fetch recommendations (ignore errors)
+                try {
+                    const rec = await axiosInstance.get("/api/booking/recommendations", {
+                        params: { scheduleId: bus._id, groupSize: 1 },
+                    });
+                    setRecommended(rec.data?.seats || []);
+                } catch (err) {
+                    console.warn("recommendations fetch failed");
+                    setRecommended([]);
+                }
 			} catch (err) {
 				console.error("Seat map fetch failed", err);
 				setSeats(defaultSeatLayout());
@@ -100,7 +112,8 @@ const SeatDrawer = ({ open, onClose, bus }) => {
                     ? "bg-Darkgreen text-white"
                     : "bg-gray-200 hover:bg-LightGreen";
         }
-		return (
+		const isRecommended = recommended.includes(seat.id);
+        return (
             <button
 				key={seat.id}
 				disabled={seat.status === "booked"}
@@ -109,6 +122,9 @@ const SeatDrawer = ({ open, onClose, bus }) => {
 			>
                 {seat.status === "bookedMale" ? <FaMale /> : seat.status === "bookedFemale" ? <FaFemale /> : <FaCouch className="text-sm" />} 
                 {/* seat label */}
+                {isRecommended && (
+                    <FaStar className="absolute -top-1 -left-1 text-amber-400 text-xs" />
+                )}
                 <span className="absolute bottom-0 right-0 text-[9px] text-white/90">{seat.id}</span>
                 {/* tooltip */}
                 <div className="absolute hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap z-10">
@@ -180,15 +196,24 @@ const SeatDrawer = ({ open, onClose, bus }) => {
 						<span>{selected.length} seat(s) selected</span>
 						<span>₹{payable}</span>
 					</div>
-					<button
-						disabled={!selected.length}
-						onClick={() =>
-							navigate("/booking", { state: { bus, seats: selected } })
-						}
-						className='w-full bg-Darkgreen disabled:bg-gray-400 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-green-700 transition'
-					>
-						<FaCheck /> Continue to Book
-					</button>
+					<div className="flex gap-3">
+                        <button
+                            disabled={selected.length < 2}
+                            onClick={()=> navigate("/group-booking", { state:{ bus, seats:selected }})}
+                            className='w-1/2 bg-amber-500 disabled:bg-gray-400 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-amber-600 transition text-sm'
+                        >
+                            Group Book
+                        </button>
+                        <button
+                            disabled={!selected.length}
+                            onClick={() =>
+                                navigate("/booking", { state: { bus, seats: selected } })
+                            }
+                            className='w-1/2 bg-Darkgreen disabled:bg-gray-400 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-green-700 transition'
+                        >
+                            <FaCheck /> Continue to Book
+                        </button>
+                    </div>
 				</div>
 			</div>
 		</Dialog>

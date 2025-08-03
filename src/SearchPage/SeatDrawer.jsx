@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
+import axiosInstance from "../utils/axiosConfig";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "@headlessui/react";
 import { FaTimes, FaCouch, FaCheck } from "react-icons/fa";
 
-// Quick in-memory seat generator (8 rows x 4)
+// Quick seat grid generator based on capacity (defaults to 32)
 const defaultSeatLayout = () => {
   const seats = [];
   for (let r = 1; r <= 8; r++) {
@@ -12,8 +13,6 @@ const defaultSeatLayout = () => {
       seats.push({ id: num, status: "available" });
     }
   }
-  // mark some booked for demo
-  seats.filter((_, idx) => idx % 7 === 0).forEach((s) => (s.status = "booked"));
   return seats;
 };
 
@@ -23,10 +22,29 @@ const SeatDrawer = ({ open, onClose, bus }) => {
   const [selected, setSelected] = useState([]);
 
   useEffect(() => {
-    if (open) {
-      // Attempt to use provided layout, else fall back to dummy
-      setSeats(bus?.seatLayout || defaultSeatLayout());
-      setSelected([]);
+    const fetchSeatMap = async () => {
+      try {
+        const layout = defaultSeatLayout();
+        const res = await axiosInstance.get(`/api/scheduleRoutes/schedule/${bus._id}/seats`);
+        // // console.log("seat map", res.data);
+
+        res.data.forEach(({ seat, status }) => {
+          const seatObj = layout.find((s) => s.id === parseInt(seat));
+          if (seatObj) {
+            seatObj.status = status.startsWith("booked") ? "booked" : "available";
+          }
+        });
+        setSeats(layout);
+      } catch (err) {
+        console.error("Seat map fetch failed", err);
+        setSeats(defaultSeatLayout());
+      } finally {
+        setSelected([]);
+      }
+    };
+
+    if (open && bus?._id) {
+      fetchSeatMap();
     }
   }, [open, bus]);
 

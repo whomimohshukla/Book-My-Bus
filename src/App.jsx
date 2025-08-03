@@ -17,6 +17,7 @@ import PrivacyPolicy from "./components/TermsAndConditions/PrivacyPolicy";
 import TicketPolicies from "./components/TermsAndConditions/TicketPolicies";
 import RefundPolicies from "./components/TermsAndConditions/RefundPolicies";
 import TicketSearch from "./components/Ticket/TicketSearch";
+import TicketPage from "./components/Ticket/TicketPage";
 import BusSeatSelection from "./components/Ticket/BusSeatSelection";
 import BusSearch2 from "./components/BusSearch2";
 import Profile from "./components/Profile/Profile";
@@ -85,6 +86,7 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={['passenger', 'admin']} />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/bookings" element={<Bookings />} />
+            <Route path="/ticket/:bookingId" element={<TicketPage />} />
             <Route path="/ticket-Search" element={<TicketSearch />} />
             <Route path="/seatSelection" element={<BusSeatSelection />} />
           </Route>

@@ -1,47 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axiosInstance from "../../utils/axiosConfig";
 import { BsFillSquareFill } from "react-icons/bs";
 import { GiSteeringWheel } from "react-icons/gi";
 
-const BusSeatSelection = () => {
-  const rows = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-  const cols = [1, 2, "", 3, 4];
+const BusSeatSelection = ({ scheduleId }) => {
+  const totalSeats = 32; // adjust per bus type
+  const seatNumbers = Array.from({ length: totalSeats }, (_, i) => (i + 1).toString());
+// console removed
+
 
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [seats, setSeats] = useState(
-    rows.reduce((acc, row) => {
-      cols.forEach((col) => {
-        if (col !== "") {
-          acc[`${row}${col}`] = {
-            status: "available",
-            price: Math.floor(Math.random() * (1200 - 800 + 1)) + 800,
-            gender: null
-          };
-        }
-      });
+    seatNumbers.reduce((acc, num) => {
+      acc[num] = { status: "available", price: 500 };
       return acc;
     }, {})
   );
 
   const handleSeatClick = (seat) => {
-    setSeats((prevSeats) => {
-      const currentSeat = prevSeats[seat];
+    const currentSeat = seats[seat];
+    if (!currentSeat) return;
+
+    // Optimistically update seat map first
+    setSeats((prevSeats) => ({
+      ...prevSeats,
+      [seat]: {
+        ...currentSeat,
+        status:
+          currentSeat.status === "available"
+            ? "selected"
+            : currentSeat.status === "selected"
+            ? "available"
+            : currentSeat.status,
+      },
+    }));
+
+    // Then update selectedSeats using functional update to avoid stale state
+    setSelectedSeats((prev) => {
       if (currentSeat.status === "available") {
-        setSelectedSeats([...selectedSeats, seat]);
-        return {
-          ...prevSeats,
-          [seat]: { ...currentSeat, status: "selected" }
-        };
+        // add
+        return [...prev, seat];
       }
       if (currentSeat.status === "selected") {
-        setSelectedSeats(selectedSeats.filter((s) => s !== seat));
-        return {
-          ...prevSeats,
-          [seat]: { ...currentSeat, status: "available" }
-        };
+        // remove
+        return prev.filter((s) => s !== seat);
       }
-      return prevSeats;
+      return prev; // no change for booked seats
     });
-  };
+  }
 
   const renderSeat = (seat, seatData) => {
     const { status, price } = seatData;
@@ -84,7 +91,9 @@ const BusSeatSelection = () => {
     );
   };
 
-  return (
+  return loading ? (
+    <div className="p-4 text-center text-gray-600">Loading seat map...</div>
+  ) : (
     <div className="max-w-6xl mx-auto p-4">
       <div className="bg-white rounded-lg shadow-lg p-6">
         <div className="flex items-center justify-between mb-6">
@@ -120,19 +129,8 @@ const BusSeatSelection = () => {
             {/* Lower Deck */}
             <div className="relative ml-8">
               <div className="text-sm font-medium mb-4 text-gray-600">Lower Deck</div>
-              <div className="grid grid-cols-5 gap-x-8 gap-y-8">
-                {rows.map((row) => (
-                  <div key={row} className="flex items-center gap-8">
-                    {cols.map((col) => {
-                      const seat = `${row}${col}`;
-                      return col !== "" ? (
-                        renderSeat(seat, seats[seat])
-                      ) : (
-                        <div key={`${row}-aisle`} className="w-4" />
-                      );
-                    })}
-                  </div>
-                ))}
+              <div className="grid grid-cols-4 gap-4">
+                {seatNumbers.map((num) => renderSeat(num, seats[num]))}
               </div>
             </div>
           </div>

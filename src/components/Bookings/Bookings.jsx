@@ -31,6 +31,80 @@ function Bookings() {
     }
   }, [user, isAuthenticated]);
 
+  // Helper to dynamically load Razorpay script
+  const loadRazorpay = () =>
+    new Promise((resolve) => {
+      if (window.Razorpay) return resolve(true);
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+
+  const handleRetryPayment = async (booking) => {
+    try {
+      const loaded = await loadRazorpay();
+      if (!loaded) {
+        alert('Failed to load payment gateway.');
+        return;
+      }
+
+      // Create new order
+      const retryRes = await axiosInstance.post('/api/booking/retry-payment', {
+        bookingId: booking._id,
+      });
+      const { key, amount, currency, razorpayOrderId } = retryRes.data.data;
+
+      const options = {
+        key,
+        amount: amount * 100, // Razorpay expects paise; backend sends in rupees
+        currency,
+        name: 'BookMyBus',
+        description: `Payment for booking ${booking._id}`,
+        order_id: razorpayOrderId,
+        handler: async function (response) {
+          const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = response;
+          try {
+            await axiosInstance.post(
+              '/api/booking/confirm',
+              {
+                bookingId: booking._id,
+                razorpayOrderId: razorpay_order_id,
+                razorpayPaymentId: razorpay_payment_id,
+                razorpaySignature: razorpay_signature,
+              },
+              { timeout: 20000 }
+            );
+            // Refresh list
+            fetchBookings();
+            alert('Payment successful and booking confirmed');
+          } catch (err) {
+            console.error('Confirm error', err);
+            if (err.code === 'ECONNABORTED') {
+              alert('Verification taking longer than expected. Please refresh in a few seconds to see updated status.');
+            } else {
+              alert('Payment verification failed');
+            }
+          }
+        },
+        prefill: booking.contactDetails,
+        modal: {
+          ondismiss: () => {
+            // do nothing – booking stays pending
+          },
+        },
+        theme: { color: '#16a34a' },
+      };
+
+      const rz = new window.Razorpay(options);
+      rz.open();
+    } catch (err) {
+      console.error('Retry payment error:', err);
+      alert(err.response?.data?.message || 'Failed to start payment');
+    }
+  };
+
   const fetchBookings = async () => {
     try {
       setLoading(true);
@@ -132,6 +206,8 @@ function Bookings() {
         return 'bg-green-100 text-green-800 border border-green-200';
       case 'completed':
         return 'bg-blue-100 text-blue-800 border border-blue-200';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 border border-yellow-200';
       case 'cancelled':
         return 'bg-red-100 text-red-800 border border-red-200';
       default:
@@ -161,8 +237,8 @@ function Bookings() {
               {booking.scheduleId?.busId?.busNumber || 'Bus'}{booking.scheduleId?.busId?.busType ? ` - ${booking.scheduleId.busId.busType}` : ''}
             </h3>
           </div>
-          <span className={`px-4 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.status)} w-fit`}>
-            {booking.status}
+          <span className={`px-4 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.paymentStatus === 'pending' ? 'pending' : booking.status)} w-fit`}>
+            {booking.paymentStatus === 'pending' ? 'Pending Payment' : booking.status}
           </span>
         </div>
         <p className="text-sm text-gray-600">
@@ -258,7 +334,15 @@ function Bookings() {
           </div>
           
           <div className="flex space-x-3">
-            {booking.status === 'confirmed' && (
+            {booking.paymentStatus === 'pending' ? (
+              <button
+                onClick={() => handleRetryPayment(booking)}
+                className="flex items-center px-3 md:px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm md:text-base transition"
+              >
+                Pay&nbsp;Now
+              </button>
+            ) : booking.status === 'confirmed' && (
+
               <>
                 <button 
                   onClick={() => navigate(`/ticket/${booking._id}`)}

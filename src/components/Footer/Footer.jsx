@@ -144,15 +144,15 @@ function Footer() {
             <ul className="space-y-4">
               <li className="flex items-center space-x-3">
                 <FaMapMarkerAlt className="text-LightGreen" />
-                <span>Bengla Road Suite, Dhaka 1209</span>
+                <span>BookMyBus, India</span>
               </li>
               <li className="flex items-center space-x-3">
                 <FaPhone className="text-LightGreen" />
-                <span>+44 45678908</span>
+                <span>+91 7233091999</span>
               </li>
               <li className="flex items-center space-x-3">
                 <FaEnvelope className="text-LightGreen" />
-                <span>example@gmail.com</span>
+                <span>bookMyBus@gmail.com</span>
               </li>
             </ul>
           </div>

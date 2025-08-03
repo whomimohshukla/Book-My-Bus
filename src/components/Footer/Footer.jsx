@@ -3,7 +3,29 @@ import { Link } from "react-router-dom";
 import { FaGithub, FaDiscord, FaTwitter, FaFacebookF, FaMapMarkerAlt, FaPhone, FaEnvelope, FaBus, FaClock, FaHeadset, FaBlog, FaPaperPlane } from "react-icons/fa";
 import mylogo from "../../assets/bookMyBusLogo.jpg";
 
+import { useState } from "react";
 function Footer() {
+  const [email, setEmail] = useState("");
+
+  const handleSubscribe = () => {
+    if (!email) return;
+    const base = import.meta.env.VITE_API_BASE || "";
+    fetch(`${base}/api/newsletter/subscribe`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          alert("Subscribed successfully! Check your inbox.");
+          setEmail("");
+        } else {
+          alert(data.message || "Subscription failed");
+        }
+      })
+      .catch(() => alert("Server error"));
+  };
   return (
     <footer className="bg-gradient-to-b from-gray-900 to-gray-800 text-gray-300">
       {/* Newsletter Section */}
@@ -30,6 +52,8 @@ function Footer() {
                   <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 max-w-md mx-auto md:max-w-none">
                     <div className="relative flex-grow">
                       <input
+                        value={email}
+                        onChange={(e)=> setEmail(e.target.value)}
                         type="email"
                         placeholder="Enter your email"
                         className="w-full px-12 py-4 rounded-xl sm:rounded-r-none bg-white/10 border border-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/20 transition-all duration-300"
@@ -38,7 +62,7 @@ function Footer() {
                         <FaEnvelope className="text-white/60" />
                       </div>
                     </div>
-                    <button className="group bg-white rounded-xl sm:rounded-l-none text-Darkgreen font-semibold hover:bg-gray-50 transition-all duration-300">
+                    <button onClick={handleSubscribe} className="group bg-white rounded-xl sm:rounded-l-none text-Darkgreen font-semibold hover:bg-gray-50 transition-all duration-300">
                       <div className="px-8 py-4 flex items-center justify-center">
                         <span className="mr-2">Subscribe</span>
                         <FaPaperPlane className="transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />

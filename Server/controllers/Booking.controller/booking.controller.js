@@ -233,6 +233,14 @@ exports.getBookingDetails = async (req, res) => {
 			});
 		}
 
+		if (booking.routeId) {
+			const route = await TravelRoute.findById(booking.routeId).lean();
+			if (route && route.source && route.destination) {
+				booking.boardingCoords = route.source.location.coordinates; // [lon, lat]
+				booking.droppingCoords = route.destination.location.coordinates;
+			}
+		}
+
 		res.status(200).json({
 			success: true,
 			data: booking,
@@ -539,8 +547,8 @@ exports.getFlexibleDateFares = async (req, res) => {
       return res.status(400).json({ success: false, message: "Invalid date range" });
     }
 
-    const Route = require("../../models/TravelRoute.model/travelRoute.model");
-    const routes = await Route.find({
+    const TravelRoute = require("../../models/TravelRoute.model/travelRoute.model");
+    const routes = await TravelRoute.find({
       "source.name": new RegExp(`^${source}$`, "i"),
       "destination.name": new RegExp(`^${destination}$`, "i"),
     }).select("_id");

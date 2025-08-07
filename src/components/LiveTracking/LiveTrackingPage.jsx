@@ -1,13 +1,14 @@
 import { useParams } from "react-router-dom";
 import BusMap from "./BusMap";
 import { useSocket } from "../../contexts/SocketProvider.jsx";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosConfig";
 
 export default function LiveTrackingPage() {
-  const { busId } = useParams();
+  const { busId, bookingId } = useParams();
   const socket = useSocket();
   const [trackingInfo, setTrackingInfo] = useState(null);
+  const [bookingCoords, setBookingCoords] = useState({ start: null, end: null });
   const [speed, setSpeed] = useState(null);
   const [eta, setEta] = useState(null);
   const [nextStop, setNextStop] = useState(null);
@@ -75,6 +76,8 @@ export default function LiveTrackingPage() {
       <h1 className="text-2xl font-semibold mb-4">Live Tracking</h1>
       <BusMap 
         initialCoords={trackingInfo?.currentLocation?.coordinates}
+        startCoords={bookingCoords.start}
+        endCoords={bookingCoords.end}
         speed={speed}
         eta={eta}
         nextStop={nextStop}

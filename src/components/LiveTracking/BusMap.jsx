@@ -26,7 +26,7 @@ function Recenter({ position }) {
   return null;
 }
 
-export default function BusMap({ initialCoords = null, speed=null, eta=null, nextStop=null, status="ON_TIME" }) {
+export default function BusMap({ initialCoords = null, startCoords=null, endCoords=null, speed=null, eta=null, nextStop=null, status="ON_TIME" }) {
   const socket = useSocket();
   const [position, setPosition] = useState(() => {
     if (initialCoords && initialCoords.length === 2) {
@@ -71,6 +71,18 @@ export default function BusMap({ initialCoords = null, speed=null, eta=null, nex
         attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      {/* Start marker */}
+      {startCoords && startCoords.length === 2 && (
+        <Marker position={[startCoords[1], startCoords[0]]} icon={L.divIcon({ html: "<div style='color:#16a34a;font-size:22px;'>📍</div>", className: "", iconSize:[24,24], iconAnchor:[12,24] })}>
+          <Popup>Boarding Point</Popup>
+        </Marker>
+      )}
+      {/* Destination marker */}
+      {endCoords && endCoords.length === 2 && (
+        <Marker position={[endCoords[1], endCoords[0]]} icon={L.divIcon({ html: "<div style='color:#dc2626;font-size:22px;'>📍</div>", className: "", iconSize:[24,24], iconAnchor:[12,24] })}>
+          <Popup>Destination</Popup>
+        </Marker>
+      )}
       {position && (
         <>
           <Marker 

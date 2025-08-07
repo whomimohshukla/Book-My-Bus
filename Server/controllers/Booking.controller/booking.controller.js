@@ -255,6 +255,7 @@ exports.getBookingDetails = async (req, res) => {
 				bookingResponse = booking.toObject();
 				bookingResponse.boardingCoords = route.source.location.coordinates; // [lon, lat]
 				bookingResponse.droppingCoords = route.destination.location.coordinates;
+        bookingResponse.stops = (route.viaStops || []).filter(s => Array.isArray(s.location?.coordinates) && s.location.coordinates.length===2).map(s => ({ name: s.name, coords: s.location.coordinates }));
 			}
 		}
 

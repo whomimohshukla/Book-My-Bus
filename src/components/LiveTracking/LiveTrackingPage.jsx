@@ -14,6 +14,7 @@ export default function LiveTrackingPage() {
   const socket = useSocket();
   const [trackingInfo, setTrackingInfo] = useState(null);
   const [bookingCoords, setBookingCoords] = useState({ start: null, end: null });
+  const [stops, setStops] = useState([]);
   const [speed, setSpeed] = useState(null);
   const [eta, setEta] = useState(null);
 
@@ -27,7 +28,8 @@ export default function LiveTrackingPage() {
         if (Array.isArray(booking?.boardingCoords) && Array.isArray(booking?.droppingCoords)) {
           console.log("[LiveTracking] Booking API response", booking);
           setBookingCoords({ start: booking.boardingCoords, end: booking.droppingCoords });
-          console.log("[LiveTracking] Set bookingCoords", booking.boardingCoords, booking.droppingCoords);
+          setStops(Array.isArray(booking.stops) ? booking.stops : []);
+          console.log("[LiveTracking] Set bookingCoords", booking.boardingCoords, booking.droppingCoords, "stops", booking.stops);
         }
       } catch (err) {
         console.error("Failed to fetch booking for map markers", err);
@@ -37,7 +39,7 @@ export default function LiveTrackingPage() {
 
   useEffect(() => {
     console.log("[LiveTracking] bookingCoords state", bookingCoords);
-  }, [bookingCoords]);
+  }, [bookingCoords, stops]);
   const [nextStop, setNextStop] = useState(null);
 
   // initial fetch of current location / ETA
@@ -109,6 +111,7 @@ export default function LiveTrackingPage() {
         speed={speed}
         eta={eta}
         nextStop={nextStop}
+        stops={stops}
         status={trackingInfo?.status}
       />
       {trackingInfo && (

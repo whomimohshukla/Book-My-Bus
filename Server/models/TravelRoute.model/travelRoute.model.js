@@ -32,6 +32,10 @@ const RouteSchema = new mongoose.Schema({
       arrivalTime: { type: String },
       departureTime: { type: String },
       stopDuration: { type: Number },
+      location: {
+        type: { type: String, enum: ["Point"], default: "Point" },
+        coordinates: { type: [Number], default: undefined }, // [lng, lat]
+      },
     },
   ],
 });

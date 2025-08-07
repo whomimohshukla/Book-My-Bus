@@ -26,7 +26,7 @@ function Recenter({ position }) {
   return null;
 }
 
-function FitBounds({ startCoords, endCoords, current }) {
+function FitBounds({ startCoords, endCoords, stops, current }) {
   const map = useMap();
   useEffect(() => {
     const points = [];
@@ -38,13 +38,16 @@ function FitBounds({ startCoords, endCoords, current }) {
     } else if (points.length === 1) {
       map.setView(points[0], 13);
     }
-  }, [startCoords, endCoords, current]);
+    stops.forEach(s => {
+      if (Array.isArray(s.coords) && s.coords.length===2) points.push([s.coords[1], s.coords[0]]);
+    });
+  }, [startCoords, endCoords, stops, current]);
   return null;
 }
 
 
 
-export default function BusMap({ initialCoords = null, startCoords=null, endCoords=null, speed=null, eta=null, nextStop=null, status="ON_TIME" }) {
+export default function BusMap({ initialCoords = null, startCoords=null, endCoords=null, stops=[], speed=null, eta=null, nextStop=null, status="ON_TIME" }) {
   const socket = useSocket();
   const [position, setPosition] = useState(() => {
     if (initialCoords && initialCoords.length === 2) {
@@ -101,9 +104,29 @@ export default function BusMap({ initialCoords = null, startCoords=null, endCoor
           <Popup>Destination</Popup>
         </Marker>
       )}
+      {/* Stops markers */}
+      {Array.isArray(stops) && stops.map((s,i)=> (
+        Array.isArray(s.coords) && s.coords.length===2 && (
+          <Marker key={i} position={[s.coords[1], s.coords[0]]} icon={L.divIcon({ html: "<div style='color:#7c3aed;font-size:26px;'>📍</div>", className:"", iconSize:[28,28], iconAnchor:[14,28] })}>
+            <Popup>{s.name || `Stop ${i+1}`}</Popup>
+          </Marker>
+        )
+      ))}
+
       {/* Route polyline */}
       {startCoords && endCoords && startCoords.length===2 && endCoords.length===2 && (
-        <Polyline positions={[[startCoords[1], startCoords[0]], [endCoords[1], endCoords[0]]]} color="#2563eb" weight={4} />
+        (() => {
+          const pts = [[startCoords[1], startCoords[0]]];
+          if (Array.isArray(stops)) {
+            stops.forEach(s => {
+              if (Array.isArray(s.coords) && s.coords.length===2) {
+                pts.push([s.coords[1], s.coords[0]]);
+              }
+            });
+          }
+          pts.push([endCoords[1], endCoords[0]]);
+          return <Polyline positions={pts} color="#2563eb" weight={4} />;
+        })()
       )}
 
       {position && (
@@ -130,7 +153,7 @@ export default function BusMap({ initialCoords = null, startCoords=null, endCoor
             </Popup>
           </Marker>
           <Recenter position={position} />
-          <FitBounds startCoords={startCoords} endCoords={endCoords} current={position} />
+          <FitBounds startCoords={startCoords} endCoords={endCoords} stops={stops} current={position} />
         </>
       )}
     </MapContainer>

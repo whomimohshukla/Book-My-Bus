@@ -131,21 +131,72 @@ exports.updateRoute = async (req, res) => {
     }
 
     // Optionally validate if the source/destination city IDs exist
-    const sourceCity = await City.findById(source.cityId);
-    const destinationCity = await City.findById(destination.cityId);
-
-    if (!sourceCity || !destinationCity) {
-      return res
-        .status(400)
-        .json({ message: "Invalid source or destination city." });
+    let sourceCity = null;
+    let destinationCity = null;
+    if (source && source.cityId) {
+      sourceCity = await City.findById(source.cityId);
+      if (!sourceCity) {
+        return res.status(400).json({ message: "Invalid source city." });
+      }
+    }
+    if (destination && destination.cityId) {
+      destinationCity = await City.findById(destination.cityId);
+      if (!destinationCity) {
+        return res.status(400).json({ message: "Invalid destination city." });
+      }
     }
 
-    // Update the route
-    route.source = source;
-    route.destination = destination;
-    route.distance = distance;
-    route.pricePerKm = pricePerKm;
-    route.viaStops = viaStops;
+    // Update fields selectively, merging with existing data
+    if (source) {
+      route.source.name = source.name || route.source.name;
+      route.source.state = source.state || route.source.state;
+      if (source.location && Array.isArray(source.location.coordinates) && source.location.coordinates.length === 2) {
+        route.source.location = {
+          type: "Point",
+          coordinates: source.location.coordinates,
+        };
+      }
+    }
+
+    if (destination) {
+      route.destination.name = destination.name || route.destination.name;
+      route.destination.state = destination.state || route.destination.state;
+      if (
+        destination.location &&
+        Array.isArray(destination.location.coordinates) &&
+        destination.location.coordinates.length === 2
+      ) {
+        route.destination.location = {
+          type: "Point",
+          coordinates: destination.location.coordinates,
+        };
+      }
+    }
+
+    if (distance !== undefined) route.distance = distance;
+    if (pricePerKm !== undefined) route.pricePerKm = pricePerKm;
+    if (Array.isArray(viaStops)) {
+      const processedStops = [];
+      for (const stop of viaStops) {
+        // if coordinates missing but cityId available, fetch city location
+        if (
+          (!stop.location || !Array.isArray(stop.location.coordinates) || stop.location.coordinates.length!==2)
+          && stop.cityId
+        ) {
+          const city = await City.findById(stop.cityId);
+          if (city && city.location && Array.isArray(city.location.coordinates) && city.location.coordinates.length===2) {
+            stop.location = {
+              type: "Point",
+              coordinates: city.location.coordinates,
+            };
+            stop.state = city.state || stop.state;
+            stop.name = city.name || stop.name;
+          }
+        }
+        processedStops.push(stop);
+      }
+      route.viaStops = processedStops;
+    }
 
     await route.save();
 

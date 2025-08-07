@@ -27,6 +27,7 @@
     "passport-google-oauth20": "^2.0.0",
     "razorpay": "^2.9.5",
     "react-toastify": "^10.0.6",
+    "socket.io": "^4.8.1",
     "twilio": "^5.3.7"
   }
 }

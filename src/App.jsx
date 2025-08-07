@@ -36,6 +36,8 @@ import ScheduleManagement from "./Admin/ScheduleManagement";
 import CityManagement from "./Admin/CityManagement";
 import AdminDashboard from "./Admin/AdminDashboard";
 import Emergency from "./components/SOS-Component/Emergency";
+import LiveTrackingPage from "./components/LiveTracking/LiveTrackingPage";
+import DriverLiveUpdate from "./components/Driver/DriverLiveUpdate";
 
 // this is to check the role of the user
 // import ProtectedRoute from "./ProtectRoutes/ProtectedRoute"
@@ -80,7 +82,7 @@ function App() {
 					<Route path='/blogs/:id' element={<BlogPost />} />
 					<Route path='/support' element={<Support />} />
 					<Route path='/booking' element={<BookingPage />} />
-<Route path='/group-booking' element={<GroupBookingPage />} />
+					<Route path='/group-booking' element={<GroupBookingPage />} />
 					<Route path='/about' element={<About />} />
 					<Route path='/FAQs' element={<FaqS />} />
 					<Route path='/contact' element={<Contact />} />
@@ -96,8 +98,17 @@ function App() {
 						<Route path='/profile' element={<Profile />} />
 						<Route path='/bookings' element={<Bookings />} />
 						<Route path='/ticket/:bookingId' element={<TicketPage />} />
+						<Route
+							path='/live-tracking/:busId'
+							element={<LiveTrackingPage />}
+						/>
 
 						<Route path='/seatSelection' element={<BusSeatSelection />} />
+					</Route>
+
+					{/* Driver / Operator Routes */}
+					<Route element={<ProtectedRoute allowedRoles={["admin", "operator"]} />}> 
+						<Route path='/driver/live-update' element={<DriverLiveUpdate />} />
 					</Route>
 
 					{/* Protected Admin Routes */}

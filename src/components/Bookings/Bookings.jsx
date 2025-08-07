@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthProvider";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axiosInstance from "../../utils/axiosConfig";
 import {
 	FaBus,
@@ -399,34 +399,55 @@ function Bookings() {
 						</div>
 					</div>
 
-					<div className='flex space-x-3'>
-						{booking.paymentStatus === "pending" ? (
-							<button
-								onClick={() => handleRetryPayment(booking)}
-								className='flex items-center px-3 md:px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm md:text-base transition'
-							>
-								Pay&nbsp;Now
-							</button>
-						) : (
-							booking.status === "confirmed" && (
-								<>
-									<button
-										onClick={() => navigate(`/ticket/${booking._id}`)}
-										className='flex items-center px-3 md:px-4 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700 transition-colors text-sm md:text-base'
-									>
-										<FaTicketAlt className='mr-2' />
-										View Ticket
-									</button>
-									<button
-										onClick={() => handleCancelBooking(booking._id)}
-										className='px-3 md:px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 transition-colors text-sm md:text-base'
-									>
-										Cancel
-									</button>
-								</>
-							)
-						)}
-					</div>
+					<div className='flex flex-wrap gap-3'>
+            {booking.paymentStatus === "pending" ? (
+              <button
+                onClick={() => handleRetryPayment(booking)}
+                className='flex items-center px-3 md:px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm md:text-base transition'
+              >
+                Pay&nbsp;Now
+              </button>
+            ) : ["confirmed", "booked", "completed"].includes(
+                (booking.status || "").toLowerCase()
+              ) && (
+              <>
+                {/* View Ticket */}
+                <button
+                  onClick={() => navigate(`/ticket/${booking._id}`)}
+                  className='flex items-center px-3 md:px-4 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700 transition-colors text-sm md:text-base'
+                >
+                  <FaTicketAlt className='mr-2' />
+                  View Ticket
+                </button>
+
+                {/* Track Bus */}
+                {(() => {
+                  const extractId = (v) =>
+                    typeof v === "string" ? v : v?._id || v?.id || "";
+                  const rawBusId =
+                    extractId(booking.busId) || extractId(booking.scheduleId?.busId);
+                  if (!rawBusId) return null;
+                  return (
+                    <Link
+                      to={`/live-tracking/${rawBusId}`}
+                      className='flex items-center px-3 md:px-4 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700 transition-colors text-sm md:text-base'
+                    >
+                      <FaBus className='mr-2' />
+                      Track&nbsp;Bus
+                    </Link>
+                  );
+                })()}
+
+                {/* Cancel Booking */}
+                <button
+                  onClick={() => handleCancelBooking(booking._id)}
+                  className='px-3 md:px-4 py-2 border border-red-500 text-red-500 rounded-md hover:bg-red-50 transition-colors text-sm md:text-base'
+                >
+                  Cancel
+                </button>
+              </>
+            )}
+          </div>
 				</div>
 			</div>
 		</div>

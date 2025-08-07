@@ -45,7 +45,7 @@ const PaymentHandler = ({ bookingId }) => {
               });
 
               toast.success('Payment successful! Redirecting to booking details...');
-              navigate(`/bookings/${bookingId}`);
+              navigate(`/ticket/${bookingId}`);
             } catch (error) {
               console.error('Payment verification failed:', error);
               toast.error('Payment verification failed. Please contact support.');

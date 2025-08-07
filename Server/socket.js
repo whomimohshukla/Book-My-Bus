@@ -1,7 +1,4 @@
-// Centralized Socket.IO helper
-// Usage: const socket = require('./socket');
-//        const io = socket.init(server); // in index.js
-//        const io = socket.getIo();      // in controllers/routes
+
 
 let ioInstance = null;
 
@@ -17,6 +14,12 @@ module.exports = {
       cors: {
         origin: "*",
       },
+    });
+    ioInstance.on("connection", (socket) => {
+      // Client can join a specific bus room
+      socket.on("JOIN_ROOM", (room) => {
+        socket.join(room);
+      });
     });
     return ioInstance;
   },

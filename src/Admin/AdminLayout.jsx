@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { FaBus, FaRoute, FaCalendarAlt, FaCity, FaUserTie, FaBars, FaTimes } from 'react-icons/fa';
+import { FaBus, FaRoute, FaCalendarAlt, FaCity, FaUserTie, FaBars, FaTimes, FaMapMarkerAlt } from 'react-icons/fa';
 
 const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -12,6 +12,7 @@ const AdminLayout = () => {
     { path: '/admin/routes', icon: <FaRoute className="w-5 h-5" />, label: 'Routes' },
     { path: '/admin/schedules', icon: <FaCalendarAlt className="w-5 h-5" />, label: 'Schedules' },
     { path: '/admin/cities', icon: <FaCity className="w-5 h-5" />, label: 'Cities' },
+    { path: '/driver/live-update', icon: <FaMapMarkerAlt className="w-5 h-5" />, label: 'Live Update' },
   ];
 
   const toggleSidebar = () => {

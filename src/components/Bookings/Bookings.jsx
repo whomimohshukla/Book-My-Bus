@@ -429,7 +429,7 @@ function Bookings() {
                   if (!rawBusId) return null;
                   return (
                     <Link
-                      to={`/live-tracking/${rawBusId}`}
+                      to={`/live-tracking/${rawBusId}?bookingId=${booking._id}`}
                       className='flex items-center px-3 md:px-4 py-2 bg-Darkgreen text-white rounded-md hover:bg-green-700 transition-colors text-sm md:text-base'
                     >
                       <FaBus className='mr-2' />

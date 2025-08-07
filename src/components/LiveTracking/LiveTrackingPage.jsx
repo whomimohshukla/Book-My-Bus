@@ -1,16 +1,43 @@
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import BusMap from "./BusMap";
 import { useSocket } from "../../contexts/SocketProvider.jsx";
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../utils/axiosConfig";
 
 export default function LiveTrackingPage() {
-  const { busId, bookingId } = useParams();
+  const location = useLocation();
+  const { busId, bookingId: bookingIdParam } = useParams();
+  // If bookingId is not present in path, attempt to read from ?bookingId= query
+  const searchParams = new URLSearchParams(location.search);
+  const bookingId = bookingIdParam || searchParams.get("bookingId");
+  console.log("[LiveTracking] busId:", busId, "bookingId:", bookingId);
   const socket = useSocket();
   const [trackingInfo, setTrackingInfo] = useState(null);
   const [bookingCoords, setBookingCoords] = useState({ start: null, end: null });
   const [speed, setSpeed] = useState(null);
   const [eta, setEta] = useState(null);
+
+  // Fetch boarding and destination coordinates from booking
+  useEffect(() => {
+    if (!bookingId) return;
+    (async () => {
+      try {
+        const { data } = await axiosInstance.get(`/api/booking/details/${bookingId}`);
+        const booking = data?.data || data;
+        if (Array.isArray(booking?.boardingCoords) && Array.isArray(booking?.droppingCoords)) {
+          console.log("[LiveTracking] Booking API response", booking);
+          setBookingCoords({ start: booking.boardingCoords, end: booking.droppingCoords });
+          console.log("[LiveTracking] Set bookingCoords", booking.boardingCoords, booking.droppingCoords);
+        }
+      } catch (err) {
+        console.error("Failed to fetch booking for map markers", err);
+      }
+    })();
+  }, [bookingId]);
+
+  useEffect(() => {
+    console.log("[LiveTracking] bookingCoords state", bookingCoords);
+  }, [bookingCoords]);
   const [nextStop, setNextStop] = useState(null);
 
   // initial fetch of current location / ETA
@@ -21,7 +48,8 @@ export default function LiveTrackingPage() {
           `/api/live-tracking/bus/${busId}`
         );
         console.log("Initial tracking data", data);
-        setTrackingInfo(data);
+        console.log("[LiveTracking] Initial tracking info", data);
+    setTrackingInfo(data);
       } catch (err) {
         console.error("Failed to fetch live tracking info", err);
       }

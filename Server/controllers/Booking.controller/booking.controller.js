@@ -2,6 +2,7 @@ const Booking = require("../../models/Booking.Model/booking.model");
 const Schedule = require("../../models/Schedule.model/schedule.model");
 const User = require("../../models/User.Login.Signup/user.model");
 const mailSender = require("../../utls/emailSender.utls/bookingEmail/bookingEmail");
+const TravelRoute = require("../../models/TravelRoute.model/travelRoute.model");
 const {
 	createPaymentOrder,
 	verifyPaymentSignature,
@@ -206,10 +207,10 @@ exports.getBookingDetails = async (req, res) => {
 		const { bookingId } = req.params;
 		const userId = req.user._id;
 
-		const booking = await Booking.findOne({
-			_id: bookingId,
-			userId,
-		}).populate([
+		// Allow admins/operators to fetch any booking
+		const isPrivileged = req.user.role && ["Admin", "Operator"].includes(req.user.role);
+		const bookingQuery = isPrivileged ? { _id: bookingId } : { _id: bookingId, userId };
+		const booking = await Booking.findOne(bookingQuery).populate([
 			{ path: "userId", select: "name email" },
 			{
 				path: "scheduleId",
@@ -233,17 +234,33 @@ exports.getBookingDetails = async (req, res) => {
 			});
 		}
 
-		if (booking.routeId) {
-			const route = await TravelRoute.findById(booking.routeId).lean();
+		let routeIdForCoords = booking.routeId;
+		// Fallback: derive routeId through schedule
+		if (!routeIdForCoords && booking.scheduleId) {
+			try {
+				const Schedule = require("../../models/Schedule.model/schedule.model");
+				const scheduleDoc = await Schedule.findById(booking.scheduleId).lean();
+				if (scheduleDoc && scheduleDoc.routeId) routeIdForCoords = scheduleDoc.routeId;
+			} catch (e) {
+				console.error("Failed to load routeId from schedule", e);
+			}
+		}
+
+		let bookingResponse = booking;
+
+		if (routeIdForCoords) {
+			const route = await TravelRoute.findById(routeIdForCoords).lean();
 			if (route && route.source && route.destination) {
-				booking.boardingCoords = route.source.location.coordinates; // [lon, lat]
-				booking.droppingCoords = route.destination.location.coordinates;
+				// Convert to plain object once to safely append new props
+				bookingResponse = booking.toObject();
+				bookingResponse.boardingCoords = route.source.location.coordinates; // [lon, lat]
+				bookingResponse.droppingCoords = route.destination.location.coordinates;
 			}
 		}
 
 		res.status(200).json({
 			success: true,
-			data: booking,
+			data: bookingResponse,
 		});
 	} catch (error) {
 		console.error("Error fetching booking details:", error);

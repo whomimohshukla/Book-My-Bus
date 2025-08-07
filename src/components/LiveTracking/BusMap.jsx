@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import { useSocket } from "../../contexts/SocketProvider.jsx";
@@ -25,6 +25,24 @@ function Recenter({ position }) {
   }, [position]);
   return null;
 }
+
+function FitBounds({ startCoords, endCoords, current }) {
+  const map = useMap();
+  useEffect(() => {
+    const points = [];
+    if (startCoords && startCoords.length === 2) points.push([startCoords[1], startCoords[0]]);
+    if (endCoords && endCoords.length === 2) points.push([endCoords[1], endCoords[0]]);
+    if (current && current.length === 2) points.push(current);
+    if (points.length > 1) {
+      map.fitBounds(points, { padding: [40, 40] });
+    } else if (points.length === 1) {
+      map.setView(points[0], 13);
+    }
+  }, [startCoords, endCoords, current]);
+  return null;
+}
+
+
 
 export default function BusMap({ initialCoords = null, startCoords=null, endCoords=null, speed=null, eta=null, nextStop=null, status="ON_TIME" }) {
   const socket = useSocket();
@@ -73,16 +91,21 @@ export default function BusMap({ initialCoords = null, startCoords=null, endCoor
       />
       {/* Start marker */}
       {startCoords && startCoords.length === 2 && (
-        <Marker position={[startCoords[1], startCoords[0]]} icon={L.divIcon({ html: "<div style='color:#16a34a;font-size:22px;'>📍</div>", className: "", iconSize:[24,24], iconAnchor:[12,24] })}>
+        <Marker position={[startCoords[1], startCoords[0]]} icon={L.divIcon({ html: "<div style='color:#16a34a;font-size:32px;'>📍</div>", className: "", iconSize:[34,34], iconAnchor:[17,34] })}>
           <Popup>Boarding Point</Popup>
         </Marker>
       )}
       {/* Destination marker */}
       {endCoords && endCoords.length === 2 && (
-        <Marker position={[endCoords[1], endCoords[0]]} icon={L.divIcon({ html: "<div style='color:#dc2626;font-size:22px;'>📍</div>", className: "", iconSize:[24,24], iconAnchor:[12,24] })}>
+        <Marker position={[endCoords[1], endCoords[0]]} icon={L.divIcon({ html: "<div style='color:#dc2626;font-size:32px;'>📍</div>", className: "", iconSize:[34,34], iconAnchor:[17,34] })}>
           <Popup>Destination</Popup>
         </Marker>
       )}
+      {/* Route polyline */}
+      {startCoords && endCoords && startCoords.length===2 && endCoords.length===2 && (
+        <Polyline positions={[[startCoords[1], startCoords[0]], [endCoords[1], endCoords[0]]]} color="#2563eb" weight={4} />
+      )}
+
       {position && (
         <>
           <Marker 
@@ -107,6 +130,7 @@ export default function BusMap({ initialCoords = null, startCoords=null, endCoor
             </Popup>
           </Marker>
           <Recenter position={position} />
+          <FitBounds startCoords={startCoords} endCoords={endCoords} current={position} />
         </>
       )}
     </MapContainer>

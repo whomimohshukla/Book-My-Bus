@@ -80,7 +80,7 @@ const BusManagement = () => {
       const response = await api.get('/busRoute/buses');
       
       const busData = response.data;
-      console.log('Bus API Response:', busData);
+      // console.log('Bus API Response:', busData);
 
       // Extract buses from the response data structure
       if (busData && busData.data && Array.isArray(busData.data)) {
@@ -92,7 +92,7 @@ const BusManagement = () => {
           totalSeats: bus.totalSeats || 0,
           amenities: Array.isArray(bus.amenities) ? bus.amenities : []
         }));
-        console.log('Transformed buses:', transformedBuses);
+        // console.log('Transformed buses:', transformedBuses);
         setBuses(transformedBuses);
       } else {
         console.error('Unexpected API response structure:', busData);
@@ -111,14 +111,14 @@ const BusManagement = () => {
     try {
       const response = await api.get('/operatorRoute/operator');
       const operatorData = response.data;
-      console.log('Operator API Response:', operatorData);
+      // console.log('Operator API Response:', operatorData);
 
       if (operatorData && operatorData.data && Array.isArray(operatorData.data)) {
         const processedOperators = operatorData.data.map(op => ({
           _id: op._id,
           name: op.name
         }));
-        console.log('Processed operators:', processedOperators);
+        // console.log('Processed operators:', processedOperators);
         setOperators(processedOperators);
       } else {
         console.error('Unexpected operator API response structure:', operatorData);

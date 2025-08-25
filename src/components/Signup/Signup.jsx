@@ -102,17 +102,21 @@ function Signup() {
 				throw new Error("No credential received from Google");
 			}
 
-			const response = await axios.post(
-				"http://localhost:8000/api/user/google-signup",
-				{
-					token: credentialResponse.credential,
-				},
-				{
-					headers: {
-						"Content-Type": "application/json",
-					},
-				}
-			);
+			// const response = await axios.post(
+			// 	"http://localhost:8000/api/user/google-signup",
+			// 	{
+			// 		token: credentialResponse.credential,
+			// 	},
+			// 	{
+			// 		headers: {
+			// 			"Content-Type": "application/json",
+			// 		},
+			// 	}
+			// );
+
+			const response = await api.post("/user/google-signup", {
+				token: credentialResponse.credential,
+			});
 
 			// console.log("Server response:", response.data);
 
@@ -289,14 +293,19 @@ function Signup() {
 				// console.log("Sending signup data:", signupPayload);
 
 				// First signup request with explicit headers
-				const signupResponse = await axios.post(
-					"http://localhost:8000/api/user/signup",
-					signupPayload,
-					{
-						headers: {
-							"Content-Type": "application/json",
-						},
-					}
+				// // const signupResponse = await axios.post(
+				// 	"http://localhost:8000/api/user/signup",
+				// 	signupPayload,
+				// 	{
+				// 		headers: {
+				// 			"Content-Type": "application/json",
+				// 		},
+				// 	}
+				// );
+
+				const signupResponse = await api.post(
+					"/user/signup",
+					signupPayload
 				);
 
 				// console.log("Signup response:", signupResponse.data);
@@ -309,19 +318,23 @@ function Signup() {
 					});
 
 					// Login request
-					const loginResponse = await axios.post(
-						"http://localhost:8000/api/user/login",
-						{
-							email: formData.email,
-							password: formData.password,
-						},
-						{
-							headers: {
-								"Content-Type": "application/json",
-							},
-						}
-					);
+					// const loginResponse = await axios.post(
+					// 	"http://localhost:8000/api/user/login",
+					// 	{
+					// 		email: formData.email,
+					// 		password: formData.password,
+					// 	},
+					// 	{
+					// 		headers: {
+					// 			"Content-Type": "application/json",
+					// 		},
+					// 	}
+					// );
 
+					const loginResponse = await api.post("/user/login", {
+						email: formData.email,
+						password: formData.password,
+					});
 					// console.log("Login response:", loginResponse.data);
 
 					if (loginResponse.status === 200) {

@@ -16,7 +16,21 @@ export const SocketProvider = ({ children }) => {
     // Connect once when component mounts.
     // Socket backend defaults to 8000 (keep in sync with Server index.js)
     const baseURL = import.meta.env.VITE_SOCKET_URL || "http://localhost:8000";
-    const s = io(baseURL, { transports: ["websocket"] });
+
+    // Attempt to extract userId from JWT stored in localStorage ("token")
+    let userId;
+    try {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        userId = payload._id || payload.id || payload.userId;
+      }
+    } catch (_) {}
+
+    const s = io(baseURL, {
+      transports: ["websocket"],
+      auth: userId ? { userId } : {},
+    });
     setSocket(s);
 
     s.on("connect", () => console.info("🔗 Connected to socket server"));

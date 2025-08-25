@@ -2,12 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaPlus, FaStar, FaSearch, FaCheck, FaCity, FaBus, FaMapMarkedAlt } from 'react-icons/fa';
 import api from '../utils/api';
-// const api = axios.create({
-//   baseURL: 'http://localhost:8000/api',
-//   headers: {
-//     'Content-Type': 'application/json'
-//   }
-// });
+
 
 const CityManagement = () => {
   const [cities, setCities] = useState([]);

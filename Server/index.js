@@ -12,6 +12,7 @@ const scheduleRoutes = require("./routes/Schedule.Routes/schedule.routes");
 const operatorRoute = require("./routes/Operator.Routes/operator.Routes");
 const busTravelRoute = require("./routes/BusTravelRoute.routes/busTravel.Routes");
 const liveTrackingRoutes = require("./routes/BusLiveTracking.routes/liveTracking.routes");
+const notificationRoutes = require("./routes/notification.routes");
 const searchBusesRoute = require("./routes/SearchBuses.Routes/searchBuses.routes");
 const contactRoute = require("./routes/contact.routes/contact.Routes");
 const emergencyRoute = require("./routes/EmergencyServices.routes/emergencyServices.Routes");
@@ -45,6 +46,7 @@ app.use("/api/booking", bookingRoute);
 app.use("/api/enhanced-passenger", enhancePassanger);
 app.use("/api/newsletter", newsletterRoute);
 app.use("/api/live-tracking", liveTrackingRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 //testing the google PI
 

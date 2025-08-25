@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }) => {
 			role: user.role ? user.role.toLowerCase() : null,
 		};
 
-		console.log("Normalized login data:", userWithRole);
+		// console.log("Normalized login data:", userWithRole);
 
 		localStorage.setItem("authToken", token);
 		localStorage.setItem("userData", JSON.stringify(userWithRole));
@@ -89,13 +89,13 @@ export const AuthProvider = ({ children }) => {
 
 	const isAdmin = () => {
 		const hasRole = auth.user?.role === "admin";
-		console.log("isAdmin check:", { role: auth.user?.role, hasRole });
+		// console.log("isAdmin check:", { role: auth.user?.role, hasRole });
 		return hasRole;
 	};
 
 	const isPassenger = () => {
 		const hasRole = auth.user?.role === "passenger";
-		console.log("isPassenger check:", { role: auth.user?.role, hasRole });
+		// console.log("isPassenger check:", { role: auth.user?.role, hasRole });
 		return hasRole;
 	};
 

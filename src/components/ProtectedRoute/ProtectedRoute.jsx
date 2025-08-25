@@ -7,14 +7,7 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
   const { user, isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
-  console.log('ProtectedRoute Debug:', {
-    user,
-    isAuthenticated,
-    allowedRoles,
-    userRole: user?.role,
-    path: location.pathname
-  });
-
+  
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -41,11 +34,11 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
     role.toLowerCase() === userRole
   );
 
-  console.log('Role check:', {
-    userRole,
-    allowedRoles,
-    hasAllowedRole
-  });
+  // console.log('Role check:', {
+  //   userRole,
+  //   allowedRoles,
+  //   hasAllowedRole
+  // });
 
   if (!hasAllowedRole) {
     console.log('Access denied - role not allowed');

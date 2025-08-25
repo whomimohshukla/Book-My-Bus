@@ -224,7 +224,7 @@ const SearchPage = () => {
 
 		try {
 			const response = await api.get("/searchBuses/allbuses/all");
-			// console.log("API Response:", response.data);
+			console.log("API Response:", response.data);
 
 			if (response.data && Array.isArray(response.data)) {
 				setResults(response.data);

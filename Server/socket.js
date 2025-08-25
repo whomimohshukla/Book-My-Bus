@@ -3,10 +3,7 @@
 let ioInstance = null;
 
 module.exports = {
-  /**
-   * Initialize Socket.IO on the provided HTTP server.
-   * Should be called once from index.js.
-   */
+ 
   init: (httpServer) => {
     if (ioInstance) return ioInstance; // singleton
     const { Server } = require("socket.io");
@@ -16,6 +13,12 @@ module.exports = {
       },
     });
     ioInstance.on("connection", (socket) => {
+      // Automatically join personal user room if userId provided by auth
+      const { userId } = socket.handshake.auth || {};
+      if (userId) {
+        socket.join(userId.toString());
+      }
+
       // Client can join a specific bus room
       socket.on("JOIN_ROOM", (room) => {
         socket.join(room);

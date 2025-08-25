@@ -85,10 +85,10 @@ const ScheduleManagement = () => {
 
   const fetchBuses = async () => {
     try {
-      console.log('Fetching buses...');
+      // console.log('Fetching buses...');
       const response = await api.get('/busRoute/buses');
       const busData = response.data;
-      console.log('Raw bus response:', busData);
+      // console.log('Raw bus response:', busData);
 
       if (busData && busData.data && Array.isArray(busData.data)) {
         const processedBuses = busData.data.map(bus => ({
@@ -102,7 +102,7 @@ const ScheduleManagement = () => {
           amenities: Array.isArray(bus.amenities) ? bus.amenities : [],
           status: bus.status || 'Active'
         }));
-        console.log('Processed buses:', processedBuses);
+        // console.log('Processed buses:', processedBuses);
         setBuses(processedBuses);
       } else {
         console.warn('Unexpected bus data structure:', {

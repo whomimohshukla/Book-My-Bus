@@ -55,8 +55,10 @@ function Login() {
 				throw new Error("No credential received from Google");
 			}
 
-			const response = await axios.post(
-				"http://localhost:8000/api/user/google-signup", // Use the same endpoint as signup
+		
+
+			const response = await api.post(
+				"/user/google-signup",
 				{
 					token: credentialResponse.credential,
 				},

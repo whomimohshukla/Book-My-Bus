@@ -36,6 +36,7 @@ const RouteManagement = () => {
 			setLoading(true);
 			setError(null);
 			const response = await api.get("/busTravelRoute/Travelroutes");
+			console.log("API Response:", response.data);
 
 			if (Array.isArray(response.data)) {
 				setRoutes(response.data);

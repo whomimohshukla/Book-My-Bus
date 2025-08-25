@@ -49,7 +49,7 @@ const OperatorManagement = () => {
       setSuccessMessage(null);
       const response = await api.get('/operatorRoute/operator');
       const operatorData = response.data;
-      console.log('Operator API Response:', operatorData);
+      // console.log('Operator API Response:', operatorData);
 
       if (operatorData && operatorData.data && Array.isArray(operatorData.data)) {
         const transformedOperators = operatorData.data.map(operator => ({
@@ -61,7 +61,7 @@ const OperatorManagement = () => {
           totalBuses: operator.totalBuses || 0,
           activeRoutes: operator.activeRoutes || 0
         }));
-        console.log('Transformed operators:', transformedOperators);
+        // console.log('Transformed operators:', transformedOperators);
         setOperators(transformedOperators);
       } else {
         console.error('Unexpected API response structure:', operatorData);
@@ -121,7 +121,7 @@ const OperatorManagement = () => {
       };
 
       // Log the payload for debugging
-      console.log('Submitting operator payload:', payload);
+      // console.log('Submitting operator payload:', payload);
 
       let response;
       if (editingId) {
@@ -131,7 +131,7 @@ const OperatorManagement = () => {
       }
 
       // Log the response
-      console.log('API Response:', response.data);
+      // console.log('API Response:', response.data);
       
       await fetchOperators();
       setShowForm(false);
@@ -193,7 +193,7 @@ const OperatorManagement = () => {
 
   const handleEdit = (operator) => {
     if (!operator || !operator._id) {
-      console.error('Invalid operator data for editing');
+      // console.error('Invalid operator data for editing');
       return;
     }
 

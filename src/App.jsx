@@ -4,6 +4,9 @@ import { AuthProvider } from "./contexts/AuthProvider";
 import "./App.css";
 import "./styles/scrollbar.css";
 import Navbar from "./components/Nav";
+import NotificationProvider from "./contexts/NotificationContext";
+import { SocketProvider } from "./contexts/SocketProvider";
+import { Toaster } from "react-hot-toast";
 import Home from "./components/Home/Home";
 import Footer from "./components/Footer/Footer";
 import About from "./components/About/About";
@@ -58,6 +61,8 @@ function App() {
 		location.pathname === "/signup" || location.pathname === "/login";
 
 	return (
+    <NotificationProvider>
+      <SocketProvider>
 		<AuthProvider>
 			<div className='min-h-screen bg-neutral-50 custom-scrollbar'>
 				<Navbar />
@@ -127,7 +132,10 @@ function App() {
 				{!shouldHideFooter && <Footer />}
 			</div>
 		</AuthProvider>
-	);
+        <Toaster position="top-right" toastOptions={{ className: 'rounded-md bg-white border border-gray-200 shadow-lg', duration: 6000 }} />
+      </SocketProvider>
+    </NotificationProvider>
+  );
 }
 
 export default App;

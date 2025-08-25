@@ -5,7 +5,7 @@ import {
   
 } from "react-icons/fa";
 import { motion } from "framer-motion";
-import axios from "axios";
+import api from "../utils/api";
 
 
 const SearchForm = ({ onSearch, disabled }) => {
@@ -20,7 +20,6 @@ const SearchForm = ({ onSearch, disabled }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [flexible, setFlexible] = useState(false);
   const [flexDates, setFlexDates] = useState([]);
-  const API_BASE_URL = "http://localhost:8000/api";
 
   const [popularCities] = useState([
     "Mumbai", "Delhi", "Bangalore", "Chennai", "Hyderabad",
@@ -40,8 +39,8 @@ const SearchForm = ({ onSearch, disabled }) => {
       setter([]);
       return;
     }
-    axios
-      .get(`${API_BASE_URL}/city/suggest`, { params: { q: value } })
+    api
+      .get(`/city/suggest`, { params: { q: value } })
       .then((res) => setter(res.data))
       .catch(() => setter([]));
   };
@@ -129,7 +128,7 @@ const SearchForm = ({ onSearch, disabled }) => {
           const end = new Date(formData.date);
           start.setDate(start.getDate() - 3);
           end.setDate(end.getDate() + 3);
-          const res = await axios.get(`${API_BASE_URL}/booking/flexible-dates`, {
+          const res = await api.get(`/booking/flexible-dates`, {
             params: {
               source: formData.source.trim(),
               destination: formData.destination.trim(),

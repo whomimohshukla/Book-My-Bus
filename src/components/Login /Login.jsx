@@ -133,16 +133,13 @@ function Login() {
 		}
 
 		try {
-			// const response = await axios.post("http://localhost:8000/api/user/login", {
-			//   email,
-			//   password,
-			// });
+		
 			const response = await api.post("/user/login", {
 				email,
 				password,
 			});
 
-			// console.log("Login response:", response.data);
+			
 
 			const { token, user } = response.data;
 
@@ -156,7 +153,7 @@ function Login() {
 				role: user.role ? user.role.toLowerCase() : null,
 			};
 
-			// console.log('Normalized user data before login:', normalizedUser);
+			
 
 			// Store auth data
 			login(token, normalizedUser);

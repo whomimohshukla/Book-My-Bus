@@ -42,14 +42,6 @@ import Emergency from "./components/SOS-Component/Emergency";
 import LiveTrackingPage from "./components/LiveTracking/LiveTrackingPage";
 import DriverLiveUpdate from "./components/Driver/DriverLiveUpdate";
 
-// this is to check the role of the user
-// import ProtectedRoute from "./ProtectRoutes/ProtectedRoute"
-{
-	/* <ProtectedRoute allowedRoles={['admin', 'operator']}>
-  <Route path="/admin" element={<AdminDashboard />} />
-</ProtectedRoute> */
-}
-
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 // this is the main App component
 
@@ -61,81 +53,119 @@ function App() {
 		location.pathname === "/signup" || location.pathname === "/login";
 
 	return (
-    <NotificationProvider>
-      <SocketProvider>
-		<AuthProvider>
-			<div className='min-h-screen bg-neutral-50 custom-scrollbar'>
-				<Navbar />
-				<ScrollToTop /> {/* Add ScrollToTop component here */}
-				<Routes>
-					{/* Public Routes */}
-					<Route path='/' element={<Home />} />
+		<NotificationProvider>
+			<SocketProvider>
+				<AuthProvider>
+					<div className='min-h-screen bg-neutral-50 custom-scrollbar'>
+						<Navbar />
+						<ScrollToTop /> {/* Add ScrollToTop component here */}
+						<Routes>
+							{/* Public Routes */}
+							<Route path='/' element={<Home />} />
 
-					<Route path='/signup' element={<Signup />} />
-					<Route path='/login' element={<Login />} />
-					<Route path='/searchBuses' element={<SearchPage />} />
-					<Route path='/routes' element={<SearchPage />} />
-					<Route path='/features' element={<FeaturesPage />} />
+							<Route path='/signup' element={<Signup />} />
+							<Route path='/login' element={<Login />} />
+							<Route path='/searchBuses' element={<SearchPage />} />
+							<Route path='/routes' element={<SearchPage />} />
+							<Route path='/features' element={<FeaturesPage />} />
 
-					<Route
-						path='/termsAndConditions'
-						element={<TermsAndConditions />}
-					/>
-					<Route path='/privacyPolicy' element={<PrivacyPolicy />} />
-					<Route path='/TicketPolicies' element={<TicketPolicies />} />
-					<Route path='/blogs' element={<Blogs />} />
-					<Route path='/blogs/:id' element={<BlogPost />} />
-					<Route path='/support' element={<Support />} />
-					<Route path='/booking' element={<BookingPage />} />
-					<Route path='/group-booking' element={<GroupBookingPage />} />
-					<Route path='/about' element={<About />} />
-					<Route path='/FAQs' element={<FaqS />} />
-					<Route path='/contact' element={<Contact />} />
-					<Route path='/refunds' element={<RefundPolicies />} />
-					<Route path='/Emergency' element={<Emergency />} />
+							<Route
+								path='/termsAndConditions'
+								element={<TermsAndConditions />}
+							/>
+							<Route path='/privacyPolicy' element={<PrivacyPolicy />} />
+							<Route
+								path='/TicketPolicies'
+								element={<TicketPolicies />}
+							/>
+							<Route path='/blogs' element={<Blogs />} />
+							<Route path='/blogs/:id' element={<BlogPost />} />
+							<Route path='/support' element={<Support />} />
+							<Route path='/booking' element={<BookingPage />} />
+							<Route
+								path='/group-booking'
+								element={<GroupBookingPage />}
+							/>
+							<Route path='/about' element={<About />} />
+							<Route path='/FAQs' element={<FaqS />} />
+							<Route path='/contact' element={<Contact />} />
+							<Route path='/refunds' element={<RefundPolicies />} />
+							<Route path='/Emergency' element={<Emergency />} />
 
-					{/* Protected Passenger Routes */}
-					<Route
-						element={
-							<ProtectedRoute allowedRoles={["passenger", "admin"]} />
-						}
-					>
-						<Route path='/profile' element={<Profile />} />
-						<Route path='/bookings' element={<Bookings />} />
-						<Route path='/ticket/:bookingId' element={<TicketPage />} />
-						<Route
-							path='/live-tracking/:busId'
-							element={<LiveTrackingPage />}
-						/>
+							{/* Protected Passenger Routes */}
+							<Route
+								element={
+									<ProtectedRoute
+										allowedRoles={["passenger", "admin"]}
+									/>
+								}
+							>
+								<Route path='/profile' element={<Profile />} />
+								<Route path='/bookings' element={<Bookings />} />
+								<Route
+									path='/ticket/:bookingId'
+									element={<TicketPage />}
+								/>
+								<Route
+									path='/live-tracking/:busId'
+									element={<LiveTrackingPage />}
+								/>
 
-						<Route path='/seatSelection' element={<BusSeatSelection />} />
-					</Route>
+								<Route
+									path='/seatSelection'
+									element={<BusSeatSelection />}
+								/>
+							</Route>
 
-					{/* Driver / Operator Routes */}
-					<Route element={<ProtectedRoute allowedRoles={["admin", "operator"]} />}> 
-						<Route path='/driver/live-update' element={<DriverLiveUpdate />} />
-					</Route>
+							{/* Driver / Operator Routes */}
+							<Route
+								element={
+									<ProtectedRoute
+										allowedRoles={["admin", "operator"]}
+									/>
+								}
+							>
+								<Route
+									path='/driver/live-update'
+									element={<DriverLiveUpdate />}
+								/>
+							</Route>
 
-					{/* Protected Admin Routes */}
-					<Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
-						<Route path='/admin' element={<AdminLayout />}>
-							<Route index element={<AdminDashboard />} />
-							<Route path='buses' element={<BusManagement />} />
-							<Route path='operators' element={<OperatorManagement />} />
-							<Route path='routes' element={<RouteManagement />} />
-							<Route path='schedules' element={<ScheduleManagement />} />
-							<Route path='cities' element={<CityManagement />} />
-						</Route>
-					</Route>
-				</Routes>
-				{/* Conditionally render Footer */}
-				{!shouldHideFooter && <Footer />}
-			</div>
-		</AuthProvider>
-        <Toaster position="top-right" toastOptions={{ className: 'rounded-md bg-white border border-gray-200 shadow-lg', duration: 6000 }} />
-      </SocketProvider>
-    </NotificationProvider>
-  );
+							{/* Protected Admin Routes */}
+							<Route
+								element={<ProtectedRoute allowedRoles={["Admin"]} />}
+							>
+								<Route path='/admin' element={<AdminLayout />}>
+									<Route index element={<AdminDashboard />} />
+									<Route path='buses' element={<BusManagement />} />
+									<Route
+										path='operators'
+										element={<OperatorManagement />}
+									/>
+									<Route path='routes' element={<RouteManagement />} />
+									<Route
+										path='schedules'
+										element={<ScheduleManagement />}
+									/>
+									<Route path='cities' element={<CityManagement />} />
+								</Route>
+							</Route>
+						</Routes>
+						{/* Conditionally render Footer */}
+						{!shouldHideFooter && <Footer />}
+					</div>
+				</AuthProvider>
+				<Toaster
+					position='top-right'
+					toastOptions={{
+						className:
+							"rounded-md bg-white border border-gray-200 shadow-lg",
+						duration: 6000,
+					}}
+				/>
+			</SocketProvider>
+		</NotificationProvider>
+	);
 }
 
 export default App;

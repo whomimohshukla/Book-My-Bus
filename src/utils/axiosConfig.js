@@ -25,12 +25,11 @@ instance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      // Handle 401 unauthorized errors (token invalid/expired)
-      // treat 500 errors that wrap a 401 message
+      
       const inner401 = error.response.status === 500 && typeof error.response.data?.error === 'string' && error.response.data.error.includes('401');
       if (error.response.status === 401 || inner401) {
         const errMsg = error.response.data?.error || error.response.data?.message || 'Session expired';
-        // show friendly toast once per page load
+       
         toast.error(`${errMsg}. Please log in again.`, { autoClose: 4000 });
         localStorage.removeItem('authToken');
         localStorage.removeItem('userData');

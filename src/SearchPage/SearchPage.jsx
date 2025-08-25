@@ -27,16 +27,9 @@ import SearchForm from "./SearchForm";
 import SearchResults from "./SearchResults";
 import Loader from "./Loader";
 import { motion } from "framer-motion";
+import api from "../utils/api";
 
-// API Configuration
-const API_BASE_URL = "http://localhost:8000/api";
-const api = axios.create({
-	baseURL: API_BASE_URL,
-	headers: {
-		"Content-Type": "application/json",
-		Accept: "application/json",
-	},
-});
+
 
 const SearchPage = () => {
 	const [loading, setLoading] = useState(false);

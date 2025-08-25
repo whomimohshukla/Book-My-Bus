@@ -102,23 +102,9 @@ function Signup() {
 				throw new Error("No credential received from Google");
 			}
 
-			// const response = await axios.post(
-			// 	"http://localhost:8000/api/user/google-signup",
-			// 	{
-			// 		token: credentialResponse.credential,
-			// 	},
-			// 	{
-			// 		headers: {
-			// 			"Content-Type": "application/json",
-			// 		},
-			// 	}
-			// );
-
 			const response = await api.post("/user/google-signup", {
 				token: credentialResponse.credential,
 			});
-
-			// console.log("Server response:", response.data);
 
 			if (
 				response.status === 200 &&

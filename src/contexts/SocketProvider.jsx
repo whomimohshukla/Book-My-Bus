@@ -5,19 +5,13 @@ import "react-toastify/dist/ReactToastify.css";
 
 const SocketContext = createContext(null);
 
-/**
- * SocketProvider wraps the app and provides a singleton socket.io-client instance.
- * It also wires default listeners for ARRIVAL_NOTICE and DESTINATION_NOTICE.
- */
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
-    // Connect once when component mounts.
-    // Socket backend defaults to 8000 (keep in sync with Server index.js)
+   
+   
     const baseURL = import.meta.env.VITE_SOCKET_URL || "http://localhost:8000";
-
-    // Attempt to extract userId from JWT stored in localStorage ("token")
     let userId;
     try {
       const token = localStorage.getItem("token");

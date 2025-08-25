@@ -7,7 +7,7 @@ const { sendEmail } = require("../../utls/emailSender.utls/mailSender");
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(process.env.VITE_GOOGLE_CLIENT_ID);
 
-// otp sender api
+
 
 exports.otpSender = async (req, res) => {
 	try {

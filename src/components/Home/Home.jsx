@@ -13,6 +13,7 @@ import {
   FaPercent,
 } from "react-icons/fa";
 import Highlight from "../../Utls/Highlight";
+import { motion } from "framer-motion";
 import CTAButton from "../../Utls/Home/Button";
 import BusSearch2 from "../../Utls/Home/BusSearch2";
 import Amenties from "./Amenties";
@@ -25,14 +26,14 @@ function FAQItem({ question, answer }) {
   return (
     <div className="border-b border-gray-200 py-4">
       <button
-        className="text-left w-full flex justify-between items-center text-lg font-medium text-gray-800 hover:text-Darkgreen transition-colors duration-300"
+        className="text-left w-full flex justify-between items-center text-lg font-medium text-gray-800 hover:text-primary-700 transition-colors duration-300"
         onClick={() => setIsOpen(!isOpen)}
       >
         {question}
         {isOpen ? (
-          <FaChevronUp className="text-Darkgreen" />
+          <FaChevronUp className="text-primary-600" />
         ) : (
-          <FaChevronDown className="text-Darkgreen" />
+          <FaChevronDown className="text-primary-600" />
         )}
       </button>
       {isOpen && (
@@ -46,7 +47,14 @@ function FAQItem({ question, answer }) {
 
 function PopularRouteCard({ from, to, price, duration, frequency }) {
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+    <motion.div
+      className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      whileHover={{ y: -4, scale: 1.01 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
       <div className="flex items-center justify-between mb-4">
         <div>
           <h3 className="text-lg font-semibold text-gray-800">{from}</h3>
@@ -56,7 +64,7 @@ function PopularRouteCard({ from, to, price, duration, frequency }) {
           </div>
         </div>
         <div className="text-right">
-          <p className="text-2xl font-bold text-Darkgreen">₹{price}</p>
+          <p className="text-2xl font-bold text-primary-700">₹{price}</p>
           <p className="text-sm text-gray-500">starting from</p>
         </div>
       </div>
@@ -64,28 +72,41 @@ function PopularRouteCard({ from, to, price, duration, frequency }) {
         <span>{duration}</span>
         <span>{frequency} daily buses</span>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 function FeatureCard({ icon, title, description }) {
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
-      <div className="w-12 h-12 bg-gradient-to-r from-Darkgreen to-LightGreen rounded-full flex items-center justify-center mb-4">
+    <motion.div
+      className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300"
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      whileHover={{ y: -4, scale: 1.02 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+    >
+      <div className="w-12 h-12 bg-gradient-to-r from-primary-700 to-primary-400 rounded-full flex items-center justify-center mb-4">
         <div className="text-xl text-white">{icon}</div>
       </div>
       <h3 className="text-xl font-semibold text-gray-800 mb-2">{title}</h3>
       <p className="text-gray-600">{description}</p>
-    </div>
+    </motion.div>
   );
 }
 
 function StatCard({ number, label }) {
   return (
-    <div className="text-center p-6 bg-white rounded-xl shadow-lg">
+    <motion.div
+      className="text-center p-6 bg-white rounded-xl shadow-lg"
+      initial={{ opacity: 0, scale: 0.9 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.45, ease: "easeOut" }}
+    >
       <div className="text-4xl font-bold text-Darkgreen mb-2">{number}</div>
       <div className="text-gray-600">{label}</div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -324,7 +345,7 @@ function Home() {
       </div>
 
       {/* Statistics Section */}
-      <div className="bg-gradient-to-r from-Darkgreen to-LightGreen py-20">
+      <div className="bg-gradient-to-r from-primary-700 to-primary-400 py-20">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-6xl mx-auto">
             <StatCard number="10M+" label="Happy Customers" />
@@ -383,37 +404,49 @@ function Home() {
         {/* Content */}
         <div className="relative py-32">
           <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto text-center">
+            <motion.div
+              className="max-w-3xl mx-auto text-center"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
               <span className="inline-block bg-white/20 text-white px-6 py-2 rounded-full text-sm font-medium tracking-wide mb-6">
                 PREMIUM COMFORT • RELIABLE SERVICE
               </span>
               
-              <h2 className="text-5xl font-bold text-white mb-8 leading-tight">
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-8 leading-tight">
                 Your Journey Begins <br />
-                With <span className="text-LightGreen">BookMyBus</span>
+                With <span className="text-primary-300">BookMyBus</span>
               </h2>
               
               <p className="text-xl text-white/90 mb-12 leading-relaxed">
                 Experience luxury travel with state-of-the-art buses, professional drivers, and 24/7 customer support.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <motion.div
+                className="flex flex-col sm:flex-row gap-6 justify-center"
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.5 }}
+                transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+              >
                 <CTAButton
                   active={true}
                   linkto="/searchBuses"
-                  className="bg-LightGreen text-white hover:bg-Darkgreen px-12 py-5 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="bg-primary-600 text-white hover:bg-primary-700 px-10 md:px-12 py-4 md:py-5 rounded-lg text-base md:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Book Now
                 </CTAButton>
                 <CTAButton
                   active={true}
                   linkto="/about"
-                  className="bg-white text-Darkgreen hover:bg-gray-100 px-12 py-5 rounded-lg text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                  className="bg-white text-primary-700 hover:bg-gray-100 px-10 md:px-12 py-4 md:py-5 rounded-lg text-base md:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                 >
                   Learn More
                 </CTAButton>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </div>
